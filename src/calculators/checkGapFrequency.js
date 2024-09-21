@@ -38,13 +38,17 @@ export const checkGapFrequency = (data, weeksCount) => {
     items.map(item => {
         let freqList = {};
 
+        if(item === 17) {
+            debugger
+        }
+
         [...Array(weeksCount).keys()].forEach(key => {
             freqList[parseInt(key) + 1] = 0;
         });
 
         for (let i = 0; i < sortedData.length; i += 1) {
             if (isInEntry(item, sortedData[i])) {
-                const gapFreqList = checkGapsFromIndex(sortedData, item, i, weeksCount - 1);
+                const gapFreqList = checkGapsFromIndex(sortedData, item, i + 1, weeksCount - 1);
                 freqList = mergeFreqResult(freqList, gapFreqList);
 
                 i += 1;
