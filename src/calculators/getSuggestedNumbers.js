@@ -15,7 +15,7 @@ const initializeList = (lastConsecutiveEntries) => {
 const filterByNonStrictConsecutiveFrequency = ({
     list,
     data,
-    nonStrictConsecutiveFrequencyData,
+    gapFrequencyData,
 }) => {
 
     list.forEach(listItem => {
@@ -31,7 +31,8 @@ export const getSuggestedNumbers = ({
     data,
     occuranceFrequencyData,
     strictConsecutiveFrequencyData,
-    nonStrictConsecutiveFrequencyData,
+    entiesRepeatabilityData,
+    gapFrequencyData,
     consecutiveWeeksCount
 }) => {
     // Get last entries sorted from the oldest up
@@ -41,7 +42,7 @@ export const getSuggestedNumbers = ({
     list = filterByNonStrictConsecutiveFrequency({
         list,
         data: lastConsecutiveEntries,
-        nonStrictConsecutiveFrequencyData,
+        gapFrequencyData,
     })
 
     return list;

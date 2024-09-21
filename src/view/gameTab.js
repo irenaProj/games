@@ -7,6 +7,8 @@ import { occuranceFrequency } from '../calculators/occuranceFrequency';
 import { getSortedByDate } from "../utils/getSortedByDate";
 import { consecutiveFrequency } from '../calculators/consecutiveFrequency';
 import { getSuggestedNumbers } from '../calculators/getSuggestedNumbers';
+import { checkGapFrequency } from '../calculators/checkGapFrequency';
+import { checkEntriesRepeatability } from '../calculators/checkEntriesRepeatability';
 
 export function GameTab({ data }) {
     const [lastEntriesCount, setLastEntriesCount] = useState(1000);
@@ -19,13 +21,15 @@ export function GameTab({ data }) {
 
     const usedData = data.slice(0, lastEntriesCount)
     const occuranceFrequencyData = occuranceFrequency(usedData);
-    const strictConsecutiveFrequencyData = consecutiveFrequency(usedData, consecutiveWeeksCount, true);
-    const nonStrictConsecutiveFrequencyData = consecutiveFrequency(usedData, consecutiveWeeksCount, false);
+    const strictConsecutiveFrequencyData = consecutiveFrequency(usedData, consecutiveWeeksCount);
+    const gapFrequencyData = checkGapFrequency(usedData, consecutiveWeeksCount);
+    const entiesRepeatabilityData = checkEntriesRepeatability(usedData, consecutiveWeeksCount);
     const suggestedItems = getSuggestedNumbers({
         data: usedData,
         occuranceFrequencyData,
+        entiesRepeatabilityData,
         strictConsecutiveFrequencyData,
-        nonStrictConsecutiveFrequencyData,
+        gapFrequencyData,
         consecutiveWeeksCount
     })
     let eventKey = 0;
@@ -48,6 +52,12 @@ export function GameTab({ data }) {
                     </Accordion.Body>
                 </Accordion.Item>
                 <Accordion.Item eventKey={eventKey++}>
+                    <Accordion.Header>Entries Repeatability</Accordion.Header>
+                    <Accordion.Body>
+                        <TabularData data={entiesRepeatabilityData} />
+                    </Accordion.Body>
+                </Accordion.Item>
+                <Accordion.Item eventKey={eventKey++}>
                     <Accordion.Header>Occurance Frequency</Accordion.Header>
                     <Accordion.Body>
                         <TabularData data={occuranceFrequencyData} />
@@ -60,9 +70,9 @@ export function GameTab({ data }) {
                     </Accordion.Body>
                 </Accordion.Item>
                 <Accordion.Item eventKey={eventKey++}>
-                    <Accordion.Header>Non-strict Consecutive Frequency</Accordion.Header>
+                    <Accordion.Header>Gaps Frequency</Accordion.Header>
                     <Accordion.Body>
-                        <TabularData data={nonStrictConsecutiveFrequencyData} />
+                        <TabularData data={gapFrequencyData} />
                     </Accordion.Body>
                 </Accordion.Item>
                 <Accordion.Item eventKey={eventKey++}>
