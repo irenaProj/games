@@ -1,6 +1,6 @@
 import {getNumbers} from "./../utils/getNumbers"
 
-export const occuranceFrequency = (data) => {
+export const consecutiveFrequency = (data) => {
   const items = getNumbers()
 
   const list = [];
