@@ -1,0 +1,1 @@
+export const isItem = (name) => name[0] === "#"

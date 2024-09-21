@@ -1,16 +1,16 @@
 import Table from 'react-bootstrap/Table';
 
-export const TabularData = ({data}) => {
+export const TabularData = ({ data }) => {
     const renderHeader = () => {
         const entry0 = data[0];
-    
+
         return Object.keys(entry0).map(key => (<th key={`header-${key}`}>{key}</th>));
     }
 
     const renderCells = (row, rowIndex) => Object.values(row).map((data, cellIndex) => (<td key={`row-${rowIndex}-${cellIndex}`}>{data}</td>));
 
-    
-    const renderRows = () => data.map((row,rowIndex) => (
+
+    const renderRows = () => data.map((row, rowIndex) => (
         <tr key={`row-${rowIndex}`}>
             {renderCells(row, rowIndex)}
         </tr>
@@ -22,18 +22,17 @@ export const TabularData = ({data}) => {
     }
 
     return (
-      <div className="listRaw">
-        <Table striped bordered hover>
-            <thead>
-                <tr>
-                    {renderHeader({data})}
-                </tr>
-            </thead>
-            <tbody>
-                {renderRows()}
-            </tbody>
+        <div className="listRaw">
+            <Table striped bordered hover>
+                <thead>
+                    <tr>
+                        {renderHeader({ data })}
+                    </tr>
+                </thead>
+                <tbody>
+                    {renderRows()}
+                </tbody>
             </Table>
-      </div>
+        </div>
     );
-  }
-  
+}

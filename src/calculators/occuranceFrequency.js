@@ -1,3 +1,4 @@
+import { isItem } from "../utils/isItem";
 import {getNumbers} from "./../utils/getNumbers"
 
 export const occuranceFrequency = (data) => {
@@ -5,7 +6,6 @@ export const occuranceFrequency = (data) => {
 
   const list = [];
 
-  debugger
   items.map(item => {
     let freq = 0
     
@@ -13,7 +13,7 @@ export const occuranceFrequency = (data) => {
       const entryContent = []
       
       Object.keys(entry).forEach(key => {
-        if (key[0] === '#') {
+        if (isItem(key)) {
           entryContent.push(entry[key])
         }
       })
