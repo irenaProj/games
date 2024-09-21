@@ -1,5 +1,7 @@
-import {pbData} from './pb'
+import { pbData } from './pb'
+import { slData } from './sl'
 
 export const data = {
-    pb: pbData
+    pb: pbData,
+    sl: slData
 }

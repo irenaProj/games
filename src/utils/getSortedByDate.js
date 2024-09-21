@@ -1,4 +1,5 @@
 import {compareAsc, compareDesc} from "date-fns";
+import { cloneDeep } from "lodash";
 
 const toDate = (dateRaw) => {
     const dateArr = dateRaw.split("/");
@@ -7,8 +8,8 @@ const toDate = (dateRaw) => {
 }
 
 export const getSortedByDate = (data, sortAsc) => {
-    const result = data.sort((e1, e2) => {
-        return !sortAsc ? compareAsc(toDate(e1.Date), toDate(e2.Date)) : compareDesc(toDate(e1.Date), toDate(e2.Date));
+    const result = cloneDeep(data).sort((e1, e2) => {
+        return sortAsc ? compareAsc(toDate(e1.Date), toDate(e2.Date)) : compareDesc(toDate(e1.Date), toDate(e2.Date));
     });
 
     return result;

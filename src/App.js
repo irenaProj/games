@@ -24,6 +24,9 @@ function App() {
         <Tab eventKey="pb" title="PB">
           <GameTab key="pb" data={data.pb}/>
         </Tab>
+        <Tab eventKey="sl" title="SL">
+          <GameTab key="sl" data={data.sl}/>
+        </Tab>
         {/* <Tab eventKey="profile" title="Profile">
           Tab content for Profile
         </Tab>

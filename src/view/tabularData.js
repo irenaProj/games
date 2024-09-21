@@ -1,3 +1,4 @@
+import React from 'react';
 import Table from 'react-bootstrap/Table';
 
 export const TabularData = ({ data }) => {
@@ -15,7 +16,6 @@ export const TabularData = ({ data }) => {
             {renderCells(row, rowIndex)}
         </tr>
     ))
-
 
     if (!data || !data.length) {
         return "No data";
