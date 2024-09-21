@@ -38,10 +38,6 @@ export const checkGapFrequency = (data, weeksCount) => {
     items.map(item => {
         let freqList = {};
 
-        if(item === 17) {
-            debugger
-        }
-
         [...Array(weeksCount).keys()].forEach(key => {
             freqList[parseInt(key) + 1] = 0;
         });
