@@ -1,1 +1,1 @@
-export const getNumbers = () => [...Array(4).keys()].map(num => num + 1)
+export const getNumbers = () => [...Array(47).keys()].map(num => num + 1)
