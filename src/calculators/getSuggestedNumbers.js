@@ -29,6 +29,16 @@ const rateByOccuranceFrequency = ({
     return sortedList;
 }
 
+/**
+ * For each of the recent entries check the distance to the first future entry.
+ * Check strict and gap frequencies for __that distance__ and sum up the values.
+ * 
+ * Note: this does not sum up all gap and strict freq values, only the values that
+ * match the entries distance to the first future entry
+ * 
+ * @param {*} param0 
+ * @returns 
+ */
 const rateByFrequency = ({
     list,
     lastConsecutiveEntries,
@@ -50,21 +60,21 @@ const rateByFrequency = ({
                     freqMap[item] = []
                 }
 
-                // if (itemStrictFreqData[distanceToNextEntry]) {
-                freqMap[item].push({
-                    type: "strict",
-                    distance: distanceToNextEntry,
-                    value: itemStrictFreqData[distanceToNextEntry]
-                })
-                // }
+                if (itemStrictFreqData[distanceToNextEntry]) {
+                    freqMap[item].push({
+                        type: "strict",
+                        distance: distanceToNextEntry,
+                        value: itemStrictFreqData[distanceToNextEntry]
+                    })
+                }
 
-                // if (itemGapFreqyData[distanceToNextEntry]) {
-                freqMap[item].push({
-                    type: "gap",
-                    distance: distanceToNextEntry,
-                    value: itemGapFreqyData[distanceToNextEntry]
-                })
-                // }
+                if (itemGapFreqyData[distanceToNextEntry]) {
+                    freqMap[item].push({
+                        type: "gap",
+                        distance: distanceToNextEntry,
+                        value: itemGapFreqyData[distanceToNextEntry]
+                    })
+                }
             }
         })
     });
@@ -87,13 +97,16 @@ const rateByFrequency = ({
 
 const getItemRatingInLists = ({ listItem, listByOccuranceFrequency, listByFrequency }) => {
     const item = listItem.number;
-    const ratingByOccurance= findItemIndexInFreqList(listByOccuranceFrequency, item)
-    const ratingByFreq= findItemIndexInFreqList(listByFrequency, item)
+    const ratingByOccurance = findItemIndexInFreqList(listByOccuranceFrequency, item)
+    const ratingByFreq = findItemIndexInFreqList(listByFrequency, item);
+    const averagedRating = (ratingByOccurance + ratingByFreq) / 2;
 
     return {
         number: item,
         "Occurance Index": ratingByOccurance,
-        "Freq Value": ratingByFreq
+        "Freq Value": ratingByFreq,
+        "Freq Meta": listByFrequency[ratingByFreq].meta,
+        "Averaged Rating": averagedRating
     };
 };
 
@@ -130,5 +143,5 @@ export const getSuggestedNumbers = ({
         itemRatingsMap.push(itemRatings)
     });
 
-    return itemRatingsMap.sort((l1, l2) => l1.number - l2.number);
+    return itemRatingsMap.sort((l1, l2) => l1["Averaged Rating"] - l2["Averaged Rating"]);
 }

@@ -35,7 +35,7 @@ export const consecutiveFrequency = (data, weeksCount) => {
                 const consecutiveFreqList = checkStrictItemFromIndex(sortedData, item, i + 1, weeksCount);
                 freqList = mergeFreqResult(freqList, consecutiveFreqList);
 
-                i += weeksCount + 1;
+                i += 1;
             }
         }
 
