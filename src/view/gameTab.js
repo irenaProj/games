@@ -13,7 +13,7 @@ import { checkEntriesRepeatability } from '../calculators/checkEntriesRepeatabil
 export function GameTab({ data }) {
     const [lastEntriesCount, setLastEntriesCount] = useState(1000);
     // Numbers from the last 'consecutiveWeeksCount' entries are examined for consecutive frequency
-    const [consecutiveWeeksCount, setConsecutiveWeeksCount] = useState(6);
+    const [consecutiveWeeksCount, setConsecutiveWeeksCount] = useState(4);
 
     if (!data || !data.length) {
         return "No data";

@@ -1,1 +1,1 @@
-export const isItem = (name) => name[0] === "#"
+export const isItem = (name) => name[0] === "#" || name[0] === "S"
