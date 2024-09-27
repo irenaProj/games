@@ -16,10 +16,10 @@ const initializeList = (lastConsecutiveEntries) => {
 }
 
 const rateByOccuranceFrequency = ({
-    list,
+    filteredList,
     occuranceFrequencyData,
 }) => {
-    const sortedList = _.cloneDeep(list).sort((listItem1, listItem2) => {
+    const sortedList = filteredList.sort((listItem1, listItem2) => {
         const occuranceFreqIndex1 = findItemIndexInFreqList(occuranceFrequencyData, listItem1.number);
         const occuranceFreqIndex2 = findItemIndexInFreqList(occuranceFrequencyData, listItem2.number);
 
@@ -40,11 +40,11 @@ const rateByOccuranceFrequency = ({
  * @returns 
  */
 const rateByFrequency = ({
-    list,
+    filteredList,
     lastConsecutiveEntries,
     strictConsecutiveFrequencyData,
     gapFrequencyData,
-    consecutiveWeeksCount
+    consecutiveWeeksCount,
 }) => {
     const freqMap = {}
 
@@ -79,7 +79,7 @@ const rateByFrequency = ({
         })
     });
 
-    const resultList = _.cloneDeep(list).map(listItem => {
+    const resultList = filteredList.map(listItem => {
         const item = listItem.number;
         const itemData = freqMap[item];
         const meta = JSON.stringify(freqMap[item])
@@ -116,24 +116,36 @@ export const getSuggestedNumbers = ({
     strictConsecutiveFrequencyData,
     entiesRepeatabilityData,
     gapFrequencyData,
-    consecutiveWeeksCount
+    consecutiveWeeksCount,
+    minItem,
+    maxItem
 }) => {
     // Get last entries sorted from the oldest up
     const allDataSorted = getSortedByDate(data, false); // All entries sorted from last, descending
     const lastConsecutiveEntries = getSortedByDate(allDataSorted.slice(0, consecutiveWeeksCount), true); // Recent entries, sorted from oldest up
     let list = initializeList(lastConsecutiveEntries);
+    const filteredList = [];
 
-    const listByOccuranceFrequency = rateByOccuranceFrequency({ list, occuranceFrequencyData })
+    list.forEach(listItem => {
+        if (listItem.number >= minItem && listItem.number <= maxItem) {
+            filteredList.push(listItem)
+        }
+    })
+
+    const listByOccuranceFrequency = rateByOccuranceFrequency({
+        filteredList,
+        occuranceFrequencyData,
+    })
     const listByFrequency = rateByFrequency({
-        list,
+        filteredList,
         lastConsecutiveEntries,
         strictConsecutiveFrequencyData,
         gapFrequencyData,
-        consecutiveWeeksCount
+        consecutiveWeeksCount,
     });
     const itemRatingsMap = [];
 
-    list.forEach(listItem => {
+    filteredList.forEach(listItem => {
         const itemRatings = getItemRatingInLists({
             listItem,
             listByOccuranceFrequency,

@@ -15,13 +15,17 @@ import { checkEntriesRepeatability } from '../calculators/checkEntriesRepeatabil
 import { getDataDates } from '../utils/getDataDates';
 import { sortEntriestIntoDataAndControlGroup } from '../utils/sortEntriestIntoDataAndControlGroup';
 import { checkAgainstTargetEntry } from '../calculators/checkAgainstTargetEntry';
+import { getNumbers } from '../utils/getNumbers';
 
 export function GameTab({ data }) {
     const dataDates = getDataDates(data);
-    const [lastEntriesCount, setLastEntriesCount] = useState(1000);
+    const items = getNumbers()
+    const [lastEntriesCount, setLastEntriesCount] = useState(data.length);
     const [lastEntryDate, setLastEntryDate] = useState(dataDates[0]);
     // Numbers from the last 'consecutiveWeeksCount' entries are examined for consecutive frequency
     const [consecutiveWeeksCount, setConsecutiveWeeksCount] = useState(4);
+    const [minItem, setMinItem] = useState(1);
+    const [maxItem, setMaxItem] = useState(35); // Align with PB
 
     if (!data || !data.length) {
         return "No data";
@@ -45,7 +49,9 @@ export function GameTab({ data }) {
         entiesRepeatabilityData,
         strictConsecutiveFrequencyData,
         gapFrequencyData,
-        consecutiveWeeksCount
+        consecutiveWeeksCount,
+        minItem,
+        maxItem
     })
     const suggestedItemsCheckResult = checkAgainstTargetEntry({
         suggestedItems,
@@ -58,7 +64,7 @@ export function GameTab({ data }) {
             <Row>
                 <Col xs={4}>
                     <DropdownButton id="last-entries-count" title="Effective Entries Count" >
-                        <Dropdown.Item as="button" onClick={() => setLastEntriesCount(1000)}>All</Dropdown.Item>
+                        <Dropdown.Item as="button" onClick={() => setLastEntriesCount(data.length)}>{data.length}</Dropdown.Item>
                         <Dropdown.Item as="button" onClick={() => setLastEntriesCount(60)}>60</Dropdown.Item>
                         <Dropdown.Item as="button" onClick={() => setLastEntriesCount(20)}>20</Dropdown.Item>
                         <Dropdown.Item as="button" onClick={() => setLastEntriesCount(10)}>10</Dropdown.Item>
@@ -75,14 +81,28 @@ export function GameTab({ data }) {
                     <p>Suggesed numbers based on {consecutiveWeeksCount} entries</p>
                 </Col>
                 <Col xs={4}>
-                    <DropdownButton id="lase-entry-date" title="Select last data entry" >
+                    <DropdownButton id="last-entry-date" title="Select last data entry" >
                         {dataDates.map(date => (<Dropdown.Item as="button" onClick={() => setLastEntryDate(date)}>{date}</Dropdown.Item>))}
                     </DropdownButton>
                     <p>Data is based on {lastEntriesCount} entries from {lastEntryDate} and older</p>
                 </Col>
             </Row>
             <Row className="justify-content-center">
-                Target entry is: {targetEntry ? JSON.stringify(targetEntry) : "None"}
+                <Col xs={4}>
+                    <DropdownButton id="min-item" title="Select lowest suggestion item" >
+                        {items.map(item => (<Dropdown.Item as="button" onClick={() => setMinItem(item)}>{item}</Dropdown.Item>))}
+                    </DropdownButton>
+                    <p>Min is {minItem}</p>
+                </Col>
+                <Col xs={4}>
+                    <DropdownButton id="max-item" title="Select highest suggestion item" >
+                        {items.map(item => (<Dropdown.Item as="button" onClick={() => setMaxItem(item)}>{item}</Dropdown.Item>))}
+                    </DropdownButton>
+                    <p>Max is {maxItem}</p>
+                </Col>
+            </Row>
+            <Row className="justify-content-center">
+                Target entry is: {targetEntry ? JSON.stringify(targetEntry) : "Next entry"}
             </Row>
 
             <Row>
