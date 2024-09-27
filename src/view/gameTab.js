@@ -67,7 +67,7 @@ export function GameTab({ data }) {
                 </Col>
                 <Col xs={4}>
                     <DropdownButton id="last-entry-date" title="Select last data entry" >
-                        {dataDates.map(date => (<Dropdown.Item as="button" onClick={() => setLastEntryDate(date)}>{date}</Dropdown.Item>))}
+                        {dataDates.map(date => (<Dropdown.Item as="button" key={date} onClick={() => setLastEntryDate(date)}>{date}</Dropdown.Item>))}
                     </DropdownButton>
                     <p>Data is based on {lastEntriesCount} entries from {lastEntryDate} and older</p>
                 </Col>
@@ -75,13 +75,13 @@ export function GameTab({ data }) {
             <Row className="justify-content-center">
                 <Col xs={4}>
                     <DropdownButton id="min-item" title="Select lowest suggestion item" >
-                        {items.map(item => (<Dropdown.Item as="button" onClick={() => setMinItem(item)}>{item}</Dropdown.Item>))}
+                        {items.map(item => (<Dropdown.Item as="button" key={item} onClick={() => setMinItem(item)}>{item}</Dropdown.Item>))}
                     </DropdownButton>
                     <p>Min is {minItem}</p>
                 </Col>
                 <Col xs={4}>
                     <DropdownButton id="max-item" title="Select highest suggestion item" >
-                        {items.map(item => (<Dropdown.Item as="button" onClick={() => setMaxItem(item)}>{item}</Dropdown.Item>))}
+                        {items.map(item => (<Dropdown.Item as="button" key={item} onClick={() => setMaxItem(item)}>{item}</Dropdown.Item>))}
                     </DropdownButton>
                     <p>Max is {maxItem}</p>
                 </Col>

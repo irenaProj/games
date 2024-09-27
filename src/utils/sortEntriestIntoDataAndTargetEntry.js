@@ -1,9 +1,9 @@
 
-import { isBefore, isSameDay } from "date-fns";
+import { isSameDay } from "date-fns";
 import _ from "lodash";
 import { getSortedByDate, toGameDate } from "./getSortedByDate"
 
-export const getLastEntryDateIndex=({
+export const getLastEntryDateIndex = ({
     data,
     lastEntryDate,
 }) => {
@@ -37,7 +37,7 @@ export const sortEntriestIntoDataAndTargetEntry = ({
 
     if (lastEntryDateIndex < 0) {
         return {
-            targetEntry:null,
+            targetEntry: null,
             dataGroup: []
         }
     }
