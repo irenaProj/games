@@ -9,13 +9,12 @@ import { TabularData } from "./tabularData"
 import { occuranceFrequency } from '../calculators/occuranceFrequency';
 import { getSortedByDate } from "../utils/getSortedByDate";
 import { consecutiveFrequency } from '../calculators/consecutiveFrequency';
-import { getSuggestedNumbers } from '../calculators/getSuggestedNumbers';
 import { checkGapFrequency } from '../calculators/checkGapFrequency';
 import { checkEntriesRepeatability } from '../calculators/checkEntriesRepeatability';
 import { getDataDates } from '../utils/getDataDates';
 import { sortEntriestIntoDataAndControlGroup } from '../utils/sortEntriestIntoDataAndControlGroup';
-import { checkAgainstTargetEntry } from '../calculators/checkAgainstTargetEntry';
 import { getNumbers } from '../utils/getNumbers';
+import { targetEntryStats } from './targetEntryStats';
 
 export function GameTab({ data }) {
     const dataDates = getDataDates(data);
@@ -43,20 +42,6 @@ export function GameTab({ data }) {
     const strictConsecutiveFrequencyData = consecutiveFrequency(dataGroup, consecutiveWeeksCount);
     const gapFrequencyData = checkGapFrequency(dataGroup, consecutiveWeeksCount);
     const entiesRepeatabilityData = checkEntriesRepeatability(dataGroup, consecutiveWeeksCount);
-    const suggestedItems = getSuggestedNumbers({
-        data: dataGroup,
-        occuranceFrequencyData,
-        entiesRepeatabilityData,
-        strictConsecutiveFrequencyData,
-        gapFrequencyData,
-        consecutiveWeeksCount,
-        minItem,
-        maxItem
-    })
-    const suggestedItemsCheckResult = checkAgainstTargetEntry({
-        suggestedItems,
-        targetEntry
-    })
     let eventKey = 0;
 
     return (
@@ -106,19 +91,24 @@ export function GameTab({ data }) {
             </Row>
 
             <Row>
+                {targetEntryStats({
+                    targetEntry,
+                    dataGroup,
+                    occuranceFrequencyData,
+                    entiesRepeatabilityData,
+                    strictConsecutiveFrequencyData,
+                    gapFrequencyData,
+                    consecutiveWeeksCount,
+                    minItem,
+                    maxItem
+                })}
+            </Row>
+            <Row  className="justify-content-center spaced-vertically">
+                Data stats
+            </Row>
+
+            <Row>
                 <Accordion defaultActiveKey="0">
-                    <Accordion.Item eventKey={eventKey++}>
-                        <Accordion.Header>Suggested Numbers Check</Accordion.Header>
-                        <Accordion.Body>
-                            <TabularData data={suggestedItemsCheckResult} />
-                        </Accordion.Body>
-                    </Accordion.Item>
-                    <Accordion.Item eventKey={eventKey++}>
-                        <Accordion.Header>Suggested Numbers</Accordion.Header>
-                        <Accordion.Body>
-                            <TabularData data={suggestedItems} />
-                        </Accordion.Body>
-                    </Accordion.Item>
                     <Accordion.Item eventKey={eventKey++}>
                         <Accordion.Header>Entries Repeatability</Accordion.Header>
                         <Accordion.Body>
