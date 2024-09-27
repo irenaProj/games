@@ -14,6 +14,7 @@ import { checkGapFrequency } from '../calculators/checkGapFrequency';
 import { checkEntriesRepeatability } from '../calculators/checkEntriesRepeatability';
 import { getDataDates } from '../utils/getDataDates';
 import { sortEntriestIntoDataAndControlGroup } from '../utils/sortEntriestIntoDataAndControlGroup';
+import { checkAgainstTargetEntry } from '../calculators/checkAgainstTargetEntry';
 
 export function GameTab({ data }) {
     const dataDates = getDataDates(data);
@@ -46,6 +47,10 @@ export function GameTab({ data }) {
         gapFrequencyData,
         consecutiveWeeksCount
     })
+    const suggestedItemsCheckResult = checkAgainstTargetEntry({
+        suggestedItems,
+        targetEntry
+    })
     let eventKey = 0;
 
     return (
@@ -76,9 +81,18 @@ export function GameTab({ data }) {
                     <p>Data is based on {lastEntriesCount} entries from {lastEntryDate} and older</p>
                 </Col>
             </Row>
+            <Row className="justify-content-center">
+                Target entry is: {targetEntry ? JSON.stringify(targetEntry) : "None"}
+            </Row>
 
             <Row>
                 <Accordion defaultActiveKey="0">
+                    <Accordion.Item eventKey={eventKey++}>
+                        <Accordion.Header>Suggested Numbers Check</Accordion.Header>
+                        <Accordion.Body>
+                            <TabularData data={suggestedItemsCheckResult} />
+                        </Accordion.Body>
+                    </Accordion.Item>
                     <Accordion.Item eventKey={eventKey++}>
                         <Accordion.Header>Suggested Numbers</Accordion.Header>
                         <Accordion.Body>
