@@ -12,7 +12,7 @@ import { consecutiveFrequency } from '../calculators/consecutiveFrequency';
 import { checkGapFrequency } from '../calculators/checkGapFrequency';
 import { checkEntriesRepeatability } from '../calculators/checkEntriesRepeatability';
 import { getDataDates } from '../utils/getDataDates';
-import { sortEntriestIntoDataAndControlGroup } from '../utils/sortEntriestIntoDataAndControlGroup';
+import { sortEntriestIntoDataAndTargetEntry } from '../utils/sortEntriestIntoDataAndTargetEntry';
 import { getNumbers } from '../utils/getNumbers';
 import { targetEntryStats } from './targetEntryStats';
 
@@ -33,7 +33,7 @@ export function GameTab({ data }) {
     const {
         targetEntry,
         dataGroup
-    } = sortEntriestIntoDataAndControlGroup({
+    } = sortEntriestIntoDataAndTargetEntry({
         data,
         lastEntriesCount,
         lastEntryDate,
