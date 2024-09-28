@@ -16,7 +16,13 @@ import { sortEntriestIntoDataAndTargetEntry } from '../utils/sortEntriestIntoDat
 import { getNumbers } from '../utils/getNumbers';
 import { targetEntryStats } from './targetEntryStats';
 
-export function GameTab({ data }) {
+const GAME_NAME_MAP = {
+    "/": "PB",
+    "/sl": "SL",
+    "/ol": "OL"
+} 
+
+export function Game({ data }) {
     const dataDates = getDataDates(data);
     const items = getNumbers()
     const [lastEntriesCount, setLastEntriesCount] = useState(data.length);
@@ -42,10 +48,14 @@ export function GameTab({ data }) {
     const strictConsecutiveFrequencyData = consecutiveFrequency(dataGroup, consecutiveWeeksCount);
     const gapFrequencyData = checkGapFrequency(dataGroup, consecutiveWeeksCount);
     const entiesRepeatabilityData = checkEntriesRepeatability(dataGroup, consecutiveWeeksCount);
+    const gameName = GAME_NAME_MAP[window.location.pathname] || "A new one?";
     let eventKey = 0;
 
     return (
         <Container>
+            <Row className="justify-content-center spaced-vertically">
+                <h2>{gameName}</h2>
+            </Row>
             <Row>
                 <Col xs={4}>
                     <DropdownButton id="last-entries-count" title="Effective Entries Count" >
@@ -86,7 +96,7 @@ export function GameTab({ data }) {
                     <p>Max is {maxItem}</p>
                 </Col>
             </Row>
-            <Row className="justify-content-center">
+            <Row className="justify-content-center spaced-vertically">
                 Target entry is: {targetEntry ? JSON.stringify(targetEntry) : "Next entry"}
             </Row>
 
@@ -103,7 +113,7 @@ export function GameTab({ data }) {
                     maxItem
                 })}
             </Row>
-            <Row  className="justify-content-center spaced-vertically">
+            <Row className="justify-content-center spaced-vertically">
                 Data stats
             </Row>
 

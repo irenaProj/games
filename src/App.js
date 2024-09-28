@@ -1,8 +1,10 @@
 import './App.scss';
+import Nav from 'react-bootstrap/Nav';
+import { Routes, Route, Outlet, Link } from "react-router-dom";
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
-import {GameTab} from "./view/gameTab";
-import {data} from "./data"
+import { Game } from "./view/game";
+import { data } from "./data"
 
 
 // URL: https://3000-irenaproj-games-ej6a7rgm5v.app.codeanywhere.com/
@@ -16,29 +18,77 @@ function App() {
         integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
         crossorigin="anonymous"
       />
-      <Tabs
-        defaultActiveKey="pb"
-        id="games"
-        className="mb-3"
-      >
-        <Tab eventKey="pb" title="PB">
-          <GameTab key="pb" data={data.pb}/>
-        </Tab>
-        <Tab eventKey="sl" title="SL">
-          <GameTab key="sl" data={data.sl}/>
-        </Tab>
-        <Tab eventKey="ol" title="OL">
-          <GameTab key="ol" data={data.ol}/>
-        </Tab>
-        {/* <Tab eventKey="profile" title="Profile">
-          Tab content for Profile
-        </Tab>
-        <Tab eventKey="contact" title="Contact" disabled>
-          Tab content for Contact
-        </Tab> */}
-      </Tabs>
+      <Routes>
+        <Route path="/" element={<Layout />}>
+          <Route index element={<Game key="pb" data={data.pb} />} />
+          <Route path="sl" element={<Game key="sl" data={data.sl} />} />
+          <Route path="ol" element={<Game key="ol" data={data.ol} />} />
+
+          {/* Using path="*"" means "match anything", so this route
+                acts like a catch-all for URLs that we don't have explicit
+                routes for. */}
+          <Route path="*" element={<Game key="pb" data={data.pb} />} />
+        </Route>
+      </Routes>
     </div>
   );
 }
+
+function Layout() {
+  return (
+    <div>
+      {/* A "layout route" is a good place to put markup you want to
+          share across all the pages on your site, like navigation. */}
+      <Nav activeKey="/">
+        <Nav.Item>
+          <Nav.Link href="/">PB</Nav.Link>
+        </Nav.Item>
+        <Nav.Item>
+          <Nav.Link href="/sl">SL</Nav.Link>
+        </Nav.Item>
+        <Nav.Item>
+          <Nav.Link href="/ol">OL</Nav.Link>
+        </Nav.Item>
+      </Nav>
+
+      <hr />
+
+      {/* An <Outlet> renders whatever child route is currently active,
+          so you can think about this <Outlet> as a placeholder for
+          the child routes we defined above. */}
+      <Outlet />
+    </div>
+  );
+}
+
+
+// function Layout() {
+//   return (
+//     <div>
+//       {/* A "layout route" is a good place to put markup you want to
+//           share across all the pages on your site, like navigation. */}
+//       <nav>
+//         <ul>
+//           <li>
+//             <Link to="/">PB</Link>
+//           </li>
+//           <li>
+//             <Link to="/about">SL</Link>
+//           </li>
+//           <li>
+//             <Link to="/dashboard">OL</Link>
+//           </li>
+//         </ul>
+//       </nav>
+
+//       <hr />
+
+//       {/* An <Outlet> renders whatever child route is currently active,
+//           so you can think about this <Outlet> as a placeholder for
+//           the child routes we defined above. */}
+//       <Outlet />
+//     </div>
+//   );
+// }
 
 export default App;
