@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import Accordion from 'react-bootstrap/Accordion';
 import Dropdown from 'react-bootstrap/Dropdown';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import Container from 'react-bootstrap/Container';
@@ -7,16 +6,13 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
-import { TabularData } from "./tabularData"
 import { occuranceFrequency } from '../calculators/occuranceFrequency';
-import { getSortedByDate } from "../utils/getSortedByDate";
 import { consecutiveFrequency } from '../calculators/consecutiveFrequency';
 import { checkGapFrequency } from '../calculators/checkGapFrequency';
 import { checkEntriesRepeatability } from '../calculators/checkEntriesRepeatability';
 import { getDataDates } from '../utils/getDataDates';
 import { sortEntriestIntoDataAndTargetEntry } from '../utils/sortEntriestIntoDataAndTargetEntry';
 import { getNumbers } from '../utils/getNumbers';
-import { targetEntryStats } from './targetEntryStats';
 import { DataStatsTab } from './dataStatsTab';
 import { TargetEntryAnalysisTab } from './targetEntryAnalysisTab';
 

@@ -1,6 +1,6 @@
 import './App.scss';
 import Nav from 'react-bootstrap/Nav';
-import { Routes, Route, Outlet, Link } from "react-router-dom";
+import { Routes, Route, Outlet } from "react-router-dom";
 import { Game } from "./view/game";
 import { data } from "./data"
 
