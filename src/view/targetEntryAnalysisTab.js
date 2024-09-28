@@ -1,7 +1,7 @@
 import React from 'react';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
-import { targetEntryStats } from './targetEntryStats';
+import { TargetEntryStats } from './targetEntryStats';
 
 export const TargetEntryAnalysisTab = ({
     targetEntry,
@@ -21,7 +21,7 @@ export const TargetEntryAnalysisTab = ({
             </Row>
 
             <Row>
-                {targetEntryStats({
+                {TargetEntryStats({
                     targetEntry,
                     dataGroup,
                     occuranceFrequencyData,

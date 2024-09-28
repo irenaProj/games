@@ -5,7 +5,7 @@ import { TabularData } from "./tabularData"
 import { checkAgainstTargetEntry } from "../calculators/checkAgainstTargetEntry"
 import { getSuggestedNumbers } from "../calculators/getSuggestedNumbers"
 
-export const targetEntryStats = ({
+export const TargetEntryStats = ({
     targetEntry,
     dataGroup,
     occuranceFrequencyData,
@@ -16,8 +16,6 @@ export const targetEntryStats = ({
     minItem,
     maxItem
 }) => {
-
-
     const suggestedItems = getSuggestedNumbers({
         data: dataGroup,
         occuranceFrequencyData,

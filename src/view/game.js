@@ -16,6 +16,7 @@ import { getNumbers } from '../utils/getNumbers';
 import { DataStatsTab } from './dataStatsTab';
 import { TargetEntryAnalysisTab } from './targetEntryAnalysisTab';
 import { LaterEntriesAnalysisTab } from './laterEntriesAnalysisTab';
+import { getSortedByDate } from '../utils/getSortedByDate';
 
 const GAME_NAME_MAP = {
     "/": "PB",
@@ -25,6 +26,7 @@ const GAME_NAME_MAP = {
 
 export function Game({ data }) {
     const dataDates = getDataDates(data);
+    const sortedDescData = getSortedByDate(data, false);
     const items = getNumbers()
     const [lastEntriesCount, setLastEntriesCount] = useState(data.length);
     const [lastEntryDate, setLastEntryDate] = useState(dataDates[0]);
