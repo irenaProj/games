@@ -1,10 +1,7 @@
-import _ from 'lodash';
 import { getItemsInEntries } from "../utils/getItemsInEntries";
 import { getSortedByDate } from "../utils/getSortedByDate";
 import { findItemIndexInFreqList } from "../utils/findItemIndexInFreqList";
 import { isItem } from "../utils/isItem";
-import { isInEntry } from '../utils/isInEntry';
-
 
 const initializeList = (lastConsecutiveEntries, useSupplemental) => {
     const items = getItemsInEntries(lastConsecutiveEntries, useSupplemental);

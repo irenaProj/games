@@ -14,13 +14,16 @@ export const TargetEntryAnalysisTab = ({
     consecutiveWeeksCount,
     minItem,
     maxItem,
-    useSupplemental
+    useSupplemental,
+    ticketsNumber
 }) => {
+
     return (
         <Container>
             <Row className="justify-content-center spaced-vertically">
                 Target entry is: {targetEntry ? JSON.stringify(targetEntry) : "Next entry"}
             </Row>
+
 
             <Row>
                 {TargetEntryStats({
@@ -34,7 +37,8 @@ export const TargetEntryAnalysisTab = ({
                     consecutiveWeeksCount,
                     minItem,
                     maxItem,
-                    useSupplemental
+                    useSupplemental,
+                    ticketsNumber
                 })}
             </Row>
 

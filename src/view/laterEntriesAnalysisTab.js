@@ -1,4 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
+import Dropdown from 'react-bootstrap/Dropdown';
+import DropdownButton from 'react-bootstrap/DropdownButton';
+import Col from 'react-bootstrap/Col';
+import Row from 'react-bootstrap/Row';
 import { getLastEntryDateIndex } from '../utils/sortEntriestIntoDataAndTargetEntry';
 import { occuranceFrequency } from '../calculators/occuranceFrequency';
 import { consecutiveFrequency } from '../calculators/consecutiveFrequency';
@@ -7,6 +11,7 @@ import { checkEntriesRepeatability } from '../calculators/checkEntriesRepeatabil
 import { TargetEntryAnalysisTab } from './targetEntryAnalysisTab';
 import { getSortedByDate } from '../utils/getSortedByDate';
 import { getFrequencyFactors } from '../calculators/getFrequencyFactors';
+import { getNumbers } from '../utils/getNumbers';
 
 export const LaterEntriesAnalysisTab = ({
     data,
@@ -14,9 +19,12 @@ export const LaterEntriesAnalysisTab = ({
     lastEntryDate,
     consecutiveWeeksCount,
     minItem,
-    maxItem, 
+    maxItem,
     useSupplemental
 }) => {
+    const maxTicketsNumber = getNumbers(50);
+    const [ticketsNumber, setTicketsNumber] = useState(3);
+
     const sortedDesc = getSortedByDate(data, false);
     const lastEntryDateIndex = getLastEntryDateIndex({
         data,
@@ -52,9 +60,22 @@ export const LaterEntriesAnalysisTab = ({
                 minItem={minItem}
                 maxItem={maxItem}
                 useSupplemental={useSupplemental}
+                ticketsNumber={ticketsNumber}
             />
         ))
     }
 
-    return content;
+    return (
+        <React.Fragment>
+            <Row className="justify-content-center">
+                <Col xs={4}>
+                    <DropdownButton id="tickets-num" title="Select tickets number" >
+                        {maxTicketsNumber.map(number => (<Dropdown.Item as="button" key={number} onClick={() => setTicketsNumber(number)}>{number}</Dropdown.Item>))}
+                    </DropdownButton>
+                    <p>{ticketsNumber} tickets</p>
+                </Col>
+            </Row>
+            {content}
+        </React.Fragment>
+    );
 }

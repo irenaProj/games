@@ -1,14 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Accordion from 'react-bootstrap/Accordion';
-import Dropdown from 'react-bootstrap/Dropdown';
-import DropdownButton from 'react-bootstrap/DropdownButton';
 import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
 import { TabularData } from "./tabularData"
 import { checkAgainstTargetEntry } from "../calculators/checkAgainstTargetEntry"
 import { getSuggestedNumbers } from "../calculators/getSuggestedNumbers"
 import { getGenerateTickets } from '../calculators/getGenerateTickets';
-import { getNumbers } from '../utils/getNumbers';
 
 const ITEMS_PER_TICKET = {
     "/": 7,
@@ -27,11 +23,10 @@ export const TargetEntryStats = ({
     consecutiveWeeksCount,
     minItem,
     maxItem,
+    ticketsNumber,
     useSupplemental
 }) => {
-    const maxTicketsNumber = getNumbers(50);
     const itemsCount = ITEMS_PER_TICKET[window.location.pathname] || 6;
-    const [ticketsNumber, setTicketsNumber] = useState(3);
     const { suggestedItems } = getSuggestedNumbers({
         data: dataGroup,
         occuranceFrequencyData,
@@ -55,14 +50,7 @@ export const TargetEntryStats = ({
 
     return (
         <React.Fragment>
-            <Row className="justify-content-center">
-                <Col xs={4}>
-                    <DropdownButton id="tickets-num" title="Select tickets number" >
-                        {maxTicketsNumber.map(number => (<Dropdown.Item as="button" key={number} onClick={() => setTicketsNumber(number)}>{number}</Dropdown.Item>))}
-                    </DropdownButton>
-                    <p>{ticketsNumber} tickets</p>
-                </Col>
-            </Row>
+
             <Row>
                 <Accordion key="target-entry-stats" defaultActiveKey="0">
                     {
