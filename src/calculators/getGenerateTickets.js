@@ -42,5 +42,5 @@ export const getGenerateTickets = ({ suggestedItems, targetEntry, frequencyFacto
         });
     }
 
-    return tickets;
+    return tickets.sort((t1, t2) => t2["Hits number"] - t1["Hits number"]);
 }

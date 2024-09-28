@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import Accordion from 'react-bootstrap/Accordion';
+import Dropdown from 'react-bootstrap/Dropdown';
+import DropdownButton from 'react-bootstrap/DropdownButton';
 import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 import { TabularData } from "./tabularData"
 import { checkAgainstTargetEntry } from "../calculators/checkAgainstTargetEntry"
 import { getSuggestedNumbers } from "../calculators/getSuggestedNumbers"
 import { getGenerateTickets } from '../calculators/getGenerateTickets';
 import { getNumbers } from '../utils/getNumbers';
-import { Col, DropdownButton } from 'react-bootstrap';
-import { Dropdown } from 'bootstrap';
 
 const ITEMS_PER_TICKET = {
     "/": 7,
@@ -48,6 +49,7 @@ export const TargetEntryStats = ({
         targetEntry,
         useSupplemental
     });
+    const hits = suggestedItemsCheckResult.map(res => res.number).join(", ");
     const generatedTickets = getGenerateTickets({ suggestedItems, targetEntry, frequencyFactorsData, ticketsNumber, itemsCount, useSupplemental });
     let eventKey = 0;
 
@@ -58,14 +60,14 @@ export const TargetEntryStats = ({
                     <DropdownButton id="tickets-num" title="Select tickets number" >
                         {maxTicketsNumber.map(number => (<Dropdown.Item as="button" key={number} onClick={() => setTicketsNumber(number)}>{number}</Dropdown.Item>))}
                     </DropdownButton>
-                    <p>Min is {minItem}</p>
+                    <p>{ticketsNumber} tickets</p>
                 </Col>
             </Row>
             <Row>
                 <Accordion key="target-entry-stats" defaultActiveKey="0">
                     {
                         targetEntry && <Accordion.Item eventKey={`target-stats-${eventKey++}`}>
-                            <Accordion.Header>Hits Check - {suggestedItemsCheckResult.length}</Accordion.Header>
+                            <Accordion.Header>Hits Check - {suggestedItemsCheckResult.length}-----> {hits}</Accordion.Header>
                             <Accordion.Body>
                                 <TabularData data={suggestedItemsCheckResult} />
                             </Accordion.Body>
