@@ -3,7 +3,7 @@ import { isInEntry } from "../utils/isInEntry";
 import { mergeFreqResult } from "../utils/mergeFreqResult";
 import { getNumbers } from "./../utils/getNumbers";
 
-const checkGapsFromIndex = (data, item, startIndex, weeksCount) => {
+const checkGapsFromIndex = (data, item, startIndex, weeksCount, useSupplemental) => {
     const gapFreqList = {};
 
     [...Array(weeksCount).keys()].forEach(key => {
@@ -13,7 +13,7 @@ const checkGapsFromIndex = (data, item, startIndex, weeksCount) => {
     for (let i = 0; i < weeksCount && startIndex + i + 1 < data.length; i += 1) {
         const entry = data[startIndex + i + 1];
 
-        if (isInEntry(item, entry)) {
+        if (isInEntry(item, entry, useSupplemental)) {
             gapFreqList[i] += 1;
         } 
     }
@@ -29,7 +29,7 @@ const checkGapsFromIndex = (data, item, startIndex, weeksCount) => {
  * @param {*} weeksCount 
  * @returns 
  */
-export const checkGapFrequency = (data, weeksCount) => {
+export const checkGapFrequency = (data, weeksCount, useSupplemental) => {
     const items = getNumbers();
     const sortedData = getSortedByDate(data, true);
 
@@ -43,8 +43,8 @@ export const checkGapFrequency = (data, weeksCount) => {
         });
 
         for (let i = 0; i < sortedData.length; i += 1) {
-            if (isInEntry(item, sortedData[i])) {
-                const gapFreqList = checkGapsFromIndex(sortedData, item, i + 1, weeksCount - 1);
+            if (isInEntry(item, sortedData[i], useSupplemental)) {
+                const gapFreqList = checkGapsFromIndex(sortedData, item, i + 1, weeksCount - 1, useSupplemental);
                 freqList = mergeFreqResult(freqList, gapFreqList);
 
                 i += 1;

@@ -13,7 +13,8 @@ export const LaterEntriesAnalysisTab = ({
     lastEntryDate,
     consecutiveWeeksCount,
     minItem,
-    maxItem
+    maxItem, 
+    useSupplemental
 }) => {
     const sortedDesc = getSortedByDate(data, false);
     const lastEntryDateIndex = getLastEntryDateIndex({
@@ -30,10 +31,10 @@ export const LaterEntriesAnalysisTab = ({
     for (let i = lastEntryDateIndex; i > 0; i -= 1) {
         const targetEntry = sortedDesc[i - 1];
         const dataGroup = sortedDesc.slice(i, i + lastEntriesCount);
-        const occuranceFrequencyData = occuranceFrequency(dataGroup);
-        const strictConsecutiveFrequencyData = consecutiveFrequency(dataGroup, consecutiveWeeksCount);
-        const gapFrequencyData = checkGapFrequency(dataGroup, consecutiveWeeksCount);
-        const entiesRepeatabilityData = checkEntriesRepeatability(dataGroup, consecutiveWeeksCount);
+        const occuranceFrequencyData = occuranceFrequency(dataGroup, useSupplemental);
+        const strictConsecutiveFrequencyData = consecutiveFrequency(dataGroup, consecutiveWeeksCount, useSupplemental);
+        const gapFrequencyData = checkGapFrequency(dataGroup, consecutiveWeeksCount, useSupplemental);
+        const entiesRepeatabilityData = checkEntriesRepeatability(dataGroup, consecutiveWeeksCount, useSupplemental);
 
         content.push((
             <TargetEntryAnalysisTab
@@ -47,6 +48,7 @@ export const LaterEntriesAnalysisTab = ({
                 consecutiveWeeksCount={consecutiveWeeksCount}
                 minItem={minItem}
                 maxItem={maxItem}
+                useSupplemental={useSupplemental}
             />
         ))
     }

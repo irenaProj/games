@@ -3,11 +3,11 @@ import { isInEntry } from "../utils/isInEntry";
 import { mergeFreqResult } from "../utils/mergeFreqResult";
 import { getNumbers } from "./../utils/getNumbers";
 
-const checkStrictItemFromIndex = (data, item, startIndex, weeksCount) => {
+const checkStrictItemFromIndex = (data, item, startIndex, weeksCount, useSupplemental) => {
     const strictConsecutiveFreqList = {};
 
     for (let i = startIndex; i < data.length && i - startIndex < weeksCount; i += 1) {
-        if (isInEntry(item, data[i])) {
+        if (isInEntry(item, data[i], useSupplemental)) {
             strictConsecutiveFreqList[i - startIndex] = 1;
         } else { // done
             i += 100;
@@ -17,7 +17,7 @@ const checkStrictItemFromIndex = (data, item, startIndex, weeksCount) => {
     return strictConsecutiveFreqList;
 }
 
-export const consecutiveFrequency = (data, weeksCount) => {
+export const consecutiveFrequency = (data, weeksCount, useSupplemental) => {
     const items = getNumbers();
     const sortedData = getSortedByDate(data, true);
 
@@ -31,8 +31,8 @@ export const consecutiveFrequency = (data, weeksCount) => {
         });
 
         for (let i = 0; i < sortedData.length; i += 1) {
-            if (isInEntry(item, sortedData[i])) {
-                const consecutiveFreqList = checkStrictItemFromIndex(sortedData, item, i + 1, weeksCount);
+            if (isInEntry(item, sortedData[i], useSupplemental)) {
+                const consecutiveFreqList = checkStrictItemFromIndex(sortedData, item, i + 1, weeksCount, useSupplemental);
                 freqList = mergeFreqResult(freqList, consecutiveFreqList);
 
                 i += 1;

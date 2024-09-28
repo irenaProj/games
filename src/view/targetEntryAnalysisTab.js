@@ -7,12 +7,14 @@ export const TargetEntryAnalysisTab = ({
     targetEntry,
     dataGroup,
     occuranceFrequencyData,
+    frequencyFactorsData,
     entiesRepeatabilityData,
     strictConsecutiveFrequencyData,
     gapFrequencyData,
     consecutiveWeeksCount,
     minItem,
-    maxItem
+    maxItem,
+    useSupplemental
 }) => {
     return (
         <Container>
@@ -25,12 +27,14 @@ export const TargetEntryAnalysisTab = ({
                     targetEntry,
                     dataGroup,
                     occuranceFrequencyData,
+                    frequencyFactorsData,
                     entiesRepeatabilityData,
                     strictConsecutiveFrequencyData,
                     gapFrequencyData,
                     consecutiveWeeksCount,
                     minItem,
-                    maxItem
+                    maxItem,
+                    useSupplemental
                 })}
             </Row>
 

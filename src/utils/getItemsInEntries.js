@@ -6,12 +6,12 @@ import { isItem } from "./isItem";
  * @param {
  * } data 
  */
-export const getItemsInEntries = (data) => {
+export const getItemsInEntries = (data, useSupplemental) => {
     const list = [];
 
     data.forEach(entry => {
         Object.keys(entry).forEach(key => {
-            if (isItem(key) && list.indexOf(entry[key]) < 0) {
+            if (isItem(key, useSupplemental) && list.indexOf(entry[key]) < 0) {
                 list.push(entry[key]);
             }
         })

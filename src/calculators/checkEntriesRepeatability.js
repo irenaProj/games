@@ -2,11 +2,11 @@ import { getSortedByDate } from "../utils/getSortedByDate";
 import { isInEntry } from "../utils/isInEntry";
 import { isItem } from "../utils/isItem";
 
-const checkEntry = (originalEntry, anotherEntry) => {
+const checkEntry = (originalEntry, anotherEntry, useSupplemental) => {
     let repeatingNumbersCount = 0;
 
     Object.keys(originalEntry).forEach(key => {
-        if (isItem(key) && isInEntry(originalEntry[key], anotherEntry)) {
+        if (isItem(key, useSupplemental) && isInEntry(originalEntry[key], anotherEntry, useSupplemental)) {
             repeatingNumbersCount += 1;
         }
     })
@@ -14,7 +14,7 @@ const checkEntry = (originalEntry, anotherEntry) => {
     return repeatingNumbersCount;
 }
 
-export const checkEntriesRepeatability = (data, weeksCount) => {
+export const checkEntriesRepeatability = (data, weeksCount, useSupplemental) => {
     const sortedData = getSortedByDate(data, false);
 
     const list = [];
@@ -30,7 +30,7 @@ export const checkEntriesRepeatability = (data, weeksCount) => {
         });
 
         for (let k = 1; k < weeksCount + 1 && i + k < sortedData.length; k += 1) {
-            entryRepeatability[k] = checkEntry(entry, sortedData[i + k]);
+            entryRepeatability[k] = checkEntry(entry, sortedData[i + k], useSupplemental);
         }
 
         list.push(entryRepeatability);

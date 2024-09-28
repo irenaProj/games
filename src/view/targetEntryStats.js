@@ -9,26 +9,31 @@ export const TargetEntryStats = ({
     targetEntry,
     dataGroup,
     occuranceFrequencyData,
+    frequencyFactorsData,
     entiesRepeatabilityData,
     strictConsecutiveFrequencyData,
     gapFrequencyData,
     consecutiveWeeksCount,
     minItem,
-    maxItem
+    maxItem,
+    useSupplemental
 }) => {
-    const suggestedItems = getSuggestedNumbers({
+    const { suggestedItems } = getSuggestedNumbers({
         data: dataGroup,
         occuranceFrequencyData,
+        frequencyFactorsData,
         entiesRepeatabilityData,
         strictConsecutiveFrequencyData,
         gapFrequencyData,
         consecutiveWeeksCount,
         minItem,
-        maxItem
+        maxItem,
+        useSupplemental
     })
     const suggestedItemsCheckResult = checkAgainstTargetEntry({
         suggestedItems,
-        targetEntry
+        targetEntry,
+        useSupplemental
     });
     let eventKey = 0;
 

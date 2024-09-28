@@ -3,12 +3,13 @@ import { getItemsInEntries } from "../utils/getItemsInEntries"
 
 export const checkAgainstTargetEntry = ({
     suggestedItems,
-    targetEntry
+    targetEntry,
+    useSupplemental
 }) => {
     if (!targetEntry || !suggestedItems) {
         return []
     }
-    const targetEntryItems = getItemsInEntries([targetEntry]);
+    const targetEntryItems = getItemsInEntries([targetEntry], useSupplemental);
     const hits = [];
 
     targetEntryItems.forEach(targetEntryItem => {

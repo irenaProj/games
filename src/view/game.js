@@ -6,6 +6,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
+import Form from 'react-bootstrap/Form';
 import { occuranceFrequency } from '../calculators/occuranceFrequency';
 import { consecutiveFrequency } from '../calculators/consecutiveFrequency';
 import { checkGapFrequency } from '../calculators/checkGapFrequency';
@@ -17,6 +18,7 @@ import { DataStatsTab } from './dataStatsTab';
 import { TargetEntryAnalysisTab } from './targetEntryAnalysisTab';
 import { LaterEntriesAnalysisTab } from './laterEntriesAnalysisTab';
 import { getSortedByDate } from '../utils/getSortedByDate';
+import { getFrequencyFactors } from '../calculators/getFrequencyFactors';
 
 const GAME_NAME_MAP = {
     "/": "PB",
@@ -26,7 +28,7 @@ const GAME_NAME_MAP = {
 
 export function Game({ data }) {
     const dataDates = getDataDates(data);
-    const sortedDescData = getSortedByDate(data, false);
+    const allDataSortedDesc = getSortedByDate(data, false);
     const items = getNumbers()
     const [lastEntriesCount, setLastEntriesCount] = useState(data.length);
     const [lastEntryDate, setLastEntryDate] = useState(dataDates[0]);
@@ -34,6 +36,7 @@ export function Game({ data }) {
     const [consecutiveWeeksCount, setConsecutiveWeeksCount] = useState(4);
     const [minItem, setMinItem] = useState(1);
     const [maxItem, setMaxItem] = useState(35); // Align with PB
+    const [useSupplemental, setUseSupplemental] = useState(true);
 
     if (!data || !data.length) {
         return "No data";
@@ -47,12 +50,12 @@ export function Game({ data }) {
         lastEntriesCount,
         lastEntryDate,
     })
-    const occuranceFrequencyData = occuranceFrequency(dataGroup);
-    const strictConsecutiveFrequencyData = consecutiveFrequency(dataGroup, consecutiveWeeksCount);
-    const gapFrequencyData = checkGapFrequency(dataGroup, consecutiveWeeksCount);
-    const entiesRepeatabilityData = checkEntriesRepeatability(dataGroup, consecutiveWeeksCount);
+    const occuranceFrequencyData = occuranceFrequency(dataGroup, useSupplemental);
+    const frequencyFactorsData = getFrequencyFactors(dataGroup, occuranceFrequencyData, useSupplemental);
+    const strictConsecutiveFrequencyData = consecutiveFrequency(dataGroup, consecutiveWeeksCount, useSupplemental);
+    const gapFrequencyData = checkGapFrequency(dataGroup, consecutiveWeeksCount, useSupplemental);
+    const entiesRepeatabilityData = checkEntriesRepeatability(dataGroup, consecutiveWeeksCount, useSupplemental);
     const gameName = GAME_NAME_MAP[window.location.pathname] || "A new one?";
-
 
     return (
         <Container>
@@ -98,6 +101,18 @@ export function Game({ data }) {
                     </DropdownButton>
                     <p>Max is {maxItem}</p>
                 </Col>
+                <Col xs={4}>
+                    <Form>
+                        <Form.Check // prettier-ignore
+                            checked={useSupplemental}
+                            type="switch"
+                            id="toggle-suplementary-use"
+                            label="Use supplementary"
+                            onChange={() => setUseSupplemental(!useSupplemental)}
+                        />
+                    </Form>
+                    <p>Using: {useSupplemental ? "yep" : "nope"}</p>
+                </Col>
             </Row>
 
             <Row>
@@ -113,6 +128,7 @@ export function Game({ data }) {
                             entiesRepeatabilityData={entiesRepeatabilityData}
                             strictConsecutiveFrequencyData={strictConsecutiveFrequencyData}
                             gapFrequencyData={gapFrequencyData}
+                            frequencyFactorsData={frequencyFactorsData}
                         />
                     </Tab>
                     <Tab eventKey="target-entry-analysis-tab" title="Next target entry">
@@ -120,12 +136,14 @@ export function Game({ data }) {
                             targetEntry={targetEntry}
                             dataGroup={dataGroup}
                             occuranceFrequencyData={occuranceFrequencyData}
+                            frequencyFactorsData={frequencyFactorsData}
                             entiesRepeatabilityData={entiesRepeatabilityData}
                             strictConsecutiveFrequencyData={strictConsecutiveFrequencyData}
                             gapFrequencyData={gapFrequencyData}
                             consecutiveWeeksCount={consecutiveWeeksCount}
                             minItem={minItem}
                             maxItem={maxItem}
+                            useSupplemental={useSupplemental}
                         />
                     </Tab>
                     <Tab eventKey="later-entries-analysis-tab" title="Later entries analysis">
@@ -136,6 +154,7 @@ export function Game({ data }) {
                             consecutiveWeeksCount={consecutiveWeeksCount}
                             minItem={minItem}
                             maxItem={maxItem}
+                            useSupplemental={useSupplemental}
                         />
                     </Tab>
                 </Tabs>

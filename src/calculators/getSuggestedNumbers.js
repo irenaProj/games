@@ -1,10 +1,13 @@
+import _ from 'lodash';
 import { getItemsInEntries } from "../utils/getItemsInEntries";
 import { getSortedByDate } from "../utils/getSortedByDate";
 import { findItemIndexInFreqList } from "../utils/findItemIndexInFreqList";
 import { isItem } from "../utils/isItem";
+import { isInEntry } from '../utils/isInEntry';
 
-const initializeList = (lastConsecutiveEntries) => {
-    const items = getItemsInEntries(lastConsecutiveEntries);
+
+const initializeList = (lastConsecutiveEntries, useSupplemental) => {
+    const items = getItemsInEntries(lastConsecutiveEntries, useSupplemental);
     const list = items.map(item => {
         return {
             number: item
@@ -44,12 +47,13 @@ const rateByFrequency = ({
     strictConsecutiveFrequencyData,
     gapFrequencyData,
     consecutiveWeeksCount,
+    useSupplemental
 }) => {
     const freqMap = {}
 
     lastConsecutiveEntries.forEach((entry, index) => {
         Object.keys(entry).forEach(key => {
-            if (isItem(key)) {
+            if (isItem(key, useSupplemental)) {
                 const item = entry[key];
                 const distanceToNextEntry = consecutiveWeeksCount - index;
                 const itemStrictFreqData = strictConsecutiveFrequencyData.find(listItem => listItem.number === item)
@@ -94,6 +98,13 @@ const rateByFrequency = ({
     return resultList.sort((r1, r2) => r2.value - r1.value);
 }
 
+const rateAllItemsByLatestOccurance = ({
+    filteredList,
+    occuranceFrequencyData,
+}) => {
+
+}
+
 const getItemRatingInLists = ({ listItem, listByOccuranceFrequency, listByFrequency }) => {
     const item = listItem.number;
     const ratingByOccurance = findItemIndexInFreqList(listByOccuranceFrequency, item)
@@ -112,17 +123,19 @@ const getItemRatingInLists = ({ listItem, listByOccuranceFrequency, listByFreque
 export const getSuggestedNumbers = ({
     data,
     occuranceFrequencyData,
+    frequencyFactorsData,
     strictConsecutiveFrequencyData,
     entiesRepeatabilityData,
     gapFrequencyData,
     consecutiveWeeksCount,
     minItem,
-    maxItem
+    maxItem,
+    useSupplemental
 }) => {
     // Get last entries sorted from the oldest up
-    const allDataSorted = getSortedByDate(data, false); // All entries sorted from last, descending
-    const lastConsecutiveEntries = getSortedByDate(allDataSorted.slice(0, consecutiveWeeksCount), true); // Recent entries, sorted from oldest up
-    let list = initializeList(lastConsecutiveEntries);
+    const dataSortedDesc = getSortedByDate(data, false); // All entries sorted from last, descending
+    const lastConsecutiveEntries = getSortedByDate(dataSortedDesc.slice(0, consecutiveWeeksCount), true); // Recent entries, sorted from oldest up
+    let list = initializeList(lastConsecutiveEntries, useSupplemental);
     const filteredList = [];
 
     list.forEach(listItem => {
@@ -141,6 +154,11 @@ export const getSuggestedNumbers = ({
         strictConsecutiveFrequencyData,
         gapFrequencyData,
         consecutiveWeeksCount,
+        useSupplemental
+    });
+    const listByOverallOccurance = rateAllItemsByLatestOccurance({
+        filteredList,
+        frequencyFactorsData,
     });
     const itemRatingsMap = [];
 
@@ -154,5 +172,7 @@ export const getSuggestedNumbers = ({
         itemRatingsMap.push(itemRatings)
     });
 
-    return itemRatingsMap.sort((l1, l2) => l1["Averaged Rating"] - l2["Averaged Rating"]);
+    return {
+        suggestedItems: itemRatingsMap.sort((l1, l2) => l1["Averaged Rating"] - l2["Averaged Rating"])
+    };
 }

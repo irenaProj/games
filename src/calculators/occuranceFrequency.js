@@ -1,7 +1,7 @@
 import { isItem } from "../utils/isItem";
 import {getNumbers} from "./../utils/getNumbers"
 
-export const occuranceFrequency = (data) => {
+export const occuranceFrequency = (data, useSupplemental) => {
   const items = getNumbers()
 
   const list = [];
@@ -13,7 +13,7 @@ export const occuranceFrequency = (data) => {
       const entryContent = []
       
       Object.keys(entry).forEach(key => {
-        if (isItem(key)) {
+        if (isItem(key, useSupplemental)) {
           entryContent.push(entry[key])
         }
       })
