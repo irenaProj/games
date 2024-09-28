@@ -17,7 +17,6 @@ import { getNumbers } from '../utils/getNumbers';
 import { DataStatsTab } from './dataStatsTab';
 import { TargetEntryAnalysisTab } from './targetEntryAnalysisTab';
 import { LaterEntriesAnalysisTab } from './laterEntriesAnalysisTab';
-import { getSortedByDate } from '../utils/getSortedByDate';
 import { getFrequencyFactors } from '../calculators/getFrequencyFactors';
 
 const GAME_NAME_MAP = {
@@ -28,15 +27,15 @@ const GAME_NAME_MAP = {
 
 export function Game({ data }) {
     const dataDates = getDataDates(data);
-    const allDataSortedDesc = getSortedByDate(data, false);
-    const items = getNumbers()
+    const items = getNumbers();
+    const gameName = GAME_NAME_MAP[window.location.pathname] || "A new one?";
     const [lastEntriesCount, setLastEntriesCount] = useState(data.length);
     const [lastEntryDate, setLastEntryDate] = useState(dataDates[0]);
     // Numbers from the last 'consecutiveWeeksCount' entries are examined for consecutive frequency
     const [consecutiveWeeksCount, setConsecutiveWeeksCount] = useState(4);
     const [minItem, setMinItem] = useState(1);
     const [maxItem, setMaxItem] = useState(35); // Align with PB
-    const [useSupplemental, setUseSupplemental] = useState(true);
+    const [useSupplemental, setUseSupplemental] = useState(gameName !== "PB");
 
     if (!data || !data.length) {
         return "No data";
@@ -55,7 +54,7 @@ export function Game({ data }) {
     const strictConsecutiveFrequencyData = consecutiveFrequency(dataGroup, consecutiveWeeksCount, useSupplemental);
     const gapFrequencyData = checkGapFrequency(dataGroup, consecutiveWeeksCount, useSupplemental);
     const entiesRepeatabilityData = checkEntriesRepeatability(dataGroup, consecutiveWeeksCount, useSupplemental);
-    const gameName = GAME_NAME_MAP[window.location.pathname] || "A new one?";
+
 
     return (
         <Container>
@@ -101,13 +100,13 @@ export function Game({ data }) {
                     </DropdownButton>
                     <p>Max is {maxItem}</p>
                 </Col>
-                <Col xs={4}>
+                <Col xs={2}>
                     <Form>
                         <Form.Check // prettier-ignore
                             checked={useSupplemental}
                             type="switch"
                             id="toggle-suplementary-use"
-                            label="Use supplementary"
+                            label="Supplementary?"
                             onChange={() => setUseSupplemental(!useSupplemental)}
                         />
                     </Form>

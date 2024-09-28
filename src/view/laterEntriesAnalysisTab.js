@@ -6,6 +6,7 @@ import { checkGapFrequency } from '../calculators/checkGapFrequency';
 import { checkEntriesRepeatability } from '../calculators/checkEntriesRepeatability';
 import { TargetEntryAnalysisTab } from './targetEntryAnalysisTab';
 import { getSortedByDate } from '../utils/getSortedByDate';
+import { getFrequencyFactors } from '../calculators/getFrequencyFactors';
 
 export const LaterEntriesAnalysisTab = ({
     data,
@@ -32,6 +33,7 @@ export const LaterEntriesAnalysisTab = ({
         const targetEntry = sortedDesc[i - 1];
         const dataGroup = sortedDesc.slice(i, i + lastEntriesCount);
         const occuranceFrequencyData = occuranceFrequency(dataGroup, useSupplemental);
+        const frequencyFactorsData = getFrequencyFactors(dataGroup, occuranceFrequencyData, useSupplemental);
         const strictConsecutiveFrequencyData = consecutiveFrequency(dataGroup, consecutiveWeeksCount, useSupplemental);
         const gapFrequencyData = checkGapFrequency(dataGroup, consecutiveWeeksCount, useSupplemental);
         const entiesRepeatabilityData = checkEntriesRepeatability(dataGroup, consecutiveWeeksCount, useSupplemental);
@@ -42,6 +44,7 @@ export const LaterEntriesAnalysisTab = ({
                 targetEntry={targetEntry}
                 dataGroup={dataGroup}
                 occuranceFrequencyData={occuranceFrequencyData}
+                frequencyFactorsData={frequencyFactorsData}
                 entiesRepeatabilityData={entiesRepeatabilityData}
                 strictConsecutiveFrequencyData={strictConsecutiveFrequencyData}
                 gapFrequencyData={gapFrequencyData}
