@@ -4,44 +4,18 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import { TabularData } from "./tabularData"
 import { getSortedByDate } from "../utils/getSortedByDate";
-import { targetEntryStats } from './targetEntryStats';
 
 export const DataStatsTab = ({
-    targetEntry,
     dataGroup,
     occuranceFrequencyData,
     entiesRepeatabilityData,
     strictConsecutiveFrequencyData,
     gapFrequencyData,
-    consecutiveWeeksCount,
-    minItem,
-    maxItem
 }) => {
     let eventKey = 0;
-    
+
     return (
         <Container>
-            <Row className="justify-content-center spaced-vertically">
-                Target entry is: {targetEntry ? JSON.stringify(targetEntry) : "Next entry"}
-            </Row>
-
-            <Row>
-                {targetEntryStats({
-                    targetEntry,
-                    dataGroup,
-                    occuranceFrequencyData,
-                    entiesRepeatabilityData,
-                    strictConsecutiveFrequencyData,
-                    gapFrequencyData,
-                    consecutiveWeeksCount,
-                    minItem,
-                    maxItem
-                })}
-            </Row>
-            <Row className="justify-content-center spaced-vertically">
-                Data stats
-            </Row>
-
             <Row>
                 <Accordion defaultActiveKey="0">
                     <Accordion.Item eventKey={eventKey++}>

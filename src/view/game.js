@@ -18,6 +18,7 @@ import { sortEntriestIntoDataAndTargetEntry } from '../utils/sortEntriestIntoDat
 import { getNumbers } from '../utils/getNumbers';
 import { targetEntryStats } from './targetEntryStats';
 import { DataStatsTab } from './dataStatsTab';
+import { TargetEntryAnalysisTab } from './targetEntryAnalysisTab';
 
 const GAME_NAME_MAP = {
     "/": "PB",
@@ -108,6 +109,15 @@ export function Game({ data }) {
                 >
                     <Tab eventKey="data-stats-tab" title="Data stats">
                         <DataStatsTab
+                            dataGroup={dataGroup}
+                            occuranceFrequencyData={occuranceFrequencyData}
+                            entiesRepeatabilityData={entiesRepeatabilityData}
+                            strictConsecutiveFrequencyData={strictConsecutiveFrequencyData}
+                            gapFrequencyData={gapFrequencyData}
+                        />
+                    </Tab>
+                    <Tab eventKey="target-entry-analysis-tab" title="Next target entry">
+                        <TargetEntryAnalysisTab
                             targetEntry={targetEntry}
                             dataGroup={dataGroup}
                             occuranceFrequencyData={occuranceFrequencyData}
