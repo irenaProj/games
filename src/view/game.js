@@ -5,6 +5,8 @@ import DropdownButton from 'react-bootstrap/DropdownButton';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import Tab from 'react-bootstrap/Tab';
+import Tabs from 'react-bootstrap/Tabs';
 import { TabularData } from "./tabularData"
 import { occuranceFrequency } from '../calculators/occuranceFrequency';
 import { getSortedByDate } from "../utils/getSortedByDate";
@@ -15,12 +17,13 @@ import { getDataDates } from '../utils/getDataDates';
 import { sortEntriestIntoDataAndTargetEntry } from '../utils/sortEntriestIntoDataAndTargetEntry';
 import { getNumbers } from '../utils/getNumbers';
 import { targetEntryStats } from './targetEntryStats';
+import { DataStatsTab } from './dataStatsTab';
 
 const GAME_NAME_MAP = {
     "/": "PB",
     "/sl": "SL",
     "/ol": "OL"
-} 
+}
 
 export function Game({ data }) {
     const dataDates = getDataDates(data);
@@ -49,7 +52,7 @@ export function Game({ data }) {
     const gapFrequencyData = checkGapFrequency(dataGroup, consecutiveWeeksCount);
     const entiesRepeatabilityData = checkEntriesRepeatability(dataGroup, consecutiveWeeksCount);
     const gameName = GAME_NAME_MAP[window.location.pathname] || "A new one?";
-    let eventKey = 0;
+
 
     return (
         <Container>
@@ -96,62 +99,27 @@ export function Game({ data }) {
                     <p>Max is {maxItem}</p>
                 </Col>
             </Row>
-            <Row className="justify-content-center spaced-vertically">
-                Target entry is: {targetEntry ? JSON.stringify(targetEntry) : "Next entry"}
-            </Row>
 
             <Row>
-                {targetEntryStats({
-                    targetEntry,
-                    dataGroup,
-                    occuranceFrequencyData,
-                    entiesRepeatabilityData,
-                    strictConsecutiveFrequencyData,
-                    gapFrequencyData,
-                    consecutiveWeeksCount,
-                    minItem,
-                    maxItem
-                })}
-            </Row>
-            <Row className="justify-content-center spaced-vertically">
-                Data stats
-            </Row>
-
-            <Row>
-                <Accordion defaultActiveKey="0">
-                    <Accordion.Item eventKey={eventKey++}>
-                        <Accordion.Header>Entries Repeatability</Accordion.Header>
-                        <Accordion.Body>
-                            <TabularData data={entiesRepeatabilityData} />
-                        </Accordion.Body>
-                    </Accordion.Item>
-                    <Accordion.Item eventKey={eventKey++}>
-                        <Accordion.Header>Occurance Frequency</Accordion.Header>
-                        <Accordion.Body>
-                            <TabularData data={occuranceFrequencyData} />
-                        </Accordion.Body>
-                    </Accordion.Item>
-                    <Accordion.Item eventKey={eventKey++}>
-                        <Accordion.Header>Strict Consecutive Frequency</Accordion.Header>
-                        <Accordion.Body>
-                            <TabularData data={strictConsecutiveFrequencyData} />
-                        </Accordion.Body>
-                    </Accordion.Item>
-                    <Accordion.Item eventKey={eventKey++}>
-                        <Accordion.Header>Gaps Frequency</Accordion.Header>
-                        <Accordion.Body>
-                            <TabularData data={gapFrequencyData} />
-                        </Accordion.Body>
-                    </Accordion.Item>
-                    <Accordion.Item eventKey={eventKey++}>
-                        <Accordion.Header>Raw data</Accordion.Header>
-                        <Accordion.Body>
-                            <TabularData data={
-                                getSortedByDate(dataGroup, false)
-                            } />
-                        </Accordion.Body>
-                    </Accordion.Item>
-                </Accordion>
+                <Tabs
+                    defaultActiveKey="data-stats-tab"
+                    id="game"
+                    className="mb-3"
+                >
+                    <Tab eventKey="data-stats-tab" title="Data stats">
+                        <DataStatsTab
+                            targetEntry={targetEntry}
+                            dataGroup={dataGroup}
+                            occuranceFrequencyData={occuranceFrequencyData}
+                            entiesRepeatabilityData={entiesRepeatabilityData}
+                            strictConsecutiveFrequencyData={strictConsecutiveFrequencyData}
+                            gapFrequencyData={gapFrequencyData}
+                            consecutiveWeeksCount={consecutiveWeeksCount}
+                            minItem={minItem}
+                            maxItem={maxItem}
+                        />
+                    </Tab>
+                </Tabs>
             </Row>
         </Container>
     );
