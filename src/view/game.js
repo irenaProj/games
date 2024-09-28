@@ -15,6 +15,7 @@ import { sortEntriestIntoDataAndTargetEntry } from '../utils/sortEntriestIntoDat
 import { getNumbers } from '../utils/getNumbers';
 import { DataStatsTab } from './dataStatsTab';
 import { TargetEntryAnalysisTab } from './targetEntryAnalysisTab';
+import { LaterEntriesAnalysisTab } from './laterEntriesAnalysisTab';
 
 const GAME_NAME_MAP = {
     "/": "PB",
@@ -120,6 +121,16 @@ export function Game({ data }) {
                             entiesRepeatabilityData={entiesRepeatabilityData}
                             strictConsecutiveFrequencyData={strictConsecutiveFrequencyData}
                             gapFrequencyData={gapFrequencyData}
+                            consecutiveWeeksCount={consecutiveWeeksCount}
+                            minItem={minItem}
+                            maxItem={maxItem}
+                        />
+                    </Tab>
+                    <Tab eventKey="later-entries-analysis-tab" title="Later entries analysis">
+                        <LaterEntriesAnalysisTab
+                            data={data}
+                            lastEntriesCount={lastEntriesCount}
+                            lastEntryDate={lastEntryDate}
                             consecutiveWeeksCount={consecutiveWeeksCount}
                             minItem={minItem}
                             maxItem={maxItem}
