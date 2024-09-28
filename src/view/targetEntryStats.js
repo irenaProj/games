@@ -12,6 +12,21 @@ const ITEMS_PER_TICKET = {
     "/ol": 7
 }
 
+const markSuggestedItemsWithHits = ({suggestedItems, suggestedItemsCheckResult}) => {
+    const markedSuggestedItems = []
+
+    suggestedItems.forEach(si => {
+        const hit = suggestedItemsCheckResult.find(res => res.number === si.number);
+
+        markedSuggestedItems.push({
+            "Hit": hit ? "YES" : null,
+            ...si
+        })
+    })
+
+    return markedSuggestedItems
+}
+
 export const TargetEntryStats = ({
     targetEntry,
     dataGroup,
@@ -47,6 +62,7 @@ export const TargetEntryStats = ({
     const hits = suggestedItemsCheckResult.map(res => res.number).join(", ");
     const generatedTickets = getGenerateTickets({ suggestedItems, targetEntry, frequencyFactorsData, ticketsNumber, itemsCount, useSupplemental });
     let eventKey = 0;
+    const markedSuggestedItems = markSuggestedItemsWithHits({suggestedItems, suggestedItemsCheckResult});
 
     return (
         <React.Fragment>
@@ -64,7 +80,7 @@ export const TargetEntryStats = ({
                     <Accordion.Item eventKey={`target-stats-${eventKey++}`}>
                         <Accordion.Header>All suggested Numbers - {suggestedItems.length}</Accordion.Header>
                         <Accordion.Body>
-                            <TabularData data={suggestedItems} />
+                            <TabularData data={markedSuggestedItems} />
                         </Accordion.Body>
                     </Accordion.Item>
                     <Accordion.Item eventKey={`tickets-${eventKey++}`}>
