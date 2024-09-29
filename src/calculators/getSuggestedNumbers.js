@@ -119,11 +119,13 @@ const getItemRatingInLists = ({ listItem, listByOccuranceFrequency, listByFreque
 
 export const getSuggestedNumbers = ({
     data,
-    occuranceFrequencyData,
-    frequencyFactorsData,
-    strictConsecutiveFrequencyData,
-    entiesRepeatabilityData,
-    gapFrequencyData,
+    dataStats: {
+        occuranceFrequencyData,
+        entiesRepeatabilityData,
+        strictConsecutiveFrequencyData,
+        gapFrequencyData,
+        frequencyFactorsData
+    },
     consecutiveWeeksCount,
     minItem,
     maxItem,

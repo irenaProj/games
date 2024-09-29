@@ -7,17 +7,13 @@ import Col from 'react-bootstrap/Col';
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 import Form from 'react-bootstrap/Form';
-import { occuranceFrequency } from '../calculators/occuranceFrequency';
-import { consecutiveFrequency } from '../calculators/consecutiveFrequency';
-import { checkGapFrequency } from '../calculators/checkGapFrequency';
-import { checkEntriesRepeatability } from '../calculators/checkEntriesRepeatability';
 import { getDataDates } from '../utils/getDataDates';
 import { sortEntriestIntoDataAndTargetEntry } from '../utils/sortEntriestIntoDataAndTargetEntry';
 import { getNumbers } from '../utils/getNumbers';
 import { DataStatsTab } from './dataStatsTab';
 import { TargetEntryAnalysisTab } from './targetEntryAnalysisTab';
 import { LaterEntriesAnalysisTab } from './laterEntriesAnalysisTab';
-import { getFrequencyFactors } from '../calculators/getFrequencyFactors';
+import { calculateDataStats } from '../calculators/calculateDataStats';
 
 const GAME_NAME_MAP = {
     "/": "PB",
@@ -49,11 +45,11 @@ export function Game({ data }) {
         lastEntriesCount,
         lastEntryDate,
     })
-    const occuranceFrequencyData = occuranceFrequency(dataGroup, useSupplemental);
-    const frequencyFactorsData = getFrequencyFactors(dataGroup, occuranceFrequencyData, useSupplemental);
-    const strictConsecutiveFrequencyData = consecutiveFrequency(dataGroup, consecutiveWeeksCount, useSupplemental);
-    const gapFrequencyData = checkGapFrequency(dataGroup, consecutiveWeeksCount, useSupplemental);
-    const entiesRepeatabilityData = checkEntriesRepeatability(dataGroup, consecutiveWeeksCount, useSupplemental);
+    const dataStats = calculateDataStats({
+        dataGroup,
+        consecutiveWeeksCount,
+        useSupplemental,
+    })
 
 
     return (
@@ -123,22 +119,14 @@ export function Game({ data }) {
                     <Tab eventKey="data-stats-tab" title="Data stats">
                         <DataStatsTab
                             dataGroup={dataGroup}
-                            occuranceFrequencyData={occuranceFrequencyData}
-                            entiesRepeatabilityData={entiesRepeatabilityData}
-                            strictConsecutiveFrequencyData={strictConsecutiveFrequencyData}
-                            gapFrequencyData={gapFrequencyData}
-                            frequencyFactorsData={frequencyFactorsData}
+                            dataStats={dataStats}
                         />
                     </Tab>
                     <Tab eventKey="target-entry-analysis-tab" title="Next target entry">
                         <TargetEntryAnalysisTab
                             targetEntry={targetEntry}
                             dataGroup={dataGroup}
-                            occuranceFrequencyData={occuranceFrequencyData}
-                            frequencyFactorsData={frequencyFactorsData}
-                            entiesRepeatabilityData={entiesRepeatabilityData}
-                            strictConsecutiveFrequencyData={strictConsecutiveFrequencyData}
-                            gapFrequencyData={gapFrequencyData}
+                            dataStats={dataStats}
                             consecutiveWeeksCount={consecutiveWeeksCount}
                             minItem={minItem}
                             maxItem={maxItem}

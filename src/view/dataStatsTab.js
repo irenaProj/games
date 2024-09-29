@@ -7,11 +7,13 @@ import { getSortedByDate } from "../utils/getSortedByDate";
 
 export const DataStatsTab = ({
     dataGroup,
-    occuranceFrequencyData,
-    entiesRepeatabilityData,
-    strictConsecutiveFrequencyData,
-    gapFrequencyData,
-    frequencyFactorsData
+    dataStats: {
+        occuranceFrequencyData,
+        entiesRepeatabilityData,
+        strictConsecutiveFrequencyData,
+        gapFrequencyData,
+        frequencyFactorsData
+    }
 }) => {
     let eventKey = 0;
 
@@ -24,7 +26,7 @@ export const DataStatsTab = ({
                         <Accordion.Body>
                             <TabularData data={frequencyFactorsData} />
                         </Accordion.Body>
-                    </Accordion.Item>                   
+                    </Accordion.Item>
                     <Accordion.Item eventKey={eventKey++}>
                         <Accordion.Header>Entries Repeatability</Accordion.Header>
                         <Accordion.Body>
