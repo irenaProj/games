@@ -18,7 +18,7 @@ export const checkAgainstTargetEntry = ({
         
         if (suggestedItem) {
             hits.push({
-                "Suggestion Index": suggestionIndex,
+                "Suggestion Index": suggestedItem["Occurance Index"],
                 ...suggestedItem,
             })
         }

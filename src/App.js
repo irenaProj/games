@@ -21,6 +21,10 @@ function App() {
           <Route index element={<Game key="pb" data={data.pb} />} />
           <Route path="sl" element={<Game key="sl" data={data.sl} />} />
           <Route path="ol" element={<Game key="ol" data={data.ol} />} />
+          <Route path="wf-mon" element={<Game key="wf" data={data.wf.filter(entry => entry.Day === "MON")} />} />
+          <Route path="wf-wed" element={<Game key="wf" data={data.wf.filter(entry => entry.Day === "WED")} />} />
+          <Route path="wf-fri" element={<Game key="wf" data={data.wf.filter(entry => entry.Day === "FRI")} />} />
+          <Route path="wf" element={<Game key="wf" data={data.wf} />} />
 
           {/* Using path="*"" means "match anything", so this route
                 acts like a catch-all for URLs that we don't have explicit
@@ -46,6 +50,18 @@ function Layout() {
         </Nav.Item>
         <Nav.Item>
           <Nav.Link href="/ol">OL</Nav.Link>
+        </Nav.Item>
+        <Nav.Item>
+          <Nav.Link href="/wf-mon">WF-Mon</Nav.Link>
+        </Nav.Item>
+        <Nav.Item>
+          <Nav.Link href="/wf-wed">WF-Wed</Nav.Link>
+        </Nav.Item>
+        <Nav.Item>
+          <Nav.Link href="/wf-fri">WF-Fri</Nav.Link>
+        </Nav.Item>
+        <Nav.Item>
+          <Nav.Link href="/wf">WF All</Nav.Link>
         </Nav.Item>
       </Nav>
 

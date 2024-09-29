@@ -1,3 +1,4 @@
+// https://gnetwork.com.au/oz-lotto-results/
 export const olData = [
     {
         "Date": "24/09/24",

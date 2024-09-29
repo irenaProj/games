@@ -14,18 +14,9 @@ import { DataStatsTab } from './dataStatsTab';
 import { TargetEntryAnalysisTab } from './targetEntryAnalysisTab';
 import { LaterEntriesAnalysisTab } from './laterEntriesAnalysisTab';
 import { calculateDataStats } from '../calculators/calculateDataStats';
+import { GAME_ITEMS, GAME_NAME_MAP } from '../constants';
 
-const GAME_NAME_MAP = {
-    "/": "PB",
-    "/sl": "SL",
-    "/ol": "OL"
-}
 
-const GAME_ITEMS = {
-    "PB": 35,
-    "SL": 45,
-    "OL": 47
-}
 
 export function Game({ data }) {
     const dataDates = getDataDates(data);
@@ -79,6 +70,9 @@ export function Game({ data }) {
                 <Col xs={4}>
                     <DropdownButton id="last-entries-count" title="Effective Entries Count" >
                         <Dropdown.Item as="button" onClick={() => setLastEntriesCount(data.length)}>{data.length}</Dropdown.Item>
+                        <Dropdown.Item as="button" onClick={() => setLastEntriesCount(500)}>500</Dropdown.Item>
+                        <Dropdown.Item as="button" onClick={() => setLastEntriesCount(200)}>200</Dropdown.Item>
+                        <Dropdown.Item as="button" onClick={() => setLastEntriesCount(100)}>100</Dropdown.Item>
                         <Dropdown.Item as="button" onClick={() => setLastEntriesCount(60)}>60</Dropdown.Item>
                         <Dropdown.Item as="button" onClick={() => setLastEntriesCount(20)}>20</Dropdown.Item>
                         <Dropdown.Item as="button" onClick={() => setLastEntriesCount(10)}>10</Dropdown.Item>

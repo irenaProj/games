@@ -1,3 +1,4 @@
+// https://gnetwork.com.au/lotto-results/saturday-lotto-results/
 export const slData = [
     {
         "Date": "28/09/24",

@@ -6,12 +6,7 @@ import { TabularData } from "./tabularData"
 import { checkAgainstTargetEntry } from "../calculators/checkAgainstTargetEntry"
 import { getSuggestedNumbers } from "../calculators/getSuggestedNumbers"
 import { getGenerateTickets } from '../calculators/getGenerateTickets';
-
-const ITEMS_PER_TICKET = {
-    "/": 7,
-    "/sl": 6,
-    "/ol": 7
-}
+import { ITEMS_PER_TICKET } from '../constants';
 
 const markSuggestedItemsWithHits = ({ suggestedItems, suggestedItemsCheckResult }) => {
     const markedSuggestedItems = []
@@ -34,7 +29,7 @@ export const TargetEntryStats = ({
     dataStats,
     settings
 }) => {
-    const itemsCount = ITEMS_PER_TICKET[window.location.pathname] || 6;
+    const itemsCount = ITEMS_PER_TICKET[window.location.pathname];
     const { suggestedItems } = getSuggestedNumbers({
         data: dataGroup,
         dataStats,
