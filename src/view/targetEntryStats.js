@@ -1,4 +1,5 @@
 import React from 'react';
+import _ from "lodash";
 import Accordion from 'react-bootstrap/Accordion';
 import Row from 'react-bootstrap/Row';
 import { TabularData } from "./tabularData"
@@ -63,6 +64,8 @@ export const TargetEntryStats = ({
     const generatedTickets = getGenerateTickets({ suggestedItems, targetEntry, frequencyFactorsData, ticketsNumber, itemsCount, useSupplemental });
     let eventKey = 0;
     const markedSuggestedItems = markSuggestedItemsWithHits({suggestedItems, suggestedItemsCheckResult});
+    const sertedByFreq = _.cloneDeep(markedSuggestedItems).sort((si1, si2) => si1["Freq Value"] - si2["Freq Value"]);
+    const sortedByOccurance = _.cloneDeep(markedSuggestedItems).sort((si1, si2) => si1["Occurance Index"] - si2["Occurance Index"])
 
     return (
         <React.Fragment>
@@ -81,6 +84,18 @@ export const TargetEntryStats = ({
                         <Accordion.Header>All suggested Numbers - {suggestedItems.length}</Accordion.Header>
                         <Accordion.Body>
                             <TabularData data={markedSuggestedItems} />
+                        </Accordion.Body>
+                    </Accordion.Item>
+                    <Accordion.Item eventKey={`target-stats-${eventKey++}`}>
+                        <Accordion.Header>Suggested numbers by freq</Accordion.Header>
+                        <Accordion.Body>
+                            <TabularData data={sertedByFreq} />
+                        </Accordion.Body>
+                    </Accordion.Item>
+                    <Accordion.Item eventKey={`target-stats-${eventKey++}`}>
+                        <Accordion.Header>Suggested numbers by occurance</Accordion.Header>
+                        <Accordion.Body>
+                            <TabularData data={sortedByOccurance} />
                         </Accordion.Body>
                     </Accordion.Item>
                     <Accordion.Item eventKey={`tickets-${eventKey++}`}>
