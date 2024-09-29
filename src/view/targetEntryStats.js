@@ -13,7 +13,7 @@ const ITEMS_PER_TICKET = {
     "/ol": 7
 }
 
-const markSuggestedItemsWithHits = ({suggestedItems, suggestedItemsCheckResult}) => {
+const markSuggestedItemsWithHits = ({ suggestedItems, suggestedItemsCheckResult }) => {
     const markedSuggestedItems = []
 
     suggestedItems.forEach(si => {
@@ -32,30 +32,26 @@ export const TargetEntryStats = ({
     targetEntry,
     dataGroup,
     dataStats,
-    consecutiveWeeksCount,
-    minItem,
-    maxItem,
-    ticketsNumber,
-    useSupplemental
+    settings
 }) => {
     const itemsCount = ITEMS_PER_TICKET[window.location.pathname] || 6;
     const { suggestedItems } = getSuggestedNumbers({
         data: dataGroup,
         dataStats,
-        consecutiveWeeksCount,
-        minItem,
-        maxItem,
-        useSupplemental
+        settings
     })
     const suggestedItemsCheckResult = checkAgainstTargetEntry({
         suggestedItems,
         targetEntry,
-        useSupplemental
+        useSupplemental: settings.useSupplemental
     });
     const hits = suggestedItemsCheckResult.map(res => res.number).join(", ");
-    const generatedTickets = getGenerateTickets({ suggestedItems, targetEntry, frequencyFactorsData: dataStats.frequencyFactorsData, ticketsNumber, itemsCount, useSupplemental });
+    const generatedTickets = getGenerateTickets({
+        suggestedItems, targetEntry, frequencyFactorsData: dataStats.frequencyFactorsData,
+        ticketsNumber: settings.ticketsNumber, itemsCount, useSupplemental: settings.useSupplemental
+    });
     let eventKey = 0;
-    const markedSuggestedItems = markSuggestedItemsWithHits({suggestedItems, suggestedItemsCheckResult});
+    const markedSuggestedItems = markSuggestedItemsWithHits({ suggestedItems, suggestedItemsCheckResult });
     const sertedByFreq = _.cloneDeep(markedSuggestedItems).sort((si1, si2) => si1["Freq Value"] - si2["Freq Value"]);
     const sortedByOccurance = _.cloneDeep(markedSuggestedItems).sort((si1, si2) => si1["Occurance Index"] - si2["Occurance Index"])
 

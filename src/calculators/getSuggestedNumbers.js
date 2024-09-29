@@ -126,10 +126,12 @@ export const getSuggestedNumbers = ({
         gapFrequencyData,
         frequencyFactorsData
     },
-    consecutiveWeeksCount,
-    minItem,
-    maxItem,
-    useSupplemental
+    settings: { 
+        consecutiveWeeksCount,
+        minItem,
+        maxItem,
+        useSupplemental 
+    }
 }) => {
     // Get last entries sorted from the oldest up
     const dataSortedDesc = getSortedByDate(data, false); // All entries sorted from last, descending

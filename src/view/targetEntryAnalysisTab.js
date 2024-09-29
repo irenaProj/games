@@ -7,11 +7,7 @@ export const TargetEntryAnalysisTab = ({
     targetEntry,
     dataGroup,
     dataStats,
-    consecutiveWeeksCount,
-    minItem,
-    maxItem,
-    useSupplemental,
-    ticketsNumber
+    settings
 }) => {
 
     return (
@@ -26,11 +22,7 @@ export const TargetEntryAnalysisTab = ({
                     targetEntry,
                     dataGroup,
                     dataStats,
-                    consecutiveWeeksCount,
-                    minItem,
-                    maxItem,
-                    useSupplemental,
-                    ticketsNumber
+                    settings
                 })}
             </Row>
 

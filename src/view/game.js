@@ -21,10 +21,17 @@ const GAME_NAME_MAP = {
     "/ol": "OL"
 }
 
+const GAME_ITEMS = {
+    "PB": 35,
+    "SL": 45,
+    "OL": 47
+}
+
 export function Game({ data }) {
     const dataDates = getDataDates(data);
     const items = getNumbers();
     const gameName = GAME_NAME_MAP[window.location.pathname] || "A new one?";
+    const gameItemsCount = GAME_ITEMS[gameName] || 35;
     const [lastEntriesCount, setLastEntriesCount] = useState(data.length);
     const [lastEntryDate, setLastEntryDate] = useState(dataDates[0]);
     // Numbers from the last 'consecutiveWeeksCount' entries are examined for consecutive frequency
@@ -32,6 +39,17 @@ export function Game({ data }) {
     const [minItem, setMinItem] = useState(1);
     const [maxItem, setMaxItem] = useState(35); // Align with PB
     const [useSupplemental, setUseSupplemental] = useState(gameName !== "PB");
+    const settings = {
+        gameName,
+        gameItemsCount,
+        lastEntriesCount,
+        lastEntryDate,
+        consecutiveWeeksCount,
+        minItem,
+        maxItem,
+        useSupplemental,
+        ticketsNumber: 0
+    }
 
     if (!data || !data.length) {
         return "No data";
@@ -127,21 +145,13 @@ export function Game({ data }) {
                             targetEntry={targetEntry}
                             dataGroup={dataGroup}
                             dataStats={dataStats}
-                            consecutiveWeeksCount={consecutiveWeeksCount}
-                            minItem={minItem}
-                            maxItem={maxItem}
-                            useSupplemental={useSupplemental}
+                            settings={settings}
                         />
                     </Tab>
                     <Tab eventKey="later-entries-analysis-tab" title="Later entries analysis">
                         <LaterEntriesAnalysisTab
                             data={data}
-                            lastEntriesCount={lastEntriesCount}
-                            lastEntryDate={lastEntryDate}
-                            consecutiveWeeksCount={consecutiveWeeksCount}
-                            minItem={minItem}
-                            maxItem={maxItem}
-                            useSupplemental={useSupplemental}
+                            settings={settings}
                         />
                     </Tab>
                 </Tabs>

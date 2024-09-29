@@ -11,13 +11,14 @@ import { calculateDataStats } from '../calculators/calculateDataStats';
 
 export const LaterEntriesAnalysisTab = ({
     data,
-    lastEntriesCount,
-    lastEntryDate,
-    consecutiveWeeksCount,
-    minItem,
-    maxItem,
-    useSupplemental
+    settings
 }) => {
+    const {
+        lastEntriesCount,
+        lastEntryDate,
+        consecutiveWeeksCount,
+        useSupplemental
+    } = settings;
     const maxTicketsNumber = getNumbers(50);
     const [ticketsNumber, setTicketsNumber] = useState(3);
 
@@ -48,11 +49,7 @@ export const LaterEntriesAnalysisTab = ({
                 targetEntry={targetEntry}
                 dataGroup={dataGroup}
                 dataStats={dataStats}
-                consecutiveWeeksCount={consecutiveWeeksCount}
-                minItem={minItem}
-                maxItem={maxItem}
-                useSupplemental={useSupplemental}
-                ticketsNumber={ticketsNumber}
+                settings={settings}
             />
         ))
     }
