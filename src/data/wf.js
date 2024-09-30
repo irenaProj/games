@@ -1,6 +1,18 @@
 
 // https://gnetwork.com.au/lotto-results/weekday-windfall/
 export const wfData = [
+  {
+    "Day": "MON",
+    "Date": "30/09/24",
+    "#1": 1,
+    "#2": 11,
+    "#3": 20,
+    "#4": 25,
+    "#5": 27,
+    "#6": 42,
+    "S1": 24,
+    "S2": 37
+  },
     {
       "Day": "FRI",
       "Date": "27/09/24",

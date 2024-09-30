@@ -1,5 +1,6 @@
 export const GAME_NAME_MAP = {
     "/": "PB",
+    "/pb": "PB",
     "/sl": "SL",
     "/ol": "OL",
     "/wf-mon": "WF-Mon",
@@ -20,6 +21,7 @@ export const GAME_ITEMS = {
 
 export const ITEMS_PER_TICKET = {
     "/": 7,
+    "/pb": 7,
     "/sl": 6,
     "/ol": 7,
     "/wf-mon": 6,
