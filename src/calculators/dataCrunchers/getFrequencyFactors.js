@@ -23,8 +23,8 @@ export const getFrequencyFactors = (
         number,
         occuranceExpectancy,
         meta: JSON.stringify({
-            expectedNumberOfGapEntries,
-            lastOccuranceIndex
+            "Expected every # of entries":  expectedNumberOfGapEntries,
+            "Last occurred # of entries ago": lastOccuranceIndex
         })
        })
     })
