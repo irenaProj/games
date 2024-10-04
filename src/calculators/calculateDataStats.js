@@ -1,6 +1,7 @@
 import { checkEntriesRepeatability } from "./dataCrunchers/checkEntriesRepeatability";
 import { checkGapFrequency } from "./dataCrunchers/checkGapFrequency";
 import { consecutiveFrequency } from "./dataCrunchers/consecutiveFrequency";
+import { getEntryItemsFirstDigits } from "./dataCrunchers/getEntryItemsFirstDigits";
 import { getFrequencyFactors } from "./dataCrunchers/getFrequencyFactors";
 import { occuranceFrequency } from "./dataCrunchers/occuranceFrequency";
 
@@ -14,13 +15,14 @@ export const calculateDataStats = ({
     const strictConsecutiveFrequencyData = consecutiveFrequency(dataGroup, consecutiveWeeksCount, useSupplemental);
     const gapFrequencyData = checkGapFrequency(dataGroup, consecutiveWeeksCount, useSupplemental);
     const entiesRepeatabilityData = checkEntriesRepeatability(dataGroup, consecutiveWeeksCount, useSupplemental);
-
+    const entryItemsFirstDigitsData = getEntryItemsFirstDigits(dataGroup, useSupplemental);
 
     return {
         occuranceFrequencyData,
         frequencyFactorsData,
         strictConsecutiveFrequencyData,
         gapFrequencyData,
-        entiesRepeatabilityData
+        entiesRepeatabilityData,
+        entryItemsFirstDigitsData
     }
 }
