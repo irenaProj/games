@@ -1,7 +1,7 @@
-import { getSortedByDate } from "../utils/getSortedByDate";
-import { isInEntry } from "../utils/isInEntry";
-import { mergeFreqResult } from "../utils/mergeFreqResult";
-import { getNumbers } from "./../utils/getNumbers";
+import { getSortedByDate } from "../../utils/getSortedByDate";
+import { isInEntry } from "../../utils/isInEntry";
+import { mergeFreqResult } from "../../utils/mergeFreqResult";
+import { getNumbers } from "../../utils/getNumbers";
 
 const checkStrictItemFromIndex = (data, item, startIndex, weeksCount, useSupplemental) => {
     const strictConsecutiveFreqList = {};

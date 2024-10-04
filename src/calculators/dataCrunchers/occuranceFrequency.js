@@ -1,5 +1,5 @@
-import { isItem } from "../utils/isItem";
-import {getNumbers} from "./../utils/getNumbers"
+import { isItem } from "../../utils/isItem";
+import {getNumbers} from "../../utils/getNumbers"
 
 export const occuranceFrequency = (data, useSupplemental) => {
   const items = getNumbers()

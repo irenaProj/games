@@ -1,6 +1,6 @@
-import { getSortedByDate } from "../utils/getSortedByDate";
-import { isInEntry } from "../utils/isInEntry";
-import { isItem } from "../utils/isItem";
+import { getSortedByDate } from "../../utils/getSortedByDate";
+import { isInEntry } from "../../utils/isInEntry";
+import { isItem } from "../../utils/isItem";
 
 const checkEntry = (originalEntry, anotherEntry, useSupplemental) => {
     let repeatingNumbersCount = 0;

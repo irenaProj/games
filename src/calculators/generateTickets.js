@@ -88,7 +88,7 @@ const selectors = [
     }
 ]
 
-export const getGenerateTickets = ({ suggestedItems, targetEntry, frequencyFactorsData, ticketsNumber, itemsCount, useSupplemental }) => {
+export const generateTickets = ({ suggestedItems, targetEntry, frequencyFactorsData, ticketsNumber, itemsCount, useSupplemental }) => {
     const tickets = [];
     const maxTicketsCount = Math.min(ticketsNumber, selectors.length)
 

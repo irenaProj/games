@@ -1,8 +1,8 @@
-import { checkEntriesRepeatability } from "./checkEntriesRepeatability";
-import { checkGapFrequency } from "./checkGapFrequency";
-import { consecutiveFrequency } from "./consecutiveFrequency";
-import { getFrequencyFactors } from "./getFrequencyFactors";
-import { occuranceFrequency } from "./occuranceFrequency";
+import { checkEntriesRepeatability } from "./dataCrunchers/checkEntriesRepeatability";
+import { checkGapFrequency } from "./dataCrunchers/checkGapFrequency";
+import { consecutiveFrequency } from "./dataCrunchers/consecutiveFrequency";
+import { getFrequencyFactors } from "./dataCrunchers/getFrequencyFactors";
+import { occuranceFrequency } from "./dataCrunchers/occuranceFrequency";
 
 export const calculateDataStats = ({
     dataGroup,

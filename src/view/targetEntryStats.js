@@ -5,7 +5,7 @@ import Row from 'react-bootstrap/Row';
 import { TabularData } from "./tabularData"
 import { checkAgainstTargetEntry } from "../calculators/checkAgainstTargetEntry"
 import { getSuggestedNumbers } from "../calculators/getSuggestedNumbers"
-import { getGenerateTickets } from '../calculators/getGenerateTickets';
+import { generateTickets } from '../calculators/generateTickets';
 import { ITEMS_PER_TICKET } from '../constants';
 
 const markSuggestedItemsWithHits = ({ suggestedItems, suggestedItemsCheckResult }) => {
@@ -41,7 +41,7 @@ export const TargetEntryStats = ({
         useSupplemental: settings.useSupplemental
     });
     const hits = suggestedItemsCheckResult.map(res => res.number).join(", ");
-    const generatedTickets = getGenerateTickets({
+    const generatedTickets = generateTickets({
         suggestedItems, targetEntry, frequencyFactorsData: dataStats.frequencyFactorsData,
         ticketsNumber: settings.ticketsNumber, itemsCount, useSupplemental: settings.useSupplemental
     });

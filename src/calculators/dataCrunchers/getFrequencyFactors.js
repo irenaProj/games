@@ -1,5 +1,5 @@
-import { getSortedByDate } from "../utils/getSortedByDate";
-import { isInEntry } from "../utils/isInEntry";
+import { getSortedByDate } from "../../utils/getSortedByDate";
+import { isInEntry } from "../../utils/isInEntry";
 
 export const getFrequencyFactors = (
     data,
