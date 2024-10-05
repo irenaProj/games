@@ -8,6 +8,7 @@ import { getSuggestedNumbers } from "../calculators/getSuggestedNumbers"
 import { generateTickets } from '../calculators/generateTickets';
 import { ITEMS_PER_TICKET } from '../constants';
 import { getSuggestedItemsClusteringByDraw } from '../calculators/getSuggestedItemsClusteringByDraw';
+import { suggestedItemsHistoryPlot } from './suggestedItemsHistoryPlot';
 
 const markSuggestedItemsWithHits = ({ suggestedItems, suggestedItemsCheckResult }) => {
     const markedSuggestedItems = []
@@ -54,7 +55,7 @@ export const TargetEntryStats = ({
 
     return (
         <React.Fragment>
-
+            {suggestedItemsHistoryPlot({ dataGroup, suggestedItems, useSupplemental: settings.useSupplemental })}
             <Row>
                 <Accordion key="target-entry-stats" defaultActiveKey="0">
                     {
@@ -68,6 +69,7 @@ export const TargetEntryStats = ({
                     <Accordion.Item eventKey={`target-stats-${eventKey++}`}>
                         <Accordion.Header>All suggested Numbers - {suggestedItems.length}</Accordion.Header>
                         <Accordion.Body>
+
                             <TabularData data={markedSuggestedItems} />
                         </Accordion.Body>
                     </Accordion.Item>

@@ -16,3 +16,13 @@ code {
   margin-top: 2em !important;
   margin-bottom: 1em;
 }
+
+.plot-container {
+  width: 100%;
+}
+
+.plot {
+  width: 8000px !important;
+  max-width:8000px !important;
+  height: 400px !important;
+}
