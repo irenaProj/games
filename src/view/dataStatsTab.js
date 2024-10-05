@@ -13,7 +13,8 @@ export const DataStatsTab = ({
         strictConsecutiveFrequencyData,
         gapFrequencyData,
         frequencyFactorsData,
-        entryItemsFirstDigitsData
+        entryItemsFirstDigitsData,
+        itemsClustersData
     }
 }) => {
     let eventKey = 0;
@@ -50,6 +51,12 @@ export const DataStatsTab = ({
                         <Accordion.Header>Gaps Frequency</Accordion.Header>
                         <Accordion.Body>
                             <TabularData data={gapFrequencyData} />
+                        </Accordion.Body>
+                    </Accordion.Item>
+                    <Accordion.Item eventKey={eventKey++}>
+                        <Accordion.Header>Clusters analysis</Accordion.Header>
+                        <Accordion.Body>
+                            <TabularData data={itemsClustersData} />
                         </Accordion.Body>
                     </Accordion.Item>
                     <Accordion.Item eventKey={eventKey++}>

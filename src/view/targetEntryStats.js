@@ -7,6 +7,7 @@ import { checkAgainstTargetEntry } from "../calculators/checkAgainstTargetEntry"
 import { getSuggestedNumbers } from "../calculators/getSuggestedNumbers"
 import { generateTickets } from '../calculators/generateTickets';
 import { ITEMS_PER_TICKET } from '../constants';
+import { getSuggestedItemsClusteringByDraw } from '../calculators/getSuggestedItemsClusteringByDraw';
 
 const markSuggestedItemsWithHits = ({ suggestedItems, suggestedItemsCheckResult }) => {
     const markedSuggestedItems = []
@@ -47,8 +48,9 @@ export const TargetEntryStats = ({
     });
     let eventKey = 0;
     const markedSuggestedItems = markSuggestedItemsWithHits({ suggestedItems, suggestedItemsCheckResult });
-    const sertedByFreq = _.cloneDeep(markedSuggestedItems).sort((si1, si2) => si1["Freq Value"] - si2["Freq Value"]);
+    const sortedByFreq = _.cloneDeep(markedSuggestedItems).sort((si1, si2) => si1["Freq Value"] - si2["Freq Value"]);
     const sortedByOccurance = _.cloneDeep(markedSuggestedItems).sort((si1, si2) => si1["Occurance Index"] - si2["Occurance Index"])
+    const suggestedItemsClusteringByDraw = getSuggestedItemsClusteringByDraw({ suggestedItems, itemsClustersData: dataStats.itemsClustersData })
 
     return (
         <React.Fragment>
@@ -70,9 +72,15 @@ export const TargetEntryStats = ({
                         </Accordion.Body>
                     </Accordion.Item>
                     <Accordion.Item eventKey={`target-stats-${eventKey++}`}>
+                        <Accordion.Header>Clusters by draws</Accordion.Header>
+                        <Accordion.Body>
+                            <TabularData data={suggestedItemsClusteringByDraw} />
+                        </Accordion.Body>
+                    </Accordion.Item>
+                    <Accordion.Item eventKey={`target-stats-${eventKey++}`}>
                         <Accordion.Header>Suggested numbers by freq</Accordion.Header>
                         <Accordion.Body>
-                            <TabularData data={sertedByFreq} />
+                            <TabularData data={sortedByFreq} />
                         </Accordion.Body>
                     </Accordion.Item>
                     <Accordion.Item eventKey={`target-stats-${eventKey++}`}>
