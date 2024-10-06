@@ -22,13 +22,13 @@ export function Game({ data }) {
     const dataDates = getDataDates(data);
     const items = getNumbers();
     const gameName = GAME_NAME_MAP[window.location.pathname] || "A new one?";
-    const gameItemsCount = GAME_ITEMS[gameName] || 35;
+    const gameItemsCount = GAME_ITEMS[gameName] || 35;  // Align with PB
     const [lastEntriesCount, setLastEntriesCount] = useState(data.length);
     const [lastEntryDate, setLastEntryDate] = useState(dataDates[0]);
     // Numbers from the last 'consecutiveWeeksCount' entries are examined for consecutive frequency
     const [consecutiveWeeksCount, setConsecutiveWeeksCount] = useState(4);
     const [minItem, setMinItem] = useState(1);
-    const [maxItem, setMaxItem] = useState(35); // Align with PB
+    const [maxItem, setMaxItem] = useState(gameItemsCount);
     const [useSupplemental, setUseSupplemental] = useState(gameName !== "PB");
     const settings = {
         gameName,
