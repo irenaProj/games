@@ -26,3 +26,8 @@ code {
   max-width:8000px !important;
   height: 400px !important;
 }
+
+.custom-tooltip-span {
+  display: block;
+  font-weight: 700;
+}
