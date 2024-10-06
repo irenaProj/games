@@ -9,7 +9,7 @@ import { generateTickets } from '../calculators/generateTickets';
 import { ITEMS_PER_TICKET } from '../constants';
 import { getSuggestedItemsClusteringByDraw } from '../calculators/getSuggestedItemsClusteringByDraw';
 import { SuggestedItemsHistoryPlot } from './suggestedItemsHistoryPlot';
-import { Form } from 'react-bootstrap';
+import { SuggestedItemsSelection } from './components/suggestedItemsSelection';
 
 const markSuggestedItemsWithHits = ({ suggestedItems, suggestedItemsCheckResult }) => {
     const markedSuggestedItems = []
@@ -27,7 +27,7 @@ const markSuggestedItemsWithHits = ({ suggestedItems, suggestedItemsCheckResult 
 }
 
 
-const toPlottedSuggestedItems = (suggestedItems) => suggestedItems.map(si => ({ ...si, isPlotted: true })).sort((s1, s2) => s1.number - s2.number);
+const toSelectedSuggestedItems = (suggestedItems) => suggestedItems.map(si => ({ ...si, isPlotted: true })).sort((s1, s2) => s1.number - s2.number);
 
 export const TargetEntryStats = ({
     targetEntry,
@@ -35,7 +35,7 @@ export const TargetEntryStats = ({
     dataStats,
     settings
 }) => {
-    const itemsCount = ITEMS_PER_TICKET[window.location.pathname];
+    const gameItemsCount = ITEMS_PER_TICKET[window.location.pathname];
     const { suggestedItems } = getSuggestedNumbers({
         data: dataGroup,
         dataStats,
@@ -48,56 +48,32 @@ export const TargetEntryStats = ({
     });
     const hits = suggestedItemsCheckResult.map(res => res.number).join(", ");
 
-    const [plottedSuggestedItems, setPlottedSuggestedItems] = useState(toPlottedSuggestedItems(suggestedItems));
+    const [selectedSuggestedItems, setSelectedSuggestedItems] = useState(toSelectedSuggestedItems(suggestedItems));
 
     useEffect(() => {
-        const newPlottedSuggestedItems = suggestedItems.map(si => {
-            const existingPlottedSuggestedItem = plottedSuggestedItems.find(i => i.number === si.number);
+        const newSelectedSuggestedItems = suggestedItems.map(si => {
+            const existingPlottedSuggestedItem = selectedSuggestedItems.find(i => i.number === si.number);
 
-             return { ...si, isPlotted: existingPlottedSuggestedItem ? existingPlottedSuggestedItem.isPlotted : true }
+            return { ...si, isPlotted: existingPlottedSuggestedItem ? existingPlottedSuggestedItem.isPlotted : true }
         }).sort((s1, s2) => s1.number - s2.number);
-        
-        setPlottedSuggestedItems(newPlottedSuggestedItems)
-      }, [suggestedItems.length]);
 
-      const renderItemsSelection = () => plottedSuggestedItems.map((si, index) => (
-        <Form.Check key={index} type={"checkbox"} style={{width: "70px", display: "inline-block"}}>
-            <Form.Check.Input
-                type={"checkbox"}
-                defaultChecked={true}
-                onClick={() => {
-                    const _plottedSuggestedItems =  _.cloneDeep(plottedSuggestedItems)
-                    const item = _plottedSuggestedItems.find(i => i.number === si.number)
-
-                    if (item) {
-                        item.isPlotted = !item.isPlotted;
-
-                        setPlottedSuggestedItems(_plottedSuggestedItems)
-                    }
-
-                }}
-            />
-            <Form.Check.Label>{si.number}</Form.Check.Label>
-        </Form.Check>
-    ));
-
+        setSelectedSuggestedItems(newSelectedSuggestedItems)
+    }, [suggestedItems.length]);
 
     const generatedTickets = generateTickets({
-        suggestedItems, targetEntry, frequencyFactorsData: dataStats.frequencyFactorsData,
-        ticketsNumber: settings.ticketsNumber, itemsCount, useSupplemental: settings.useSupplemental
+        suggestedItems, targetEntry, dataStats, settings,
+        ticketsNumber: settings.ticketsNumber, gameItemsCount
     });
-    let eventKey = 0;
     const markedSuggestedItems = markSuggestedItemsWithHits({ suggestedItems, suggestedItemsCheckResult });
     const sortedByFreq = _.cloneDeep(markedSuggestedItems).sort((si1, si2) => si1["Freq Value"] - si2["Freq Value"]);
     const sortedByOccurance = _.cloneDeep(markedSuggestedItems).sort((si1, si2) => si1["Occurance Index"] - si2["Occurance Index"])
     const suggestedItemsClusteringByDraw = getSuggestedItemsClusteringByDraw({ suggestedItems, itemsClustersData: dataStats.itemsClustersData })
+    let eventKey = 0;
 
     return (
         <React.Fragment>
-            <Form.Group>
-                {renderItemsSelection()}
-            </Form.Group>
-            {SuggestedItemsHistoryPlot({ dataGroup, plottedSuggestedItems, useSupplemental: settings.useSupplemental, minItem:settings.minItem, maxItem:settings.maxItem })}
+            <SuggestedItemsSelection selectedSuggestedItems={selectedSuggestedItems} setSelectedSuggestedItems={setSelectedSuggestedItems} />
+            {SuggestedItemsHistoryPlot({ dataGroup, selectedSuggestedItems, useSupplemental: settings.useSupplemental, minItem: settings.minItem, maxItem: settings.maxItem })}
             <Row>
                 <Accordion key="target-entry-stats" defaultActiveKey="0">
                     {

@@ -35,7 +35,7 @@ const LINE_COLORS = [
 ]
 
 
-export const SuggestedItemsHistoryPlot = ({ plottedSuggestedItems, dataGroup, useSupplemental }) => {
+export const SuggestedItemsHistoryPlot = ({ selectedSuggestedItems, dataGroup, useSupplemental }) => {
     const plotData = [];
     const dataGroupSortedAsc = getSortedByDate(getSortedByDate(dataGroup, false).slice(0, 200), true)
 
@@ -46,7 +46,7 @@ export const SuggestedItemsHistoryPlot = ({ plottedSuggestedItems, dataGroup, us
         }
 
         items.forEach(item => {
-            const foundItem = _.find(plottedSuggestedItems, ({ number }) => number === item);
+            const foundItem = _.find(selectedSuggestedItems, ({ number }) => number === item);
 
             plotDataEntry[item] = foundItem && foundItem.isPlotted ? item : 0;
         })
@@ -54,7 +54,7 @@ export const SuggestedItemsHistoryPlot = ({ plottedSuggestedItems, dataGroup, us
         plotData.push(plotDataEntry)
     })
 
-    const renderLines = () => plottedSuggestedItems && plottedSuggestedItems.map((si, index) => (<Line type="monotone" key={si.number} dataKey={si.number} stroke={LINE_COLORS[index]} />));
+    const renderLines = () => selectedSuggestedItems && selectedSuggestedItems.map((si, index) => (<Line type="monotone" key={si.number} dataKey={si.number} stroke={LINE_COLORS[index]} />));
 
     const CustomTooltip = ({ active, payload, label }) => {
         if (active && payload && payload.length) {
