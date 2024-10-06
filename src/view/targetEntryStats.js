@@ -8,7 +8,7 @@ import { getSuggestedNumbers } from "../calculators/getSuggestedNumbers"
 import { generateTickets } from '../calculators/generateTickets';
 import { ITEMS_PER_TICKET } from '../constants';
 import { getSuggestedItemsClusteringByDraw } from '../calculators/getSuggestedItemsClusteringByDraw';
-import { suggestedItemsHistoryPlot } from './suggestedItemsHistoryPlot';
+import { SuggestedItemsHistoryPlot } from './suggestedItemsHistoryPlot';
 
 const markSuggestedItemsWithHits = ({ suggestedItems, suggestedItemsCheckResult }) => {
     const markedSuggestedItems = []
@@ -55,7 +55,7 @@ export const TargetEntryStats = ({
 
     return (
         <React.Fragment>
-            {suggestedItemsHistoryPlot({ dataGroup, suggestedItems, useSupplemental: settings.useSupplemental })}
+            {SuggestedItemsHistoryPlot({ dataGroup, suggestedItems, useSupplemental: settings.useSupplemental, minItem:settings.minItem, maxItem:settings.maxItem })}
             <Row>
                 <Accordion key="target-entry-stats" defaultActiveKey="0">
                     {
