@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import _ from "lodash";
 import Accordion from 'react-bootstrap/Accordion';
 import Row from 'react-bootstrap/Row';
@@ -9,6 +9,7 @@ import { generateTickets } from '../calculators/generateTickets';
 import { ITEMS_PER_TICKET } from '../constants';
 import { getSuggestedItemsClusteringByDraw } from '../calculators/getSuggestedItemsClusteringByDraw';
 import { SuggestedItemsHistoryPlot } from './suggestedItemsHistoryPlot';
+import { Form } from 'react-bootstrap';
 
 const markSuggestedItemsWithHits = ({ suggestedItems, suggestedItemsCheckResult }) => {
     const markedSuggestedItems = []
@@ -24,6 +25,9 @@ const markSuggestedItemsWithHits = ({ suggestedItems, suggestedItemsCheckResult 
 
     return markedSuggestedItems
 }
+
+
+const toPlottedSuggestedItems = (suggestedItems) => suggestedItems.map(si => ({ ...si, isPlotted: true })).sort((s1, s2) => s1.number - s2.number);
 
 export const TargetEntryStats = ({
     targetEntry,
@@ -43,6 +47,41 @@ export const TargetEntryStats = ({
         useSupplemental: settings.useSupplemental
     });
     const hits = suggestedItemsCheckResult.map(res => res.number).join(", ");
+
+    const [plottedSuggestedItems, setPlottedSuggestedItems] = useState(toPlottedSuggestedItems(suggestedItems));
+
+    useEffect(() => {
+        const newPlottedSuggestedItems = suggestedItems.map(si => {
+            const existingPlottedSuggestedItem = plottedSuggestedItems.find(i => i.number === si.number);
+
+             return { ...si, isPlotted: existingPlottedSuggestedItem ? existingPlottedSuggestedItem.isPlotted : true }
+        }).sort((s1, s2) => s1.number - s2.number);
+        
+        setPlottedSuggestedItems(newPlottedSuggestedItems)
+      }, [suggestedItems.length]);
+
+      const renderItemsSelection = () => plottedSuggestedItems.map((si, index) => (
+        <Form.Check key={index} type={"checkbox"} style={{width: "70px", display: "inline-block"}}>
+            <Form.Check.Input
+                type={"checkbox"}
+                defaultChecked={true}
+                onClick={() => {
+                    const _plottedSuggestedItems =  _.cloneDeep(plottedSuggestedItems)
+                    const item = _plottedSuggestedItems.find(i => i.number === si.number)
+
+                    if (item) {
+                        item.isPlotted = !item.isPlotted;
+
+                        setPlottedSuggestedItems(_plottedSuggestedItems)
+                    }
+
+                }}
+            />
+            <Form.Check.Label>{si.number}</Form.Check.Label>
+        </Form.Check>
+    ));
+
+
     const generatedTickets = generateTickets({
         suggestedItems, targetEntry, frequencyFactorsData: dataStats.frequencyFactorsData,
         ticketsNumber: settings.ticketsNumber, itemsCount, useSupplemental: settings.useSupplemental
@@ -55,7 +94,10 @@ export const TargetEntryStats = ({
 
     return (
         <React.Fragment>
-            {SuggestedItemsHistoryPlot({ dataGroup, suggestedItems, useSupplemental: settings.useSupplemental, minItem:settings.minItem, maxItem:settings.maxItem })}
+            <Form.Group>
+                {renderItemsSelection()}
+            </Form.Group>
+            {SuggestedItemsHistoryPlot({ dataGroup, plottedSuggestedItems, useSupplemental: settings.useSupplemental, minItem:settings.minItem, maxItem:settings.maxItem })}
             <Row>
                 <Accordion key="target-entry-stats" defaultActiveKey="0">
                     {

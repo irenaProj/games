@@ -1,7 +1,6 @@
 import _ from 'lodash';
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import Form from 'react-bootstrap/Form';
 import { getSortedByDate } from '../utils/getSortedByDate';
 import { getItemsInEntries } from '../utils/getItemsInEntries';
 
@@ -35,28 +34,10 @@ const LINE_COLORS = [
     "#deb0f5",
 ]
 
-const toPlottedSuggestedItems = (suggestedItems) => {
-    console.log(`suggestedItems length: ${suggestedItems.length}`)
-    return suggestedItems.map(si => ({ ...si, isPlotted: true })).sort((s1, s2) => s1.number - s2.number);
-}
 
-
-export const SuggestedItemsHistoryPlot = ({ suggestedItems, dataGroup, useSupplemental, minItem, maxItem }) => {
+export const SuggestedItemsHistoryPlot = ({ plottedSuggestedItems, dataGroup, useSupplemental }) => {
     const plotData = [];
     const dataGroupSortedAsc = getSortedByDate(getSortedByDate(dataGroup, false).slice(0, 200), true)
-    const [plottedSuggestedItems, setPlottedSuggestedItems] = useState(toPlottedSuggestedItems(suggestedItems));
-
-    console.log(`plottedSuggestedItems length: ${plottedSuggestedItems.length}`)
-
-    useEffect(() => {
-        const newPlottedSuggestedItems = suggestedItems.map(si => {
-            const existingPlottedSuggestedItem = plottedSuggestedItems.find(i => i.number === si.number);
-
-             return { ...si, isPlotted: existingPlottedSuggestedItem ? existingPlottedSuggestedItem.isPlotted : true }
-        }).sort((s1, s2) => s1.number - s2.number);
-        
-        setPlottedSuggestedItems(newPlottedSuggestedItems)
-      }, [suggestedItems.length]);
 
     dataGroupSortedAsc.forEach((entry) => {
         const items = getItemsInEntries([entry], useSupplemental);
@@ -73,27 +54,7 @@ export const SuggestedItemsHistoryPlot = ({ suggestedItems, dataGroup, useSupple
         plotData.push(plotDataEntry)
     })
 
-    const renderLines = () => plottedSuggestedItems.map((si, index) => (<Line type="monotone" key={si.number} dataKey={si.number} stroke={LINE_COLORS[index]} />));
-    const renderItemsSelection = () => plottedSuggestedItems.map((si, index) => (
-        <Form.Check key={index} type={"checkbox"} style={{width: "70px", display: "inline-block"}}>
-            <Form.Check.Input
-                type={"checkbox"}
-                defaultChecked={true}
-                onClick={() => {
-                    const _plottedSuggestedItems =  _.cloneDeep(plottedSuggestedItems)
-                    const item = _plottedSuggestedItems.find(i => i.number === si.number)
-
-                    if (item) {
-                        item.isPlotted = !item.isPlotted;
-
-                        setPlottedSuggestedItems(_plottedSuggestedItems)
-                    }
-
-                }}
-            />
-            <Form.Check.Label>{si.number}</Form.Check.Label>
-        </Form.Check>
-    ));
+    const renderLines = () => plottedSuggestedItems && plottedSuggestedItems.map((si, index) => (<Line type="monotone" key={si.number} dataKey={si.number} stroke={LINE_COLORS[index]} />));
 
     const CustomTooltip = ({ active, payload, label }) => {
         if (active && payload && payload.length) {
@@ -114,12 +75,8 @@ export const SuggestedItemsHistoryPlot = ({ suggestedItems, dataGroup, useSupple
         return null;
     };
 
-
     return (
         <React.Fragment>
-            <Form.Group>
-                {renderItemsSelection()}
-            </Form.Group>
             <div className="plot-container overflow-x-scroll ">
                 <div className="plot">
                     <ResponsiveContainer width="100%" height="100%" >
