@@ -1,4 +1,5 @@
 import { getItemsInEntries } from "../utils/getItemsInEntries";
+import { getSortedByDate } from "../utils/getSortedByDate";
 
 const checkTicket = (ticket, targetEntry, useSupplemental) => {
     if (!targetEntry || !ticket) {
@@ -44,24 +45,27 @@ const combinationsRecursive = (collection, combinationLength) => {
     return result;
 }
 
-const getLowestSelectedItems = (ticketsStatsMap, itemsPerTicket) => {
+const getLowestSelectedItems = (ticketsStatsMap, itemsPerTicket, selectedItemsRequiredOccuranceMap) => {
     // Transform map into array sorted by the number the item appears in tickets, ascending
     const arr = [];
 
     Object.keys(ticketsStatsMap).forEach(key => {
-        arr.push({ number: key, occurances: ticketsStatsMap[key] })
+        arr.push({ number: key, occurancesMissing: selectedItemsRequiredOccuranceMap[key] - ticketsStatsMap[key] })
     })
 
-    const arrSorted = arr.sort((m1, m2) => m1.occurances - m2.occurances);
+    const arrSorted = arr.sort((m1, m2) => m2.occurancesMissing - m1.occurancesMissing);
     const lowestItemsCount = Math.floor(itemsPerTicket / 2);
 
     return arrSorted.slice(0, lowestItemsCount).map(i => parseInt(i.number));
 }
 
-const generateUniformDistributionTickets = ({ selectedSuggestedItemsSorted, settings: { itemsPerTicket }, ticketsSettings: {
-    ticketsNumber,
-    occurancesPerSelectedSuggestedItem
-}, allCombinations }) => {
+const generateUniformDistributionTickets = ({ selectedSuggestedItemsSorted, settings: { itemsPerTicket },
+    ticketsSettings: {
+        ticketsNumber,
+    },
+    allCombinations,
+    selectedItemsRequiredOccuranceMap
+}) => {
     const ticketsStatsMap = {};
     const tickets = [];
     const randomSelectionCount = Math.max(1, Math.floor(ticketsNumber / 4));
@@ -90,7 +94,7 @@ const generateUniformDistributionTickets = ({ selectedSuggestedItemsSorted, sett
 
     // For the rest of the tickets: find the lowest used numbers and use them
     for (let i = randomSelectionCount; i < ticketsNumber;) {
-        const lowestNumbers = getLowestSelectedItems(ticketsStatsMap, itemsPerTicket);
+        const lowestNumbers = getLowestSelectedItems(ticketsStatsMap, itemsPerTicket, selectedItemsRequiredOccuranceMap);
 
         const randomCombinationIndex = Math.floor(Math.random() * allCombinationsCount);
 
@@ -113,7 +117,7 @@ const generateUniformDistributionTickets = ({ selectedSuggestedItemsSorted, sett
                 let isOccurancesPerItemConditionSatisfied = true;
 
                 Object.keys(ticketsStatsMap).forEach(key => {
-                    if (ticketsStatsMap[key] < occurancesPerSelectedSuggestedItem) {
+                    if (ticketsStatsMap[key] < selectedItemsRequiredOccuranceMap[key]) {
                         isOccurancesPerItemConditionSatisfied = false;
                     }
                 })
@@ -134,16 +138,52 @@ const generateUniformDistributionTickets = ({ selectedSuggestedItemsSorted, sett
     };
 }
 
+const buildRelativePrioritySettings = ({
+    selectedSuggestedItems,
+    dataGroup,
+    occurancesPerSelectedSuggestedItem,
+    useRelativePriority,
+    settings: { useSupplemental }
+}) => {
+    const dataSortedDesc = getSortedByDate(dataGroup, false); // All entries sorted from last, descending
+    const last3WeeksItems = getItemsInEntries(getSortedByDate(dataSortedDesc.slice(0, 3), true), useSupplemental); // Recent entries, sorted from oldest up
+    const last2WeeksItems = getItemsInEntries(getSortedByDate(dataSortedDesc.slice(0, 2), true), useSupplemental); // Recent entries, sorted from oldest up
+    const selectedItemsRequiredOccuranceMap = {}
 
-export const generateTickets = ({ selectedSuggestedItems, targetEntry, dataStats, settings, itemsPerTicketCustom, ticketsSettings: {
-    ticketsNumber,
-    occurancesPerSelectedSuggestedItem
-} }) => {
+    selectedSuggestedItems.forEach(suggestedItem => {
+        const number = suggestedItem.number;
+
+        if (last2WeeksItems.indexOf(number) > -1) {
+            selectedItemsRequiredOccuranceMap[number] = useRelativePriority ? occurancesPerSelectedSuggestedItem * 1.4 : occurancesPerSelectedSuggestedItem;
+        } else if (last3WeeksItems.indexOf(number) > -1) {
+            selectedItemsRequiredOccuranceMap[number] = useRelativePriority ? occurancesPerSelectedSuggestedItem * 1.2 : occurancesPerSelectedSuggestedItem;
+        } else {
+            selectedItemsRequiredOccuranceMap[number] = occurancesPerSelectedSuggestedItem
+        }
+    })
+
+    return selectedItemsRequiredOccuranceMap;
+}
+
+export const generateTickets = ({ selectedSuggestedItems, targetEntry, dataStats, settings, itemsPerTicketCustom,
+    dataGroup,
+    ticketsSettings: {
+        ticketsNumber,
+        occurancesPerSelectedSuggestedItem,
+        useRelativePriority
+    } }) => {
     const {
         useSupplemental
     } = settings;
     const selectedSuggestedItemsSorted = getItemsSortedAsc(selectedSuggestedItems);
     const allCombinations = combinationsRecursive(selectedSuggestedItemsSorted, itemsPerTicketCustom);
+    const selectedItemsRequiredOccuranceMap = buildRelativePrioritySettings({
+        selectedSuggestedItems,
+        dataGroup,
+        occurancesPerSelectedSuggestedItem,
+        useRelativePriority,
+        settings
+    })
 
     const {
         tickets,
@@ -152,7 +192,9 @@ export const generateTickets = ({ selectedSuggestedItems, targetEntry, dataStats
         selectedSuggestedItemsSorted, settings, ticketsSettings: {
             ticketsNumber,
             occurancesPerSelectedSuggestedItem
-        }, allCombinations
+        },
+        allCombinations,
+        selectedItemsRequiredOccuranceMap
     });
 
     if (targetEntry) {

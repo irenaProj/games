@@ -108,7 +108,9 @@ export const TargetEntryStats = ({
                         <Accordion.Header>Generated tickets</Accordion.Header>
                         <Accordion.Body>
                             <Tickets selectedSuggestedItems={selectedSuggestedItems}
-                                targetEntry={targetEntry} dataStats={dataStats} settings={settings} />
+                                targetEntry={targetEntry} dataStats={dataStats} 
+                                settings={settings}
+                                dataGroup={dataGroup} />
                         </Accordion.Body>
                     </Accordion.Item>
                 </Accordion>
