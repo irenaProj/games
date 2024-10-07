@@ -18,6 +18,6 @@ const checkTicket = (ticket, targetEntry, useSupplemental) => {
     return hits;
 }
 
-export const generateTickets = ({ suggestedItems, targetEntry, frequencyFactorsData, ticketsNumber, itemsCount, useSupplemental }) => {
+export const generateTickets = ({ selectedSuggestedItems, targetEntry, frequencyFactorsData, ticketsNumber, itemsCount, useSupplemental }) => {
 
 }

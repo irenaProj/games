@@ -5,11 +5,11 @@ import Row from 'react-bootstrap/Row';
 import { TabularData } from "./tabularData"
 import { checkAgainstTargetEntry } from "../calculators/checkAgainstTargetEntry"
 import { getSuggestedNumbers } from "../calculators/getSuggestedNumbers"
-import { generateTickets } from '../calculators/generateTickets';
 import { ITEMS_PER_TICKET } from '../constants';
 import { getSuggestedItemsClusteringByDraw } from '../calculators/getSuggestedItemsClusteringByDraw';
 import { SuggestedItemsHistoryPlot } from './suggestedItemsHistoryPlot';
 import { SuggestedItemsSelection } from './components/suggestedItemsSelection';
+import { Tickets } from './tickets';
 
 const markSuggestedItemsWithHits = ({ suggestedItems, suggestedItemsCheckResult }) => {
     const markedSuggestedItems = []
@@ -35,7 +35,6 @@ export const TargetEntryStats = ({
     dataStats,
     settings
 }) => {
-    const gameItemsCount = ITEMS_PER_TICKET[window.location.pathname];
     const { suggestedItems } = getSuggestedNumbers({
         data: dataGroup,
         dataStats,
@@ -60,10 +59,7 @@ export const TargetEntryStats = ({
         setSelectedSuggestedItems(newSelectedSuggestedItems)
     }, [suggestedItems.length]);
 
-    const generatedTickets = generateTickets({
-        suggestedItems, targetEntry, dataStats, settings,
-        ticketsNumber: settings.ticketsNumber, gameItemsCount
-    });
+
     const markedSuggestedItems = markSuggestedItemsWithHits({ suggestedItems, suggestedItemsCheckResult });
     const sortedByFreq = _.cloneDeep(markedSuggestedItems).sort((si1, si2) => si1["Freq Value"] - si2["Freq Value"]);
     const sortedByOccurance = _.cloneDeep(markedSuggestedItems).sort((si1, si2) => si1["Occurance Index"] - si2["Occurance Index"])
@@ -112,7 +108,8 @@ export const TargetEntryStats = ({
                     <Accordion.Item eventKey={`tickets-${eventKey++}`}>
                         <Accordion.Header>Generated tickets</Accordion.Header>
                         <Accordion.Body>
-                            <TabularData data={generatedTickets} />
+                            <Tickets selectedSuggestedItems={selectedSuggestedItems}
+                                targetEntry={targetEntry} dataStats={dataStats} settings={settings} />
                         </Accordion.Body>
                     </Accordion.Item>
                 </Accordion>

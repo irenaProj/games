@@ -39,7 +39,6 @@ export function Game({ data }) {
         minItem,
         maxItem,
         useSupplemental,
-        ticketsNumber: 0
     }
 
     if (!data || !data.length) {

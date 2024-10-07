@@ -1,12 +1,7 @@
-import React, { useState } from 'react';
-import Dropdown from 'react-bootstrap/Dropdown';
-import DropdownButton from 'react-bootstrap/DropdownButton';
-import Col from 'react-bootstrap/Col';
-import Row from 'react-bootstrap/Row';
+import React from 'react';
 import { getLastEntryDateIndex } from '../utils/sortEntriestIntoDataAndTargetEntry';
 import { TargetEntryAnalysisTab } from './targetEntryAnalysisTab';
 import { getSortedByDate } from '../utils/getSortedByDate';
-import { getNumbers } from '../utils/getNumbers';
 import { calculateDataStats } from '../calculators/calculateDataStats';
 
 export const LaterEntriesAnalysisTab = ({
@@ -19,8 +14,6 @@ export const LaterEntriesAnalysisTab = ({
         consecutiveWeeksCount,
         useSupplemental
     } = settings;
-    const maxTicketsNumber = getNumbers(50);
-    const [ticketsNumber, setTicketsNumber] = useState(3);
 
     const sortedDesc = getSortedByDate(data, false);
     const lastEntryDateIndex = getLastEntryDateIndex({
@@ -56,14 +49,6 @@ export const LaterEntriesAnalysisTab = ({
 
     return (
         <React.Fragment>
-            <Row className="justify-content-center">
-                <Col xs={4}>
-                    <DropdownButton id="tickets-num" title="Select tickets number" >
-                        {maxTicketsNumber.map(number => (<Dropdown.Item as="button" key={number} onClick={() => setTicketsNumber(number)}>{number}</Dropdown.Item>))}
-                    </DropdownButton>
-                    <p>{ticketsNumber} tickets</p>
-                </Col>
-            </Row>
             {content}
         </React.Fragment>
     );
