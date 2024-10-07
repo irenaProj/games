@@ -14,7 +14,7 @@ import { DataStatsTab } from './dataStatsTab';
 import { TargetEntryAnalysisTab } from './targetEntryAnalysisTab';
 import { LaterEntriesAnalysisTab } from './laterEntriesAnalysisTab';
 import { calculateDataStats } from '../calculators/calculateDataStats';
-import { GAME_ITEMS, GAME_NAME_MAP } from '../constants';
+import { GAME_ITEMS, GAME_NAME_MAP, ITEMS_PER_TICKET } from '../constants';
 
 
 
@@ -22,7 +22,8 @@ export function Game({ data }) {
     const dataDates = getDataDates(data);
     const items = getNumbers();
     const gameName = GAME_NAME_MAP[window.location.pathname] || "A new one?";
-    const gameItemsCount = GAME_ITEMS[gameName] || 35;  // Align with PB
+    const gameItemsCount = GAME_ITEMS[gameName] || 35;  // Align with PB 
+    const itemsPerTicket = ITEMS_PER_TICKET[gameName] || 6;
     const [lastEntriesCount, setLastEntriesCount] = useState(data.length);
     const [lastEntryDate, setLastEntryDate] = useState(dataDates[0]);
     // Numbers from the last 'consecutiveWeeksCount' entries are examined for consecutive frequency
@@ -33,6 +34,7 @@ export function Game({ data }) {
     const settings = {
         gameName,
         gameItemsCount,
+        itemsPerTicket,
         lastEntriesCount,
         lastEntryDate,
         consecutiveWeeksCount,

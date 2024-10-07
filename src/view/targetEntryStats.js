@@ -5,7 +5,6 @@ import Row from 'react-bootstrap/Row';
 import { TabularData } from "./tabularData"
 import { checkAgainstTargetEntry } from "../calculators/checkAgainstTargetEntry"
 import { getSuggestedNumbers } from "../calculators/getSuggestedNumbers"
-import { ITEMS_PER_TICKET } from '../constants';
 import { getSuggestedItemsClusteringByDraw } from '../calculators/getSuggestedItemsClusteringByDraw';
 import { SuggestedItemsHistoryPlot } from './suggestedItemsHistoryPlot';
 import { SuggestedItemsSelection } from './components/suggestedItemsSelection';
