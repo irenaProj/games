@@ -131,16 +131,15 @@ const generateUniformDistributionTickets = ({ selectedSuggestedItemsSorted, sett
     return tickets;
 }
 
-export const generateTickets = ({ selectedSuggestedItems, targetEntry, dataStats, settings, ticketsSettings: {
+export const generateTickets = ({ selectedSuggestedItems, targetEntry, dataStats, settings, itemsPerTicketCustom, ticketsSettings: {
     ticketsNumber,
     occurancesPerSelectedSuggestedItem
 } }) => {
     const {
-        itemsPerTicket,
         useSupplemental
     } = settings;
     const selectedSuggestedItemsSorted = getItemsSortedAsc(selectedSuggestedItems);
-    const allCombinations = combinationsRecursive(selectedSuggestedItemsSorted, itemsPerTicket);
+    const allCombinations = combinationsRecursive(selectedSuggestedItemsSorted, itemsPerTicketCustom);
 
     const tickets = generateUniformDistributionTickets({
         selectedSuggestedItemsSorted, settings, ticketsSettings: {

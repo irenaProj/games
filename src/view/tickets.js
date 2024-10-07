@@ -9,9 +9,11 @@ import { TabularData } from "./tabularData";
 export const Tickets = ({ selectedSuggestedItems, targetEntry, dataStats, settings }) => {
     const [tickets, setTickets] = useState([]);
     const [ticketsNumber, setTicketsNumber] = useState(0);
+    const [itemsPerTicketCustom, setItemsPerTicketCustom] = useState(settings.itemsPerTicket);
     const [occurancesPerSelectedSuggestedItem, setOccurancesPerSelectedSuggestedItem] = useState(0);
 
     const onTicketsNumberUpdate = ({target:{value}}) => setTicketsNumber(parseInt(value));
+    const onNumbersPerTicketUpdate = ({target:{value}}) => setItemsPerTicketCustom(parseInt(value));
     const onOccurancesPerSelectedSuggestedItemUpdate = ({target:{value}}) => setOccurancesPerSelectedSuggestedItem(parseInt(value));
 
     const handleSubmit = (event) => {
@@ -20,6 +22,7 @@ export const Tickets = ({ selectedSuggestedItems, targetEntry, dataStats, settin
 
         const generatedTickets = generateTickets({
             selectedSuggestedItems, targetEntry, dataStats, settings,
+            itemsPerTicketCustom,
             ticketsSettings: {
                 ticketsNumber,
                 occurancesPerSelectedSuggestedItem
@@ -44,10 +47,16 @@ export const Tickets = ({ selectedSuggestedItems, targetEntry, dataStats, settin
                                     </Form.Text>
                                 </Form.Group>
                             </Col>
-                            <Col sm="6">
+                            <Col sm="4">
                                 <Form.Group className="xs-3" controlId="occurancesPerSelectedSuggestedItem">
                                     <Form.Label>Number of occurances for each selected suggested item</Form.Label>
                                     <Form.Control type="number" placeholder="Item occurances #" onChange={onOccurancesPerSelectedSuggestedItemUpdate} />
+                                </Form.Group>
+                            </Col>
+                            <Col sm="4">
+                                <Form.Group className="xs-3" controlId="itemsPerTicketCustom">
+                                    <Form.Label>Number of items per ticket</Form.Label>
+                                    <Form.Control type="number" placeholder="Numbers per ticket #" onChange={onNumbersPerTicketUpdate} />
                                 </Form.Group>
                             </Col>
                         </Row>
