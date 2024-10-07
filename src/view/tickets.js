@@ -9,18 +9,19 @@ import { TabularData } from "./tabularData";
 export const Tickets = ({ selectedSuggestedItems, targetEntry, dataStats, settings }) => {
     const [tickets, setTickets] = useState([]);
     const [ticketsNumber, setTicketsNumber] = useState(0);
+    const [ticketsStatsMap, setTicketsStatsMap] = useState({});
     const [itemsPerTicketCustom, setItemsPerTicketCustom] = useState(settings.itemsPerTicket);
     const [occurancesPerSelectedSuggestedItem, setOccurancesPerSelectedSuggestedItem] = useState(0);
 
-    const onTicketsNumberUpdate = ({target:{value}}) => setTicketsNumber(parseInt(value));
-    const onNumbersPerTicketUpdate = ({target:{value}}) => setItemsPerTicketCustom(parseInt(value));
-    const onOccurancesPerSelectedSuggestedItemUpdate = ({target:{value}}) => setOccurancesPerSelectedSuggestedItem(parseInt(value));
+    const onTicketsNumberUpdate = ({ target: { value } }) => setTicketsNumber(parseInt(value));
+    const onNumbersPerTicketUpdate = ({ target: { value } }) => setItemsPerTicketCustom(parseInt(value));
+    const onOccurancesPerSelectedSuggestedItemUpdate = ({ target: { value } }) => setOccurancesPerSelectedSuggestedItem(parseInt(value));
 
     const handleSubmit = (event) => {
         // Do not refresh page
         event.preventDefault();
 
-        const generatedTickets = generateTickets({
+        const { tickets, ticketsStatsMap } = generateTickets({
             selectedSuggestedItems, targetEntry, dataStats, settings,
             itemsPerTicketCustom,
             ticketsSettings: {
@@ -29,7 +30,8 @@ export const Tickets = ({ selectedSuggestedItems, targetEntry, dataStats, settin
             }
         });
 
-        setTickets(generatedTickets)
+        setTickets(tickets);
+        setTicketsStatsMap(ticketsStatsMap)
     }
 
     return (
@@ -41,7 +43,7 @@ export const Tickets = ({ selectedSuggestedItems, targetEntry, dataStats, settin
                             <Col sm="3">
                                 <Form.Group className="xs-3" controlId="ticketsNumber">
                                     <Form.Label>Number of tickets</Form.Label>
-                                    <Form.Control type="number" placeholder="Tickets #"onChange={onTicketsNumberUpdate} />
+                                    <Form.Control type="number" placeholder="Tickets #" onChange={onTicketsNumberUpdate} />
                                     <Form.Text className="text-muted">
                                         Total number of generated tickets
                                     </Form.Text>
@@ -67,6 +69,12 @@ export const Tickets = ({ selectedSuggestedItems, targetEntry, dataStats, settin
                     {/* <p>{ticketsNumber} tickets</p>
                     <p>{occurancesPerSelectedSuggestedItem} repeats per item</p> */}
                 </Col>
+            </Row>
+            <Row>
+                <TabularData data={Object.keys(ticketsStatsMap).map(key => ({
+                    "Number": key,
+                    "Number of tickets": ticketsStatsMap[key]
+                }))} />
             </Row>
             <Row>
                 <TabularData data={tickets} />
