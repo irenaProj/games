@@ -14,7 +14,8 @@ export const DataStatsTab = ({
         gapFrequencyData,
         frequencyFactorsData,
         entryItemsFirstDigitsData,
-        itemsClustersData
+        itemsClustersData,
+        coupleAndTrippleSequentialNumbersData
     }
 }) => {
     let eventKey = 0;
@@ -63,6 +64,13 @@ export const DataStatsTab = ({
                         <Accordion.Header>First digits analysis</Accordion.Header>
                         <Accordion.Body>
                             <TabularData data={entryItemsFirstDigitsData} />
+                        </Accordion.Body>
+                    </Accordion.Item>
+                    <Accordion.Item eventKey={eventKey++}>
+                        <Accordion.Header>Couples and tripples sequential numbers</Accordion.Header>
+                        <Accordion.Body>
+                            {coupleAndTrippleSequentialNumbersData.trippleSequentialNumbers.length} tripples: {coupleAndTrippleSequentialNumbersData.trippleSequentialNumbers.map((tripple, index) => (<p key={index}>{JSON.stringify(tripple)}</p>))}
+                            {coupleAndTrippleSequentialNumbersData.coupleSequentialNumbers.length} couples: {coupleAndTrippleSequentialNumbersData.coupleSequentialNumbers.map((couple, index) => (<p key={index}>{JSON.stringify(couple)}</p>))}
                         </Accordion.Body>
                     </Accordion.Item>
                     <Accordion.Item eventKey={eventKey++}>
