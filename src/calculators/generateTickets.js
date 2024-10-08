@@ -45,7 +45,7 @@ const combinationsRecursive = (collection, combinationLength) => {
     return result;
 }
 
-const getLowestSelectedItems = (ticketsStatsMap, itemsPerTicket, selectedItemsRequiredOccuranceMap) => {
+const getLowestSelectedItems = (ticketsStatsMap, itemsPerTicketCustom, selectedItemsRequiredOccuranceMap) => {
     // Transform map into array sorted by the number the item appears in tickets, ascending
     const arr = [];
 
@@ -54,12 +54,13 @@ const getLowestSelectedItems = (ticketsStatsMap, itemsPerTicket, selectedItemsRe
     })
 
     const arrSorted = arr.sort((m1, m2) => m2.occurancesMissing - m1.occurancesMissing);
-    const lowestItemsCount = Math.floor(itemsPerTicket / 2);
+    const lowestItemsCount = Math.floor(itemsPerTicketCustom / 2);
 
     return arrSorted.slice(0, lowestItemsCount).map(i => parseInt(i.number));
 }
 
-const generateUniformDistributionTickets = ({ selectedSuggestedItemsSorted, settings: { itemsPerTicket },
+const generateUniformDistributionTickets = ({ selectedSuggestedItemsSorted, 
+    itemsPerTicketCustom,
     ticketsSettings: {
         ticketsNumber,
     },
@@ -83,7 +84,7 @@ const generateUniformDistributionTickets = ({ selectedSuggestedItemsSorted, sett
         if (usedCombinationsIndex.indexOf(randomCombinationIndex) < 0) {
             const combination = allCombinations[randomCombinationIndex];
 
-            for (let k = 0; k < itemsPerTicket; k += 1) {
+            for (let k = 0; k < itemsPerTicketCustom; k += 1) {
                 ticketsStatsMap[combination[k]] += 1;
             }
 
@@ -94,7 +95,7 @@ const generateUniformDistributionTickets = ({ selectedSuggestedItemsSorted, sett
 
     // For the rest of the tickets: find the lowest used numbers and use them
     for (let i = randomSelectionCount; i < ticketsNumber;) {
-        const lowestNumbers = getLowestSelectedItems(ticketsStatsMap, itemsPerTicket, selectedItemsRequiredOccuranceMap);
+        const lowestNumbers = getLowestSelectedItems(ticketsStatsMap, itemsPerTicketCustom, selectedItemsRequiredOccuranceMap);
 
         const randomCombinationIndex = Math.floor(Math.random() * allCombinationsCount);
 
@@ -109,7 +110,7 @@ const generateUniformDistributionTickets = ({ selectedSuggestedItemsSorted, sett
             });
 
             if (isContainsRequiredNumbers) {
-                for (let k = 0; k < itemsPerTicket; k += 1) {
+                for (let k = 0; k < itemsPerTicketCustom; k += 1) {
                     ticketsStatsMap[combination[k]] += 1;
                 }
 
@@ -189,7 +190,7 @@ export const generateTickets = ({ selectedSuggestedItems, targetEntry, dataStats
         tickets,
         ticketsStatsMap
     } = generateUniformDistributionTickets({
-        selectedSuggestedItemsSorted, settings, ticketsSettings: {
+        selectedSuggestedItemsSorted, itemsPerTicketCustom, ticketsSettings: {
             ticketsNumber,
             occurancesPerSelectedSuggestedItem
         },
@@ -199,20 +200,19 @@ export const generateTickets = ({ selectedSuggestedItems, targetEntry, dataStats
 
     if (targetEntry) {
         const checkedTickets = tickets.map((ticket, index) => ({
-            index,
             hits: JSON.stringify(checkTicket(ticket, targetEntry, useSupplemental)),
             ...ticket,
         }));
 
         return {
-            tickets: checkedTickets.sort((ch1, ch2) => ch2.hits.length - ch1.hits.length).map((ticket, index) => ({ ...ticket, index })),
+            tickets: checkedTickets.sort((ch1, ch2) => ch2.hits.length - ch1.hits.length).map((ticket, index) => ({ ...ticket, index: index + 1 })),
             ticketsStatsMap
         };
     }
 
     return {
         tickets: tickets.map((ticket, index) => ({
-            index,
+            index: index + 1,
             ...ticket,
         })),
         ticketsStatsMap
