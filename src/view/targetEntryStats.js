@@ -9,6 +9,7 @@ import { getSuggestedItemsClusteringByDraw } from '../calculators/getSuggestedIt
 import { SuggestedItemsHistoryPlot } from './suggestedItemsHistoryPlot';
 import { SuggestedItemsSelection } from './components/suggestedItemsSelection';
 import { Tickets } from './tickets';
+import { getSuggestedItemsWithStateMachines } from '../calculators/getSuggestedItemsStateMachines';
 
 const markSuggestedItemsWithHits = ({ suggestedItems, suggestedItemsCheckResult }) => {
     const markedSuggestedItems = []
@@ -63,6 +64,7 @@ export const TargetEntryStats = ({
     const sortedByFreq = _.cloneDeep(markedSuggestedItems).sort((si1, si2) => si1["Freq Value"] - si2["Freq Value"]);
     const sortedByOccurance = _.cloneDeep(markedSuggestedItems).sort((si1, si2) => si1["Occurance Index"] - si2["Occurance Index"])
     const suggestedItemsClusteringByDraw = getSuggestedItemsClusteringByDraw({ suggestedItems, itemsClustersData: dataStats.itemsClustersData })
+    const suggestedItemsWithStateMachines = getSuggestedItemsWithStateMachines({ markedSuggestedItems, dataStats, settings });
     let eventKey = 0;
 
     return (
@@ -89,6 +91,12 @@ export const TargetEntryStats = ({
                         <Accordion.Body>
 
                             <TabularData data={markedSuggestedItems} />
+                        </Accordion.Body>
+                    </Accordion.Item>
+                    <Accordion.Item eventKey={`target-stats-${eventKey++}`}>
+                        <Accordion.Header>State machines</Accordion.Header>
+                        <Accordion.Body>
+                            <TabularData data={suggestedItemsWithStateMachines} />
                         </Accordion.Body>
                     </Accordion.Item>
                     <Accordion.Item eventKey={`target-stats-${eventKey++}`}>
