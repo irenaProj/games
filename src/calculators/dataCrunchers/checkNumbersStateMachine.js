@@ -5,40 +5,40 @@ import { getNumbers } from "../../utils/getNumbers";
 
 
 const TWO_ENTRIES_STATES = {
-    "00": "00",
-    "10": "10",
-    "01": "01",
-    "11": "11"
+    "00": "a_00",
+    "10": "b_10",
+    "01": "c_01",
+    "11": "d_11"
 };
 
 const THREE_ENTRIES_STATES = {
-    "000": "000",
-    "100": "100",
-    "010": "010",
-    "001": "001",
-    "110": "110",
-    "101": "101",
-    "011": "011",
-    "111": "111",
+    "000": "a_000",
+    "100": "b_100",
+    "010": "c_010",
+    "001": "d_001",
+    "110": "e_110",
+    "101": "f_101",
+    "011": "e_011",
+    "111": "g_111",
 }
 
 const FOUR_ENTRIES_STATES = {
-    "0000": "0000",
-    "1000": "1000",
-    "0100": "0100",
-    "0010": "0010",
-    "0001": "0001",
-    "1100": "1100",
-    "1010": "1010",
-    "1001": "1001",
-    "0110": "0110",
-    "0101": "0101",
-    "0011": "0011",
-    "1110": "1110",
-    "1101": "1101",
-    "1011": "1011",
-    "0111": "0111",
-    "1111": "1111"
+    "0000": "a_0000",
+    "1000": "b_1000",
+    "0100": "c_0100",
+    "0010": "d_0010",
+    "0001": "e_0001",
+    "1100": "f_1100",
+    "1010": "e_1010",
+    "1001": "g_1001",
+    "0110": "h_0110",
+    "0101": "i_0101",
+    "0011": "j_0011",
+    "1110": "k_1110",
+    "1101": "l_1101",
+    "1011": "m_1011",
+    "0111": "n_0111",
+    "1111": "o_1111"
 }
 
 const ENTRIES_COUNT_TO_STATES_MACHINE_MAP = {
@@ -73,7 +73,7 @@ export const checkNumbersStateMachine = ({
         itemsToEntriesStatesMap[item] = "";
         numbersStateMachineData[item] = {};
 
-        Object.keys(stateMachine).forEach(state => {
+        Object.values(stateMachine).forEach(state => {
             numbersStateMachineData[item][state] = 0;
         })
     })
@@ -93,16 +93,12 @@ export const checkNumbersStateMachine = ({
             const state = itemStates.slice(i - entriesInStateMachineCount, i);
             const stateName = stateMachine[state];
 
-            if (!numbersStateMachineData[item][stateName]) {
-                numbersStateMachineData[item][stateName] = 0;
-            }
-
             numbersStateMachineData[item][stateName] += 1;
         }
     })
 
     return Object.keys(numbersStateMachineData).map((item, index) => {
-        debugger
+debugger
         return {
             "number": index + 1,
             ...numbersStateMachineData[item]
