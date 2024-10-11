@@ -18,6 +18,7 @@ export const DataStatsTab = ({
         coupleAndTrippleSequentialNumbersData,
         numbersStateMachineData
     },
+    settings,
 }) => {
     let eventKey = 0;
 
@@ -28,7 +29,7 @@ export const DataStatsTab = ({
                     <Accordion.Item eventKey={eventKey++}>
                         <Accordion.Header>Items states</Accordion.Header>
                         <Accordion.Body>
-                            <TabularData data={numbersStateMachineData} />
+                            <TabularData data={numbersStateMachineData[settings.entriesInStateMachineCount]} />
                         </Accordion.Body>
                     </Accordion.Item>
                     <Accordion.Item eventKey={eventKey++}>

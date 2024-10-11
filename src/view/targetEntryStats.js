@@ -68,9 +68,14 @@ export const TargetEntryStats = ({
     return (
         <React.Fragment>
             <SuggestedItemsSelection selectedSuggestedItems={selectedSuggestedItems} setSelectedSuggestedItems={setSelectedSuggestedItems} />
-            {SuggestedItemsHistoryPlot({ dataGroup, selectedSuggestedItems, useSupplemental: settings.useSupplemental, minItem: settings.minItem, maxItem: settings.maxItem })}
             <Row>
                 <Accordion key="target-entry-stats" defaultActiveKey="0">
+                    <Accordion.Item eventKey={`target-stats-${eventKey++}`}>
+                        <Accordion.Header>Draws plot</Accordion.Header>
+                        <Accordion.Body>
+                            {SuggestedItemsHistoryPlot({ dataGroup, selectedSuggestedItems, useSupplemental: settings.useSupplemental, minItem: settings.minItem, maxItem: settings.maxItem })}
+                        </Accordion.Body>
+                    </Accordion.Item>
                     {
                         targetEntry && <Accordion.Item eventKey={`target-stats-${eventKey++}`}>
                             <Accordion.Header>Hits Check - {suggestedItemsCheckResult.length}-----> {hits}</Accordion.Header>
@@ -108,7 +113,7 @@ export const TargetEntryStats = ({
                         <Accordion.Header>Generated tickets</Accordion.Header>
                         <Accordion.Body>
                             <Tickets selectedSuggestedItems={selectedSuggestedItems}
-                                targetEntry={targetEntry} dataStats={dataStats} 
+                                targetEntry={targetEntry} dataStats={dataStats}
                                 settings={settings}
                                 dataGroup={dataGroup} />
                         </Accordion.Body>

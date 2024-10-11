@@ -141,6 +141,7 @@ export function Game({ data }) {
                         <DataStatsTab
                             dataGroup={dataGroup}
                             dataStats={dataStats}
+                            settings={settings}
                         />
                     </Tab>
                     <Tab eventKey="target-entry-analysis-tab" title="Next target entry">

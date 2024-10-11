@@ -83,7 +83,8 @@ const ENTRIES_COUNT_TO_STATES_MACHINE_MAP = {
     5: FIVE_ENTRIES_STATES
 }
 
-export const checkNumbersStateMachine = ({
+
+const checkNumbersStateMachineWithAState = ({
     entriesInStateMachineCount,
     dataGroup,
     useSupplemental,
@@ -136,4 +137,37 @@ export const checkNumbersStateMachine = ({
             ...numbersStateMachineData[item]
         }
     });
+}
+
+export const checkNumbersStateMachine = ({
+    dataGroup,
+    useSupplemental,
+    gameItemsCount
+}) => {
+    return {
+        2: checkNumbersStateMachineWithAState({
+            entriesInStateMachineCount: 2,
+            dataGroup,
+            useSupplemental,
+            gameItemsCount
+        }),
+        3: checkNumbersStateMachineWithAState({
+            entriesInStateMachineCount: 3,
+            dataGroup,
+            useSupplemental,
+            gameItemsCount
+        }),
+        4: checkNumbersStateMachineWithAState({
+            entriesInStateMachineCount: 4,
+            dataGroup,
+            useSupplemental,
+            gameItemsCount
+        }),
+        5: checkNumbersStateMachineWithAState({
+            entriesInStateMachineCount: 5,
+            dataGroup,
+            useSupplemental,
+            gameItemsCount
+        })
+    }
 }
