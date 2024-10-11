@@ -14,7 +14,7 @@ export const ItemsStateMachine = ({ settings, dataGroup }) => {
     const [dataSortedAsc, setDataSortedAsc] = useState(_dataSortedAsc);
     const [oldestEntryDate, setOldestEntryDate] = useState(_dataSortedAsc[0].Date);
     const [newestEntryDate, setNewestEntryDate] = useState(_dataSortedAsc[_dataSortedAsc.length - 1].Date);
-    const [entriesInStateMachineCount, setEntriesInStateMachineCount] = useState(2);
+    const [entriesInStateMachineCount, setEntriesInStateMachineCount] = useState(3);
 
     const onOldestEntryDateUpdate = ({ target: { value } }) => setOldestEntryDate(value);
     const onNewestEntryDateUpdate = ({ target: { value } }) => setNewestEntryDate(value);
@@ -78,6 +78,7 @@ export const ItemsStateMachine = ({ settings, dataGroup }) => {
                                         <option key={2} value="2">2</option>
                                         <option key={3} value="3">3</option>
                                         <option key={4} value="4">4</option>
+                                        <option key={5} value="5">5</option>
                                     </Form.Select>
                                     <Form.Text className="text-muted">
                                         Number of entries in state machine {entriesInStateMachineCount}
