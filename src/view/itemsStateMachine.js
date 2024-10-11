@@ -73,7 +73,7 @@ export const ItemsStateMachine = ({ settings, dataGroup }) => {
                             </Col>
                             <Col sm="4">
                                 <Form.Group className="xs-4" controlId="entriesInStateMachineCount">
-                                    <Form.Label>Newest entry</Form.Label>
+                                    <Form.Label>Number of entries in state machine</Form.Label>
                                     <Form.Select aria-label="Newest entry" value={entriesInStateMachineCount} onChange={onEntriesInStateMachineCountUpdate}>
                                         <option key={2} value="2">2</option>
                                         <option key={3} value="3">3</option>
