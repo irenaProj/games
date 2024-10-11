@@ -16,8 +16,6 @@ import { LaterEntriesAnalysisTab } from './laterEntriesAnalysisTab';
 import { calculateDataStats } from '../calculators/calculateDataStats';
 import { GAME_ITEMS, GAME_NAME_MAP, ITEMS_PER_TICKET } from '../constants';
 
-
-
 export function Game({ data }) {
     const dataDates = getDataDates(data);
     const items = getNumbers();
