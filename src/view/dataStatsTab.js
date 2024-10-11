@@ -4,7 +4,6 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import { TabularData } from "./tabularData"
 import { getSortedByDate } from "../utils/getSortedByDate";
-import { ItemsStateMachine } from './itemsStateMachine';
 
 export const DataStatsTab = ({
     dataGroup,
@@ -16,9 +15,9 @@ export const DataStatsTab = ({
         frequencyFactorsData,
         entryItemsFirstDigitsData,
         itemsClustersData,
-        coupleAndTrippleSequentialNumbersData
+        coupleAndTrippleSequentialNumbersData,
+        numbersStateMachineData
     },
-    settings
 }) => {
     let eventKey = 0;
 
@@ -29,7 +28,7 @@ export const DataStatsTab = ({
                     <Accordion.Item eventKey={eventKey++}>
                         <Accordion.Header>Items states</Accordion.Header>
                         <Accordion.Body>
-                            <ItemsStateMachine settings={settings} dataGroup={dataGroup} />
+                            <TabularData data={numbersStateMachineData} />
                         </Accordion.Body>
                     </Accordion.Item>
                     <Accordion.Item eventKey={eventKey++}>

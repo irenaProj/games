@@ -29,6 +29,7 @@ export function Game({ data }) {
     const [minItem, setMinItem] = useState(1);
     const [maxItem, setMaxItem] = useState(gameItemsCount);
     const [useSupplemental, setUseSupplemental] = useState(gameName !== "PB");
+    const [entriesInStateMachineCount, setEntriesInStateMachineCount] = useState(3);
     const settings = {
         gameName,
         gameItemsCount,
@@ -39,6 +40,7 @@ export function Game({ data }) {
         minItem,
         maxItem,
         useSupplemental,
+        entriesInStateMachineCount
     }
 
     if (!data || !data.length) {
@@ -56,9 +58,8 @@ export function Game({ data }) {
     const dataStats = calculateDataStats({
         dataGroup,
         consecutiveWeeksCount,
-        useSupplemental,
+        settings
     })
-
 
     return (
         <Container>
@@ -95,13 +96,13 @@ export function Game({ data }) {
                 </Col>
             </Row>
             <Row className="justify-content-center">
-                <Col xs={4}>
+                <Col xs={3}>
                     <DropdownButton id="min-item" title="Select lowest suggestion item" >
                         {items.map(item => (<Dropdown.Item as="button" key={item} onClick={() => setMinItem(item)}>{item}</Dropdown.Item>))}
                     </DropdownButton>
                     <p>Min is {minItem}</p>
                 </Col>
-                <Col xs={4}>
+                <Col xs={3}>
                     <DropdownButton id="max-item" title="Select highest suggestion item" >
                         {items.map(item => (<Dropdown.Item as="button" key={item} onClick={() => setMaxItem(item)}>{item}</Dropdown.Item>))}
                     </DropdownButton>
@@ -119,6 +120,15 @@ export function Game({ data }) {
                     </Form>
                     <p>Using: {useSupplemental ? "yep" : "nope"}</p>
                 </Col>
+                <Col xs={3}>
+                    <DropdownButton id="entries-in-state-machine-count" title="Number of entries in state machine" >
+                        <Dropdown.Item as="button" onClick={() => setEntriesInStateMachineCount(2)}>2</Dropdown.Item>
+                        <Dropdown.Item as="button" onClick={() => setEntriesInStateMachineCount(3)}>3</Dropdown.Item>
+                        <Dropdown.Item as="button" onClick={() => setEntriesInStateMachineCount(4)}>4</Dropdown.Item>
+                        <Dropdown.Item as="button" onClick={() => setEntriesInStateMachineCount(5)}>5</Dropdown.Item>
+                    </DropdownButton>
+                    <p>Number of entries in state machine {entriesInStateMachineCount}</p>
+                </Col>
             </Row>
 
             <Row>
@@ -131,7 +141,6 @@ export function Game({ data }) {
                         <DataStatsTab
                             dataGroup={dataGroup}
                             dataStats={dataStats}
-                            settings={settings}
                         />
                     </Tab>
                     <Tab eventKey="target-entry-analysis-tab" title="Next target entry">

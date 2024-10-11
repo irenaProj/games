@@ -1,5 +1,6 @@
 import { checkEntriesRepeatability } from "./dataCrunchers/checkEntriesRepeatability";
 import { checkGapFrequency } from "./dataCrunchers/checkGapFrequency";
+import { checkNumbersStateMachine } from "./dataCrunchers/checkNumbersStateMachine";
 import { checkSequentialNumbers } from "./dataCrunchers/checkSequentialNumbers";
 import { clusterBySameDraw } from "./dataCrunchers/clusterBySameDraw";
 import { consecutiveFrequency } from "./dataCrunchers/consecutiveFrequency";
@@ -10,8 +11,9 @@ import { occuranceFrequency } from "./dataCrunchers/occuranceFrequency";
 export const calculateDataStats = ({
     dataGroup,
     consecutiveWeeksCount,
-    useSupplemental,
+    settings
 }) => {
+    const { useSupplemental, entriesInStateMachineCount, gameItemsCount } = settings;
     const occuranceFrequencyData = occuranceFrequency(dataGroup, useSupplemental);
     const frequencyFactorsData = getFrequencyFactors(dataGroup, occuranceFrequencyData, useSupplemental);
     const strictConsecutiveFrequencyData = consecutiveFrequency(dataGroup, consecutiveWeeksCount, useSupplemental);
@@ -20,6 +22,12 @@ export const calculateDataStats = ({
     const entryItemsFirstDigitsData = getEntryItemsFirstDigits(dataGroup, useSupplemental);
     const itemsClustersData = clusterBySameDraw(dataGroup, useSupplemental);
     const coupleAndTrippleSequentialNumbersData = checkSequentialNumbers(dataGroup, useSupplemental)
+    const numbersStateMachineData = checkNumbersStateMachine({
+        entriesInStateMachineCount,
+        dataGroup,
+        useSupplemental,
+        gameItemsCount
+    })
 
     return {
         occuranceFrequencyData,
@@ -29,6 +37,7 @@ export const calculateDataStats = ({
         entiesRepeatabilityData,
         entryItemsFirstDigitsData,
         itemsClustersData,
-        coupleAndTrippleSequentialNumbersData
+        coupleAndTrippleSequentialNumbersData,
+        numbersStateMachineData
     }
 }

@@ -84,17 +84,13 @@ const ENTRIES_COUNT_TO_STATES_MACHINE_MAP = {
 }
 
 export const checkNumbersStateMachine = ({
-    oldestEntryDate,
-    newestEntryDate,
     entriesInStateMachineCount,
     dataGroup,
     useSupplemental,
     gameItemsCount
 }) => {
     const dataSortedAsc = getSortedByDate(dataGroup, true);
-    const oldestEntryDateIndex = _.findIndex(dataSortedAsc, (entry => entry.Date === oldestEntryDate));
-    const newestEntryDateIndex = _.findIndex(dataSortedAsc, (entry => entry.Date === newestEntryDate));
-    const statesCount = newestEntryDateIndex - oldestEntryDateIndex + 1;
+    const statesCount = dataSortedAsc.length;
 
     if (statesCount <= entriesInStateMachineCount) {
         return [];
@@ -114,7 +110,7 @@ export const checkNumbersStateMachine = ({
         })
     })
 
-    for (let i = oldestEntryDateIndex; i <= newestEntryDateIndex; i += 1) {
+    for (let i = 0; i < statesCount; i += 1) {
         const entryItems = getItemsInEntries([dataSortedAsc[i]], useSupplemental);
 
         gameItems.forEach(item => {
@@ -134,7 +130,7 @@ export const checkNumbersStateMachine = ({
     })
 
     return Object.keys(numbersStateMachineData).map((item, index) => {
-debugger
+        debugger
         return {
             "number": index + 1,
             ...numbersStateMachineData[item]

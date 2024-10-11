@@ -12,7 +12,6 @@ export const LaterEntriesAnalysisTab = ({
         lastEntriesCount,
         lastEntryDate,
         consecutiveWeeksCount,
-        useSupplemental
     } = settings;
 
     const sortedDesc = getSortedByDate(data, false);
@@ -33,7 +32,7 @@ export const LaterEntriesAnalysisTab = ({
         const dataStats = calculateDataStats({
             dataGroup,
             consecutiveWeeksCount,
-            useSupplemental,
+            settings
         })
 
         content.push((
