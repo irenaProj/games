@@ -1,6 +1,15 @@
 import _ from "lodash";
 
 const CHECK_STATE_MACHINE_COLUMNS = [
+
+    { type: 3, column: "a_000" },
+    { type: 3, column: "a_100" },
+    { type: 3, column: "a_010" },
+    { type: 3, column: "a_001" },
+    { type: 3, column: "a_110" },
+    { type: 3, column: "a_101" },
+    { type: 3, column: "a_011" },
+    { type: 3, column: "a_111" },
     { type: 4, column: "b_0000" },
     { type: 4, column: "b_1000" },
     { type: 4, column: "b_0100" },
