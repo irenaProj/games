@@ -1,39 +1,9 @@
 import _ from 'lodash';
 import React from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { getSortedByDate } from '../utils/getSortedByDate';
-import { getItemsInEntries } from '../utils/getItemsInEntries';
-
-const LINE_COLORS = [
-    "#44FFD2",
-    "#87F6FF",
-    "#FFBFA0",
-    "#99C2A2",
-    "#aa2993",
-    "#f550fe",
-    "#9d9041",
-    "#ce1743",
-    "#3c82f7",
-    "#712aba",
-    "#8d2b7d",
-    "#239e04",
-    "#4a7452",
-    "#2c4b10",
-    "#74ee46",
-    "#661f08",
-    "#132d67",
-    "#b88b20",
-    "#88a447",
-    "#bcca13",
-    "#db2893",
-    "#4287f5",
-    "#f5b7b1",
-    "#a9cce3",
-    "#616163",
-    "#DAF5FF",
-    "#deb0f5",
-]
-
+import { getSortedByDate } from '../../utils/getSortedByDate';
+import { getItemsInEntries } from '../../utils/getItemsInEntries';
+import { LINE_COLORS } from '../../constants';
 
 export const SuggestedItemsHistoryPlot = ({ selectedSuggestedItems, dataGroup, useSupplemental }) => {
     const plotData = [];

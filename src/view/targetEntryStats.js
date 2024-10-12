@@ -6,7 +6,7 @@ import { TabularData } from "./tabularData"
 import { checkAgainstTargetEntry } from "../calculators/checkAgainstTargetEntry"
 import { getSuggestedNumbers } from "../calculators/getSuggestedNumbers"
 import { getSuggestedItemsClusteringByDraw } from '../calculators/getSuggestedItemsClusteringByDraw';
-import { SuggestedItemsHistoryPlot } from './suggestedItemsHistoryPlot';
+import { SuggestedItemsHistoryPlot } from './components/suggestedItemsHistoryPlot';
 import { SuggestedItemsSelection } from './components/suggestedItemsSelection';
 import { Tickets } from './tickets';
 import { getSuggestedItemsWithStateMachines } from '../calculators/getSuggestedItemsStateMachines';
