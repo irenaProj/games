@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import Dropdown from 'react-bootstrap/Dropdown';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import Container from 'react-bootstrap/Container';
+import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
+import Tooltip from 'react-bootstrap/Tooltip';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Tab from 'react-bootstrap/Tab';
@@ -61,6 +63,15 @@ export function Game({ data }) {
         settings
     })
 
+    // Tootltips - start
+    const renderLastDataEntryTooltip = (props) => (
+        <Tooltip id="last-data-entry-tooltip" {...props}>
+            When selected date is not the latest actual entry date, then all entries starting with the selected
+            one and older are used as database and the entries after the selected one are used for simulation.
+        </Tooltip>
+    );
+    // Tooltips - end
+
     return (
         <Container>
             <Row className="justify-content-center spaced-vertically">
@@ -89,10 +100,17 @@ export function Game({ data }) {
                     <p>Suggesed numbers based on {consecutiveWeeksCount} entries</p>
                 </Col>
                 <Col xs={4}>
-                    <DropdownButton id="last-entry-date" title="Select last data entry" >
-                        {dataDates.map(date => (<Dropdown.Item as="button" key={date} onClick={() => setLastEntryDate(date)}>{date}</Dropdown.Item>))}
-                    </DropdownButton>
-                    <p>Data is based on {lastEntriesCount} entries from {lastEntryDate} and older</p>
+                    <OverlayTrigger
+                        placement="right"
+                        delay={{ show: 250, hide: 400 }}
+                        overlay={renderLastDataEntryTooltip}
+                    >
+                        <DropdownButton id="last-entry-date" title="Select last data entry" >
+                            {dataDates.map(date => (<Dropdown.Item as="button" key={date} onClick={() => setLastEntryDate(date)}>{date}</Dropdown.Item>))}
+                        </DropdownButton>
+                    </OverlayTrigger>
+                    <p>Data is based on entries from {lastEntryDate} and older</p>
+
                 </Col>
             </Row>
             <Row className="justify-content-center">
@@ -138,6 +156,12 @@ export function Game({ data }) {
                     className="mb-3"
                 >
                     <Tab eventKey="data-stats-tab" title="Data stats">
+                        <p>
+                            <strong>
+                                This tab shows statistics for all game items. Statistics are based on the selections above, e.g.
+                                "Effective Entries Count" and "Select last data entry"
+                            </strong>
+                        </p>
                         <DataStatsTab
                             dataGroup={dataGroup}
                             dataStats={dataStats}
@@ -145,6 +169,11 @@ export function Game({ data }) {
                         />
                     </Tab>
                     <Tab eventKey="target-entry-analysis-tab" title="Next target entry">
+                        <p>
+                            <strong>
+                                This tab shows analysis for the entry that is a week after the date specified in "Select last data entry" selector
+                            </strong>
+                        </p>
                         <TargetEntryAnalysisTab
                             targetEntry={targetEntry}
                             dataGroup={dataGroup}
@@ -153,6 +182,11 @@ export function Game({ data }) {
                         />
                     </Tab>
                     <Tab eventKey="later-entries-analysis-tab" title="Later entries analysis">
+                        <p>
+                            <strong>
+                                This tab shows analysis for ALL entries that are after the date specified in "Select last data entry" selector
+                            </strong>
+                        </p>
                         <LaterEntriesAnalysisTab
                             data={data}
                             settings={settings}
