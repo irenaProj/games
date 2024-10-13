@@ -5,6 +5,8 @@ import Row from 'react-bootstrap/Row';
 import Form from 'react-bootstrap/Form';
 import { generateTickets } from "../calculators/generateTickets";
 import { TabularData } from "./tabularData";
+import { ITEM_PRIORITY_TYPES } from "../constants";
+import { FloatingLabel } from "react-bootstrap";
 
 export const Tickets = ({ selectedSuggestedItems, targetEntry, dataStats, settings, dataGroup }) => {
     const [tickets, setTickets] = useState([]);
@@ -13,11 +15,24 @@ export const Tickets = ({ selectedSuggestedItems, targetEntry, dataStats, settin
     const [ticketsStatsMap, setTicketsStatsMap] = useState({});
     const [itemsPerTicketCustom, setItemsPerTicketCustom] = useState(settings.itemsPerTicket);
     const [occurancesPerSelectedSuggestedItem, setOccurancesPerSelectedSuggestedItem] = useState(0);
+    const [priorityPerSelectedSuggestedItem, setPriorityPerSelectedSuggestedItem] = useState(selectedSuggestedItems.map(si => ({ ...si, itemPriority: ITEM_PRIORITY_TYPES.NORMAL })));
 
     const onTicketsNumberUpdate = ({ target: { value } }) => setTicketsNumber(parseInt(value));
     const onNumbersPerTicketUpdate = ({ target: { value } }) => setItemsPerTicketCustom(parseInt(value));
     const onRelativePriorityUpdate = () => setUseRelativePriority(!useRelativePriority);
     const onOccurancesPerSelectedSuggestedItemUpdate = ({ target: { value } }) => setOccurancesPerSelectedSuggestedItem(parseInt(value));
+    const onPriorityPerSelectedSuggestedItemUpdate = (updatedItem) => {
+
+        const updatedList = priorityPerSelectedSuggestedItem.map(selectedSuggestedItem => {
+            if (selectedSuggestedItem.number !== updatedItem.number) {
+                return selectedSuggestedItem;
+            }
+
+            return updatedItem
+        });
+
+        setPriorityPerSelectedSuggestedItem(updatedList);
+    }
 
     const handleSubmit = (event) => {
         // Do not refresh page
@@ -36,6 +51,18 @@ export const Tickets = ({ selectedSuggestedItems, targetEntry, dataStats, settin
 
         setTickets(tickets);
         setTicketsStatsMap(ticketsStatsMap)
+    }
+
+    const renderItemsPriority = (selectedSuggestedItem) => {
+        return (
+            <Col sm="2">
+                <FloatingLabel controlId={`selected-item-priority-${selectedSuggestedItem.number}`} label={`Item ${selectedSuggestedItem.number}`}>
+                    <Form.Select value={selectedSuggestedItem.itemPriority} onChange={({ target: { value } }) => onPriorityPerSelectedSuggestedItemUpdate({ ...selectedSuggestedItem, itemPriority: parseFloat(value) })}>
+                        {Object.values(ITEM_PRIORITY_TYPES).map((priorityType, index) => (<option key={index} value={priorityType}>{priorityType}</option>))}
+                    </Form.Select>
+                </FloatingLabel>
+            </Col >
+        )
     }
 
     return (
@@ -59,11 +86,14 @@ export const Tickets = ({ selectedSuggestedItems, targetEntry, dataStats, settin
                                     <Form.Control type="number" placeholder="Item occurances #" onChange={onOccurancesPerSelectedSuggestedItemUpdate} />
                                 </Form.Group>
                             </Col>
-                            <Col sm="4">
-                                {/* <Form.Group className="xs-3" controlId="useRelativePriority">
-                                    <Form.Label>Use relative priority by week</Form.Label>
-                                    <Form.Control type="c" placeholder="Numbers per ticket #" onChange={onRelativePriorityUpdate} />
-                                </Form.Group> */}
+                        </Row>
+                        <Row>
+                            <h6 style={{ textAlign: 'left', margin: '1rem 0 1rem 0' }}>Alternative 1: Set priority for selected items</h6>
+                            {priorityPerSelectedSuggestedItem.map((selectedSuggestedItem) => renderItemsPriority(selectedSuggestedItem))}
+                        </Row>
+                        <Row>
+                            <h6 style={{ textAlign: 'left', margin: '1rem 0 1rem 0' }}>Alternative 2: Use relative priority between entries</h6>
+                            <Col sm="3">
                                 <Form.Group className="xs-3" controlId="useRelativePriority">
                                     <Form.Label>Use relative priority by week</Form.Label>
                                     <Form.Check type={"checkbox"}>
@@ -75,16 +105,14 @@ export const Tickets = ({ selectedSuggestedItems, targetEntry, dataStats, settin
                                     </Form.Check>
                                 </Form.Group>
                             </Col>
-                        </Row>
-                        <Row>
-                            <Col sm="4">
+                            <Col sm="3">
                                 <Form.Group className="xs-3" controlId="itemsPerTicketCustom">
                                     <Form.Label>Number of items per ticket</Form.Label>
                                     <Form.Control type="number" placeholder="Numbers per ticket #" onChange={onNumbersPerTicketUpdate} />
                                 </Form.Group>
                             </Col>
-
                         </Row>
+
                         <Button variant="primary" type="submit">
                             Submit
                         </Button>

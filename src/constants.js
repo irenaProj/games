@@ -41,6 +41,16 @@ export const ITEMS_PER_TICKET = {
     [GANE_NAMES.WF]: 6
 }
 
+export const ITEM_PRIORITY_TYPES = {
+    HIGHEST: 1.75,
+    HIGHER: 1.5,
+    HIGH: 1.25,
+    NORMAL: 1,
+    LOW: 0.75,
+    LOWER: 0.5,
+    LOWEST: 0.25
+}
+
 export const LINE_COLORS = [
     "#44FFD2",
     "#87F6FF",
