@@ -35,6 +35,7 @@ export const TargetEntryStats = ({
     dataStats,
     settings
 }) => {
+    const { entriesInPlots, useSupplemental } = settings;
     const { suggestedItems } = getSuggestedNumbers({
         data: dataGroup,
         dataStats,
@@ -43,7 +44,7 @@ export const TargetEntryStats = ({
     const suggestedItemsCheckResult = checkAgainstTargetEntry({
         suggestedItems,
         targetEntry,
-        useSupplemental: settings.useSupplemental
+        useSupplemental: useSupplemental
     });
     const hits = suggestedItemsCheckResult.map(res => res.number).join(", ");
 
@@ -70,7 +71,7 @@ export const TargetEntryStats = ({
     return (
         <React.Fragment>
             <SuggestedItemsSelection selectedSuggestedItems={selectedSuggestedItems} setSelectedSuggestedItems={setSelectedSuggestedItems} />
-            {SuggestedItemsHistoryPlot({ dataGroup, selectedSuggestedItems, useSupplemental: settings.useSupplemental, minItem: settings.minItem, maxItem: settings.maxItem })}
+            {SuggestedItemsHistoryPlot({ dataGroup, selectedSuggestedItems, useSupplemental, entriesInPlots })}
             <Row>
                 <Accordion key="target-entry-stats" defaultActiveKey="0">
                     {

@@ -5,10 +5,9 @@ import { getSortedByDate } from '../../utils/getSortedByDate';
 import { getItemsInEntries } from '../../utils/getItemsInEntries';
 import { LINE_COLORS } from '../../constants';
 
-export const SuggestedItemsHistoryPlot = ({ selectedSuggestedItems, dataGroup, useSupplemental }) => {
+export const SuggestedItemsHistoryPlot = ({ selectedSuggestedItems, dataGroup, useSupplemental, entriesInPlots }) => {
     const plotData = [];
-    // const dataGroupSortedAsc = getSortedByDate(getSortedByDate(dataGroup, false).slice(0, 200), true)
-    const dataGroupSortedAsc = getSortedByDate(dataGroup, true);
+    const dataGroupSortedAsc = getSortedByDate(getSortedByDate(dataGroup, false).slice(0, entriesInPlots), true)
 
     dataGroupSortedAsc.forEach((entry) => {
         const items = getItemsInEntries([entry], useSupplemental);

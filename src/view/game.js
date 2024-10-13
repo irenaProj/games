@@ -26,6 +26,7 @@ export function Game({ data }) {
     const itemsPerTicket = ITEMS_PER_TICKET[gameName] || 6;
     const [lastEntriesCount, setLastEntriesCount] = useState(data.length);
     const [lastEntryDate, setLastEntryDate] = useState(dataDates[0]);
+    const [entriesInPlots, setEntriesInPlots] = useState(200);
     // Numbers from the last 'consecutiveWeeksCount' entries are examined for consecutive frequency
     const [consecutiveWeeksCount, setConsecutiveWeeksCount] = useState(4);
     const [minItem, setMinItem] = useState(1);
@@ -42,7 +43,8 @@ export function Game({ data }) {
         minItem,
         maxItem,
         useSupplemental,
-        entriesInStateMachineCount
+        entriesInStateMachineCount,
+        entriesInPlots
     }
 
     if (!data || !data.length) {
@@ -78,7 +80,7 @@ export function Game({ data }) {
                 <h2>{gameName}</h2>
             </Row>
             <Row>
-                <Col xs={4}>
+                <Col xs={3}>
                     <DropdownButton id="last-entries-count" title="Effective Entries Count" >
                         <Dropdown.Item as="button" onClick={() => setLastEntriesCount(data.length)}>{data.length}</Dropdown.Item>
                         <Dropdown.Item as="button" onClick={() => setLastEntriesCount(500)}>500</Dropdown.Item>
@@ -90,7 +92,7 @@ export function Game({ data }) {
                     </DropdownButton>
                     <p>Showing stats for the last {lastEntriesCount} entries</p>
                 </Col>
-                <Col xs={4}>
+                <Col xs={3}>
                     <DropdownButton id="consecutive-weeks-count" title="Consecutive Weeks Count" >
                         <Dropdown.Item as="button" onClick={() => setConsecutiveWeeksCount(6)}>6</Dropdown.Item>
                         <Dropdown.Item as="button" onClick={() => setConsecutiveWeeksCount(4)}>4</Dropdown.Item>
@@ -99,7 +101,16 @@ export function Game({ data }) {
                     </DropdownButton>
                     <p>Suggesed numbers based on {consecutiveWeeksCount} entries</p>
                 </Col>
-                <Col xs={4}>
+                <Col xs={3}>
+                    <DropdownButton id="entries-in-plot-count" title="Entries in plot" >
+                        <Dropdown.Item as="button" onClick={() => setEntriesInPlots(dataDates.length)}>dataDates.length</Dropdown.Item>
+                        <Dropdown.Item as="button" onClick={() => setEntriesInPlots(300)}>300</Dropdown.Item>
+                        <Dropdown.Item as="button" onClick={() => setEntriesInPlots(200)}>200</Dropdown.Item>
+                        <Dropdown.Item as="button" onClick={() => setEntriesInPlots(100)}>100</Dropdown.Item>
+                    </DropdownButton>
+                    <p>Entries in plots: {entriesInPlots} </p>
+                </Col>
+                <Col xs={3}>
                     <OverlayTrigger
                         placement="right"
                         delay={{ show: 250, hide: 400 }}
