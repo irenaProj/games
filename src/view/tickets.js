@@ -22,7 +22,6 @@ export const Tickets = ({ selectedSuggestedItems, targetEntry, dataStats, settin
     const onRelativePriorityUpdate = () => setUseRelativePriority(!useRelativePriority);
     const onOccurancesPerSelectedSuggestedItemUpdate = ({ target: { value } }) => setOccurancesPerSelectedSuggestedItem(parseInt(value));
     const onPriorityPerSelectedSuggestedItemUpdate = (updatedItem) => {
-
         const updatedList = priorityPerSelectedSuggestedItem.map(selectedSuggestedItem => {
             if (selectedSuggestedItem.number !== updatedItem.number) {
                 return selectedSuggestedItem;
@@ -117,8 +116,6 @@ export const Tickets = ({ selectedSuggestedItems, targetEntry, dataStats, settin
                             Submit
                         </Button>
                     </Form>
-                    {/* <p>{ticketsNumber} tickets</p>
-                    <p>{occurancesPerSelectedSuggestedItem} repeats per item</p> */}
                 </Col>
             </Row>
             <Row>

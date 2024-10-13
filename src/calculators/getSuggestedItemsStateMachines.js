@@ -42,6 +42,21 @@ const CHECK_STATE_MACHINE_COLUMNS = [
     { type: 5, column: "c_11011" },
     { type: 5, column: "c_10111" },
     { type: 5, column: "c_11111" },
+    { type: 5, column: "c_01000" },
+    { type: 5, column: "c_00100" },
+    { type: 5, column: "c_00010" },
+    { type: 5, column: "c_00001" },
+    { type: 5, column: "c_01100" },
+    { type: 5, column: "c_01010" },
+    { type: 5, column: "c_01001" },
+    { type: 5, column: "c_00110" },
+    { type: 5, column: "c_00101" },
+    { type: 5, column: "c_00011" },
+    { type: 5, column: "c_01110" },
+    { type: 5, column: "c_01101" },
+    { type: 5, column: "c_01011" },
+    { type: 5, column: "c_00111" },
+    { type: 5, column: "c_01111" },
 ];
 
 export const getSuggestedItemsWithStateMachines = ({ markedSuggestedItems, dataStats, settings }) => {
@@ -52,8 +67,36 @@ export const getSuggestedItemsWithStateMachines = ({ markedSuggestedItems, dataS
 
         CHECK_STATE_MACHINE_COLUMNS.forEach(column => {
             const siStateMachineData = _.find(numbersStateMachineData[[column.type]], (stateMachineData => stateMachineData.number === si.number));
+            const currentState = siStateMachineData.currentState;
+            const currentStateLessOne = currentState.slice(0, currentState.length - 1);
+            const currentStateLessOneWithHit = currentStateLessOne + "1";
+            const currentStateLessOneWithNoHit = currentStateLessOne + "0";
 
-            siWithStateMachine[column.column] = siStateMachineData[column.column]
+            switch (column.column) {
+                case currentStateLessOneWithHit:
+                    siWithStateMachine[column.column] = {
+                        value: siStateMachineData[column.column],
+                        style: {
+                            backgroundColor: "#b8ffb8"
+                        }
+                    };
+
+                    break;
+
+                case currentStateLessOneWithNoHit:
+                    siWithStateMachine[column.column] = {
+                        value: siStateMachineData[column.column],
+                        style: {
+                            backgroundColor: "#ffd8d8"
+                        }
+                    };
+                    break;
+
+                case currentStateLessOneWithHit:
+                default:
+                    siWithStateMachine[column.column] = siStateMachineData[column.column]
+
+            }
         })
 
         return siWithStateMachine;

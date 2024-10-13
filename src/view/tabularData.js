@@ -8,7 +8,14 @@ export const TabularData = ({ data }) => {
         return Object.keys(entry0).map(key => (<th key={`header-${key}`}>{key}</th>));
     }
 
-    const renderCells = (row, rowIndex) => Object.values(row).map((data, cellIndex) => (<td key={`row-${rowIndex}-${cellIndex}`}>{data}</td>));
+    const renderCells = (row, rowIndex) => Object.values(row).map((data, cellIndex) => {
+
+        if (data && data.style) {
+            return (<td key={`row-${rowIndex}-${cellIndex}`} style={data.style}>{data.value}</td>)
+        }
+
+        return (<td key={`row-${rowIndex}-${cellIndex}`}>{data}</td>)
+    });
 
 
     const renderRows = () => data.map((row, rowIndex) => (

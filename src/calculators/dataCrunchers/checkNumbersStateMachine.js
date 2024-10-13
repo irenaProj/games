@@ -125,6 +125,10 @@ const checkNumbersStateMachineWithAState = ({
             const stateName = stateMachine[state];
 
             numbersStateMachineData[item][stateName] += 1;
+
+            if (i === statesCount) {
+                numbersStateMachineData[item]["currentState"] = stateName;
+            }
         }
     })
 
