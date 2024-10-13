@@ -1,6 +1,6 @@
 import { getSortedByDate } from "./getSortedByDate"
 
-const MAX_DISTANCE_TO_LAST_DATA_ENTRY = 50;
+// const MAX_DISTANCE_TO_LAST_DATA_ENTRY = 50;
 
 export const getDataDates = (data) => {
     if (!data || !data.length) {

@@ -4,6 +4,8 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import { TabularData } from "./tabularData"
 import { getSortedByDate } from "../utils/getSortedByDate";
+import { ItemsHistoryPlot } from './components/itemsHistoryPlot';
+import { GANE_NAMES } from '../constants';
 
 export const DataStatsTab = ({
     dataGroup,
@@ -32,6 +34,24 @@ export const DataStatsTab = ({
                             <TabularData data={numbersStateMachineData[settings.entriesInStateMachineCount]} />
                         </Accordion.Body>
                     </Accordion.Item>
+                    <Accordion.Item eventKey={eventKey++}>
+                        <Accordion.Header>First item analysis</Accordion.Header>
+                        <Accordion.Body>
+                            {ItemsHistoryPlot({ dataGroup, itemNameInEntry: "#1" })}
+                        </Accordion.Body>
+                    </Accordion.Item>
+                    <Accordion.Item eventKey={eventKey++}>
+                        <Accordion.Header>Last item analysis</Accordion.Header>
+                        <Accordion.Body>
+                            {ItemsHistoryPlot({ dataGroup, itemNameInEntry: `#${settings.itemsPerTicket}` })}
+                        </Accordion.Body>
+                    </Accordion.Item>
+                    {settings.gameName === GANE_NAMES.PB && (< Accordion.Item eventKey={eventKey++}>
+                        <Accordion.Header>PB analysis</Accordion.Header>
+                        <Accordion.Body>
+                            {ItemsHistoryPlot({ dataGroup, itemNameInEntry: "PB" })}
+                        </Accordion.Body>
+                    </Accordion.Item>)}
                     <Accordion.Item eventKey={eventKey++}>
                         <Accordion.Header>Frequency Factor</Accordion.Header>
                         <Accordion.Body>
@@ -91,6 +111,6 @@ export const DataStatsTab = ({
                     </Accordion.Item>
                 </Accordion>
             </Row>
-        </Container>
+        </Container >
     )
 }

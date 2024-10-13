@@ -22,8 +22,8 @@ code {
 }
 
 .plot {
-  width: 8000px !important;
-  max-width:8000px !important;
+  width: 12000px !important;
+  max-width: 12000px !important;
   height: 400px !important;
 }
 

@@ -1,6 +1,17 @@
 // https://gnetwork.com.au/lotto-results/saturday-lotto-results/
 export const slData = [
     {
+        "Date": "12/10/24",
+        "#1": 2,
+        "#2": 8,
+        "#3": 10,
+        "#4": 21,
+        "#5": 28,
+        "#6": 45,
+        "S1": 27,
+        "S2": 30
+    },
+    {
         "Date": "05/10/24",
         "#1": 13,
         "#2": 15,

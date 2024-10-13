@@ -1,43 +1,32 @@
-import _ from 'lodash';
 import React from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { getSortedByDate } from '../../utils/getSortedByDate';
 import { getItemsInEntries } from '../../utils/getItemsInEntries';
 import { LINE_COLORS } from '../../constants';
 
-export const SuggestedItemsHistoryPlot = ({ selectedSuggestedItems, dataGroup, useSupplemental }) => {
+export const ItemsHistoryPlot = ({ itemNameInEntry, dataGroup }) => {
     const plotData = [];
     // const dataGroupSortedAsc = getSortedByDate(getSortedByDate(dataGroup, false).slice(0, 200), true)
     const dataGroupSortedAsc = getSortedByDate(dataGroup, true);
 
     dataGroupSortedAsc.forEach((entry) => {
-        const items = getItemsInEntries([entry], useSupplemental);
         const plotDataEntry = {
-            Date: entry.Date
-        }
+            Date: entry.Date,
+            item: entry[itemNameInEntry]
+        };
 
-        items.forEach(item => {
-            const foundItem = _.find(selectedSuggestedItems, ({ number }) => number === item);
-
-            plotDataEntry[item] = foundItem && foundItem.isPlotted ? item : 0;
-        })
-
-        plotData.push(plotDataEntry)
+        plotData.push(plotDataEntry);
     })
-
-    const renderLines = () => selectedSuggestedItems && selectedSuggestedItems.map((si, index) => (<Line type="monotone" key={si.number} dataKey={si.number} stroke={LINE_COLORS[index]} />));
 
     const CustomTooltip = ({ active, payload, label }) => {
         if (active && payload && payload.length) {
-            const items = payload.sort((p1, p2) => p2.dataKey - p1.dataKey)
-            // `'${item.color}'`
-            const content = items.map(item => (<span className='custom-tooltip-span' key={item.dataKey} style={{ color: `${item.color}` }}>{item.dataKey}</span>))
+            const payloadItem = payload[0];
 
             return (
                 <div className="custom-tooltip">
                     <p className="label">
                         <span className='custom-tooltip-span'>Date: {label}</span>
-                        {content}
+                        <span className='custom-tooltip-span' key={payloadItem.dataKey} style={{ color: 'black' }}>{payloadItem.payload.item}</span>
                     </p>
                 </div>
             );
@@ -51,7 +40,7 @@ export const SuggestedItemsHistoryPlot = ({ selectedSuggestedItems, dataGroup, u
             <div className="plot-container overflow-x-scroll ">
                 <div className="plot">
                     <ResponsiveContainer width="100%" height="100%" >
-                        <LineChart
+                        <BarChart
                             width={500}
                             height={300}
                             data={plotData}
@@ -67,9 +56,8 @@ export const SuggestedItemsHistoryPlot = ({ selectedSuggestedItems, dataGroup, u
                             <YAxis />
                             <Tooltip content={<CustomTooltip />} />
                             <Legend />
-
-                            {renderLines()}
-                        </LineChart>
+                            <Bar dataKey="item" fill={LINE_COLORS[4]} />
+                        </BarChart >
                     </ResponsiveContainer>
                 </div>
             </div>

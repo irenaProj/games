@@ -1,33 +1,44 @@
+
+export const GANE_NAMES = {
+    "PB": "PB",
+    "SL": "SL",
+    "OL": "OL",
+    "WF-Mon": "WF-Mon",
+    "WF-Wed": "WF-Wed",
+    "WF-Fri": "WF-Fri",
+    "WF": "WF",
+}
+
 export const GAME_NAME_MAP = {
-    "/": "PB",
-    "/pb": "PB",
-    "/sl": "SL",
-    "/ol": "OL",
-    "/wf-mon": "WF-Mon",
-    "/wf-wed": "WF-Wed",
-    "/wf-fri": "WF-Fri",
-    "/wf": "WF"
+    "/": GANE_NAMES.PB,
+    "/pb": GANE_NAMES.PB,
+    "/sl": GANE_NAMES.SL,
+    "/ol": GANE_NAMES.OL,
+    "/wf-mon": GANE_NAMES["WF-Mon"],
+    "/wf-wed": GANE_NAMES["WF-Wed"],
+    "/wf-fri": GANE_NAMES["WF-Fri"],
+    "/wf": GANE_NAMES.WF
 }
 
 export const GAME_ITEMS = {
-    "PB": 35,
-    "SL": 45,
-    "OL": 47,
-    "WF-Mon": 45,
-    "WF-Wed": 45,
-    "WF-Fri": 45,
-    "WF": 45,
+    [GANE_NAMES.PB]: 35,
+    [GANE_NAMES.SL]: 45,
+    [GANE_NAMES.OL]: 47,
+    [GANE_NAMES["WF-Mon"]]: 45,
+    [GANE_NAMES["WF-Wed"]]: 45,
+    [GANE_NAMES["WF-Fri"]]: 45,
+    [GANE_NAMES.WF]: 45,
 }
 
 export const ITEMS_PER_TICKET = {
-    "/": 7,
-    "/pb": 7,
-    "/sl": 6,
-    "/ol": 7,
-    "/wf-mon": 6,
-    "/wf-wed": 6,
-    "/wf-fri": 6,
-    "/wf": 6
+    [GANE_NAMES.PB]: 7,
+    [GANE_NAMES.PB]: 7,
+    [GANE_NAMES.SL]: 6,
+    [GANE_NAMES.OL]: 7,
+    [GANE_NAMES["WF-Mon"]]: 6,
+    [GANE_NAMES["WF-Wed"]]: 6,
+    [GANE_NAMES["WF-Fri"]]: 6,
+    [GANE_NAMES.WF]: 6
 }
 
 export const LINE_COLORS = [
