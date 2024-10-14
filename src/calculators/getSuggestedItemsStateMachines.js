@@ -1,63 +1,81 @@
 import _ from "lodash";
 
 const CHECK_STATE_MACHINE_COLUMNS = [
-
-    { type: 3, column: "a_000" },
-    { type: 3, column: "a_100" },
-    { type: 3, column: "a_010" },
-    { type: 3, column: "a_001" },
-    { type: 3, column: "a_110" },
-    { type: 3, column: "a_101" },
-    { type: 3, column: "a_011" },
-    { type: 3, column: "a_111" },
-    { type: 4, column: "b_0000" },
-    { type: 4, column: "b_1000" },
-    { type: 4, column: "b_0100" },
-    { type: 4, column: "b_0010" },
-    { type: 4, column: "b_0001" },
-    { type: 4, column: "b_1100" },
-    { type: 4, column: "b_1010" },
-    { type: 4, column: "b_1001" },
-    { type: 4, column: "b_0110" },
-    { type: 4, column: "b_0101" },
-    { type: 4, column: "b_0011" },
-    { type: 4, column: "b_1110" },
-    { type: 4, column: "b_1101" },
-    { type: 4, column: "b_1011" },
-    { type: 4, column: "b_0111" },
-    { type: 4, column: "b_1111" },
-    { type: 5, column: "c_10000" },
-    { type: 5, column: "c_11000" },
-    { type: 5, column: "c_10100" },
-    { type: 5, column: "c_10010" },
-    { type: 5, column: "c_10001" },
-    { type: 5, column: "c_11100" },
-    { type: 5, column: "c_11010" },
-    { type: 5, column: "c_11001" },
-    { type: 5, column: "c_10110" },
-    { type: 5, column: "c_10101" },
-    { type: 5, column: "c_10011" },
-    { type: 5, column: "c_11110" },
-    { type: 5, column: "c_11101" },
-    { type: 5, column: "c_11011" },
-    { type: 5, column: "c_10111" },
-    { type: 5, column: "c_11111" },
-    { type: 5, column: "c_01000" },
-    { type: 5, column: "c_00100" },
-    { type: 5, column: "c_00010" },
-    { type: 5, column: "c_00001" },
-    { type: 5, column: "c_01100" },
-    { type: 5, column: "c_01010" },
-    { type: 5, column: "c_01001" },
-    { type: 5, column: "c_00110" },
-    { type: 5, column: "c_00101" },
-    { type: 5, column: "c_00011" },
-    { type: 5, column: "c_01110" },
-    { type: 5, column: "c_01101" },
-    { type: 5, column: "c_01011" },
-    { type: 5, column: "c_00111" },
-    { type: 5, column: "c_01111" },
+    {
+        type: 3,
+        columns: [
+            "a_000",
+            "a_100",
+            "a_010",
+            "a_001",
+            "a_110",
+            "a_101",
+            "a_011",
+            "a_111"
+        ]
+    }, {
+        type: 4,
+        columns: [
+            "b_0000",
+            "b_1000",
+            "b_0100",
+            "b_0010",
+            "b_0001",
+            "b_1100",
+            "b_1010",
+            "b_1001",
+            "b_0110",
+            "b_0101",
+            "b_0011",
+            "b_1110",
+            "b_1101",
+            "b_1011",
+            "b_0111",
+            "b_1111",
+        ]
+    }, {
+        type: 5,
+        columns: [
+            "c_10000",
+            "c_11000",
+            "c_10100",
+            "c_10010",
+            "c_10001",
+            "c_11100",
+            "c_11010",
+            "c_11001",
+            "c_10110",
+            "c_10101",
+            "c_10011",
+            "c_11110",
+            "c_11101",
+            "c_11011",
+            "c_10111",
+            "c_11111",
+            "c_01000",
+            "c_00100",
+            "c_00010",
+            "c_00001",
+            "c_01100",
+            "c_01010",
+            "c_01001",
+            "c_00110",
+            "c_00101",
+            "c_00011",
+            "c_01110",
+            "c_01101",
+            "c_01011",
+            "c_00111",
+            "c_01111",
+        ]
+    },
 ];
+
+const getItemPreviousCurrentState = ({ numbersStateMachineData, currentType, number }) => {
+    const siPreviousStateMachineData = _.find(numbersStateMachineData[currentType - 1], (stateMachineData => stateMachineData.number === number));
+
+    return siPreviousStateMachineData.currentState;
+}
 
 export const getSuggestedItemsWithStateMachines = ({ markedSuggestedItems, dataStats, settings }) => {
     const { numbersStateMachineData } = dataStats;
@@ -65,42 +83,48 @@ export const getSuggestedItemsWithStateMachines = ({ markedSuggestedItems, dataS
     const markedSuggestedItemsWithStateMachines = markedSuggestedItems.map(si => {
         const siWithStateMachine = { ...si };
 
-        CHECK_STATE_MACHINE_COLUMNS.forEach(column => {
-            const siStateMachineData = _.find(numbersStateMachineData[[column.type]], (stateMachineData => stateMachineData.number === si.number));
-            const currentState = siStateMachineData.currentState;
-            const currentStateLessOne = currentState.slice(0, currentState.length - 1);
-            const currentStateLessOneWithHit = currentStateLessOne + "1";
-            const currentStateLessOneWithNoHit = currentStateLessOne + "0";
+        CHECK_STATE_MACHINE_COLUMNS.forEach(machineType => {
+            const type = machineType.type;
+            const previousState = getItemPreviousCurrentState({ numbersStateMachineData, currentType: type, number: si.number });
+            const currentStateWithHit = previousState.slice(1) + "1";
+            const currentStateWithNoHit = previousState.slice(1) + "0";
 
-            switch (column.column) {
-                case currentStateLessOneWithHit:
-                    siWithStateMachine[column.column] = {
-                        value: siStateMachineData[column.column],
-                        style: {
-                            backgroundColor: "#b8ffb8"
-                        }
-                    };
+            machineType.columns.forEach(column => {
+                const siStateMachineData = _.find(numbersStateMachineData[type], (stateMachineData => stateMachineData.number === si.number));
 
-                    break;
+                switch (column.slice(1)) {
+                    case currentStateWithHit:
+                        siWithStateMachine[column] = {
+                            value: siStateMachineData[column],
+                            style: {
+                                backgroundColor: "#b8ffb8"
+                            }
+                        };
 
-                case currentStateLessOneWithNoHit:
-                    siWithStateMachine[column.column] = {
-                        value: siStateMachineData[column.column],
-                        style: {
-                            backgroundColor: "#ffd8d8"
-                        }
-                    };
-                    break;
+                        break;
 
-                case currentStateLessOneWithHit:
-                default:
-                    siWithStateMachine[column.column] = siStateMachineData[column.column]
+                    case currentStateWithNoHit:
+                        siWithStateMachine[column] = {
+                            value: siStateMachineData[column],
+                            style: {
+                                backgroundColor: "#ffd8d8"
+                            }
+                        };
+                        break;
 
-            }
+                    case currentStateWithHit:
+                    default:
+                        siWithStateMachine[column] = siStateMachineData[column]
+
+                }
+            })
+
+            return siWithStateMachine;
         })
 
         return siWithStateMachine;
-    });
+    })
 
     return markedSuggestedItemsWithStateMachines.sort((ms1, ms2) => ms1.number - ms2.number);
 }
+
