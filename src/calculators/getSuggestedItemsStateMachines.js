@@ -114,7 +114,12 @@ export const getSuggestedItemsWithStateMachines = ({ markedSuggestedItems, dataS
 
                     case currentStateWithHit:
                     default:
-                        siWithStateMachine[column] = siStateMachineData[column]
+                        siWithStateMachine[column] = {
+                            value: siStateMachineData[column],
+                            style: {
+                                backgroundColor: si.Hit ? "#c8defe" : "white"
+                            }
+                        }
 
                 }
             })
