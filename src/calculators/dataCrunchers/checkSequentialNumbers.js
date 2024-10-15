@@ -9,10 +9,16 @@ export const checkSequentialNumbers = (data, useSupplemental) => {
 
         for (let i = 0; i < entryItems.length;) {
             if (i + 2 < entryItems.length && entryItems[i + 1] === entryItems[i] + 1 && entryItems[i + 2] === entryItems[i + 1] + 1) {
-                trippleSequentialNumbers.push([entryItems[i], entryItems[i + 1], entryItems[i + 2]])
+                trippleSequentialNumbers.push({
+                    items: [entryItems[i], entryItems[i + 1], entryItems[i + 2]],
+                    entry: JSON.stringify(entry)
+                })
                 i += 3;
             } else if (i + 1 < entryItems.length && entryItems[i + 1] === entryItems[i] + 1) {
-                coupleSequentialNumbers.push([entryItems[i], entryItems[i + 1]])
+                coupleSequentialNumbers.push({
+                    items: [entryItems[i], entryItems[i + 1]],
+                    entry: JSON.stringify(entry)
+                })
                 i += 2;
             } else {
                 i += 1;

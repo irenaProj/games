@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
@@ -15,7 +15,27 @@ export const Tickets = ({ selectedSuggestedItems, targetEntry, dataStats, settin
     const [ticketsStatsMap, setTicketsStatsMap] = useState({});
     const [itemsPerTicketCustom, setItemsPerTicketCustom] = useState(settings.itemsPerTicket);
     const [occurancesPerSelectedSuggestedItem, setOccurancesPerSelectedSuggestedItem] = useState(0);
-    const [priorityPerSelectedSuggestedItem, setPriorityPerSelectedSuggestedItem] = useState(selectedSuggestedItems.map(si => ({ ...si, itemPriority: ITEM_PRIORITY_TYPES.NORMAL })));
+    const plottedSelectedSuggestedItems = [];
+
+    selectedSuggestedItems.forEach(si => {
+        if (si.isPlotted) {
+            plottedSelectedSuggestedItems.push(si)
+        }
+    })
+
+    const [priorityPerSelectedSuggestedItem, setPriorityPerSelectedSuggestedItem] = useState(plottedSelectedSuggestedItems.map(si => ({ ...si, itemPriority: ITEM_PRIORITY_TYPES.NORMAL })));
+
+    useEffect(() => {
+        const _plottedSelectedSuggestedItems = [];
+
+        selectedSuggestedItems.forEach(si => {
+            if (si.isPlotted) {
+                _plottedSelectedSuggestedItems.push(si)
+            }
+        })
+
+        setPriorityPerSelectedSuggestedItem(_plottedSelectedSuggestedItems.map(si => ({ ...si, itemPriority: ITEM_PRIORITY_TYPES.NORMAL })));
+    }, [selectedSuggestedItems]);
 
     const onTicketsNumberUpdate = ({ target: { value } }) => setTicketsNumber(parseInt(value));
     const onNumbersPerTicketUpdate = ({ target: { value } }) => setItemsPerTicketCustom(parseInt(value));
@@ -38,13 +58,15 @@ export const Tickets = ({ selectedSuggestedItems, targetEntry, dataStats, settin
         event.preventDefault();
 
         const { tickets, ticketsStatsMap } = generateTickets({
-            selectedSuggestedItems, targetEntry, dataStats, settings,
-            itemsPerTicketCustom,
+            selectedSuggestedItems: plottedSelectedSuggestedItems,
+            targetEntry, dataStats, settings,
             dataGroup,
             ticketsSettings: {
                 ticketsNumber,
                 occurancesPerSelectedSuggestedItem,
                 useRelativePriority,
+                priorityPerSelectedSuggestedItem,
+                itemsPerTicketCustom,
             }
         });
 
@@ -53,6 +75,7 @@ export const Tickets = ({ selectedSuggestedItems, targetEntry, dataStats, settin
     }
 
     const renderItemsPriority = (selectedSuggestedItem) => {
+
         return (
             <Col sm="2">
                 <FloatingLabel controlId={`selected-item-priority-${selectedSuggestedItem.number}`} label={`Item ${selectedSuggestedItem.number}`}>
@@ -79,12 +102,6 @@ export const Tickets = ({ selectedSuggestedItems, targetEntry, dataStats, settin
                                     </Form.Text>
                                 </Form.Group>
                             </Col>
-                            <Col sm="5">
-                                <Form.Group className="xs-3" controlId="occurancesPerSelectedSuggestedItem">
-                                    <Form.Label>Number of occurances for each selected suggested item</Form.Label>
-                                    <Form.Control type="number" placeholder="Item occurances #" onChange={onOccurancesPerSelectedSuggestedItemUpdate} />
-                                </Form.Group>
-                            </Col>
                         </Row>
                         <Row>
                             <h6 style={{ textAlign: 'left', margin: '1rem 0 1rem 0' }}>Alternative 1: Set priority for selected items</h6>
@@ -102,6 +119,12 @@ export const Tickets = ({ selectedSuggestedItems, targetEntry, dataStats, settin
                                             onClick={onRelativePriorityUpdate}
                                         />
                                     </Form.Check>
+                                </Form.Group>
+                            </Col>
+                            <Col sm="5">
+                                <Form.Group className="xs-3" controlId="occurancesPerSelectedSuggestedItem">
+                                    <Form.Label>Number of occurances for each selected suggested item</Form.Label>
+                                    <Form.Control type="number" placeholder="Item occurances #" onChange={onOccurancesPerSelectedSuggestedItemUpdate} />
                                 </Form.Group>
                             </Col>
                             <Col sm="3">
