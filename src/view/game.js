@@ -95,6 +95,7 @@ export function Game({ data }) {
                 <Col xs={3}>
                     <DropdownButton id="consecutive-weeks-count" title="Consecutive Weeks Count" >
                         <Dropdown.Item as="button" onClick={() => setConsecutiveWeeksCount(6)}>6</Dropdown.Item>
+                        <Dropdown.Item as="button" onClick={() => setConsecutiveWeeksCount(5)}>5</Dropdown.Item>
                         <Dropdown.Item as="button" onClick={() => setConsecutiveWeeksCount(4)}>4</Dropdown.Item>
                         <Dropdown.Item as="button" onClick={() => setConsecutiveWeeksCount(3)}>3</Dropdown.Item>
                         <Dropdown.Item as="button" onClick={() => setConsecutiveWeeksCount(2)}>2</Dropdown.Item>

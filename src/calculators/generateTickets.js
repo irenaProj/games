@@ -71,6 +71,31 @@ const getLowestAndHighestSelectedItems = (ticketsStatsMap, itemsPerTicketCustom,
     };
 }
 
+const findRepeatedTickets = (tickets, itemsPerTicketCustom) => {
+    const repeatedTickets = [];
+    const ticketsCount = tickets.length;
+
+    for (let i = 0; i < ticketsCount - 1; i += 1) {
+        for (let j = i + 1; j < ticketsCount; j += 1) {
+            let repeated = true;
+
+            for (let m = 0; m < itemsPerTicketCustom && repeated; m += 1) {
+                if (tickets[j].indexOf(tickets[i][m]) < 0) {
+                    repeated = false;
+                }
+            }
+
+            if (repeated) {
+                repeatedTickets.push({
+                    content: JSON.stringify(tickets[i])
+                })
+            }
+        }
+    }
+
+    return repeatedTickets;
+}
+
 const generateUniformDistributionTickets = ({ selectedSuggestedItemsSorted,
     itemsPerTicketCustom,
     ticketsSettings: {
@@ -152,9 +177,10 @@ const generateUniformDistributionTickets = ({ selectedSuggestedItemsSorted,
         }
     }
 
+
     return {
         tickets,
-        ticketsStatsMap
+        ticketsStatsMap,
     };
 }
 
@@ -251,7 +277,8 @@ export const generateTickets = ({ selectedSuggestedItems, targetEntry, dataStats
 
         return {
             tickets: checkedTickets.sort((ch1, ch2) => ch2.hits.length - ch1.hits.length).map((ticket, index) => ({ ...ticket, index: index + 1 })),
-            ticketsStatsMap
+            ticketsStatsMap,
+            repeatedTickets: findRepeatedTickets(tickets, itemsPerTicketCustom)
         };
     }
 
@@ -260,6 +287,7 @@ export const generateTickets = ({ selectedSuggestedItems, targetEntry, dataStats
             index: index + 1,
             ...ticket,
         })),
-        ticketsStatsMap
+        ticketsStatsMap,
+        repeatedTickets: findRepeatedTickets(tickets, itemsPerTicketCustom)
     };
 }
