@@ -72,11 +72,13 @@ const getLowestAndHighestSelectedItems = (ticketsStatsMap, itemsPerTicketCustom,
 }
 
 const findRepeatedTickets = (tickets, itemsPerTicketCustom) => {
-    const repeatedTickets = [];
+    const nonRepeatedTickets = [];
     const ticketsCount = tickets.length;
 
     for (let i = 0; i < ticketsCount - 1; i += 1) {
-        for (let j = i + 1; j < ticketsCount; j += 1) {
+        let uniqueTicket = true;
+
+        for (let j = i + 1; j < ticketsCount && uniqueTicket; j += 1) {
             let repeated = true;
 
             for (let m = 0; m < itemsPerTicketCustom && repeated; m += 1) {
@@ -86,14 +88,17 @@ const findRepeatedTickets = (tickets, itemsPerTicketCustom) => {
             }
 
             if (repeated) {
-                repeatedTickets.push({
-                    content: JSON.stringify(tickets[i])
-                })
+                uniqueTicket = false;
             }
         }
+
+        if (uniqueTicket) {
+            nonRepeatedTickets.push(tickets[i])
+        }
+
     }
 
-    return repeatedTickets;
+    return nonRepeatedTickets;
 }
 
 const generateUniformDistributionTickets = ({ selectedSuggestedItemsSorted,
@@ -269,25 +274,26 @@ export const generateTickets = ({ selectedSuggestedItems, targetEntry, dataStats
         selectedItemsRequiredOccuranceMap
     });
 
+    const nonRepeatedTickets = findRepeatedTickets(tickets, itemsPerTicketCustom)
+
     if (targetEntry) {
-        const checkedTickets = tickets.map((ticket, index) => ({
+        const checkedTickets = nonRepeatedTickets.map((ticket, index) => ({
             hits: JSON.stringify(checkTicket(ticket, targetEntry, useSupplemental)),
             ...ticket,
         }));
 
+
         return {
             tickets: checkedTickets.sort((ch1, ch2) => ch2.hits.length - ch1.hits.length).map((ticket, index) => ({ ...ticket, index: index + 1 })),
             ticketsStatsMap,
-            repeatedTickets: findRepeatedTickets(tickets, itemsPerTicketCustom)
         };
     }
 
     return {
-        tickets: tickets.map((ticket, index) => ({
+        tickets: nonRepeatedTickets.map((ticket, index) => ({
             index: index + 1,
             ...ticket,
         })),
         ticketsStatsMap,
-        repeatedTickets: findRepeatedTickets(tickets, itemsPerTicketCustom)
     };
 }

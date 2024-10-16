@@ -10,7 +10,6 @@ import { FloatingLabel } from "react-bootstrap";
 
 export const Tickets = ({ selectedSuggestedItems, targetEntry, dataStats, settings, dataGroup }) => {
     const [tickets, setTickets] = useState([]);
-    const [repeatedTickets, setRepeatedTickets] = useState([]);
     const [ticketsNumber, setTicketsNumber] = useState(0);
     const [useRelativePriority, setUseRelativePriority] = useState(false);
     const [ticketsStatsMap, setTicketsStatsMap] = useState({});
@@ -58,7 +57,7 @@ export const Tickets = ({ selectedSuggestedItems, targetEntry, dataStats, settin
         // Do not refresh page
         event.preventDefault();
 
-        const { tickets, ticketsStatsMap, repeatedTickets } = generateTickets({
+        const { tickets, ticketsStatsMap } = generateTickets({
             selectedSuggestedItems: plottedSelectedSuggestedItems,
             targetEntry, dataStats, settings,
             dataGroup,
@@ -73,7 +72,6 @@ export const Tickets = ({ selectedSuggestedItems, targetEntry, dataStats, settin
 
         setTickets(tickets);
         setTicketsStatsMap(ticketsStatsMap);
-        setRepeatedTickets(repeatedTickets)
     }
 
     const renderItemsPriority = (selectedSuggestedItem) => {
@@ -148,10 +146,6 @@ export const Tickets = ({ selectedSuggestedItems, targetEntry, dataStats, settin
                     "Number": key,
                     "Number of tickets": ticketsStatsMap[key]
                 }))} />
-            </Row>
-            <Row>
-                <p>Repeated tickets: {repeatedTickets.length} </p>
-                <TabularData data={repeatedTickets} />
             </Row>
             <Row>
                 <TabularData data={tickets} />
