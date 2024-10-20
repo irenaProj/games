@@ -1,6 +1,7 @@
 import _ from "lodash";
 import { getItemsInEntries } from "../utils/getItemsInEntries";
 import { getSortedByDate } from "../utils/getSortedByDate";
+import { sleep } from "../utils/sleep";
 
 const checkTicket = (ticket, targetEntry, useSupplemental) => {
     if (!targetEntry || !ticket) {
@@ -101,7 +102,7 @@ const findRepeatedTickets = (tickets, itemsPerTicketCustom) => {
     return nonRepeatedTickets;
 }
 
-const generateUniformDistributionTickets = ({ selectedSuggestedItemsSorted,
+const generateUniformDistributionTickets = async ({ selectedSuggestedItemsSorted,
     itemsPerTicketCustom,
     ticketsSettings: {
         ticketsNumber,
@@ -113,7 +114,8 @@ const generateUniformDistributionTickets = ({ selectedSuggestedItemsSorted,
     const tickets = [];
     const randomSelectionCount = Math.max(1, Math.floor(ticketsNumber / 10));
     const allCombinationsCount = allCombinations.length;
-    const usedCombinationsIndex = []
+    const usedCombinationsIndex = [];
+    const delay = 500;
 
     selectedSuggestedItemsSorted.forEach(item => {
         ticketsStatsMap[item] = 0;
@@ -132,6 +134,9 @@ const generateUniformDistributionTickets = ({ selectedSuggestedItemsSorted,
 
             tickets.push(combination)
             i += 1;
+
+            await sleep(delay)
+            console.log(`${i} tickets ready`)
         }
     }
 
@@ -164,6 +169,7 @@ const generateUniformDistributionTickets = ({ selectedSuggestedItemsSorted,
                 }
 
                 tickets.push(combination);
+
                 let isOccurancesPerItemConditionSatisfied = true;
 
                 Object.keys(ticketsStatsMap).forEach(key => {
@@ -178,6 +184,9 @@ const generateUniformDistributionTickets = ({ selectedSuggestedItemsSorted,
                 } else {
                     i += 1;
                 }
+
+                console.log(`${i} tickets ready ${new Date().toISOString()} `);
+                await sleep(delay)
             }
         }
     }
@@ -236,7 +245,7 @@ const buildRelativePrioritySettingsByMannualSetting = ({
     return selectedItemsRequiredOccuranceMap;
 }
 
-export const generateTickets = ({ selectedSuggestedItems, targetEntry, dataStats, settings,
+export const generateTickets = async ({ selectedSuggestedItems, targetEntry, dataStats, settings,
     dataGroup,
     ticketsSettings: {
         ticketsNumber,
@@ -265,7 +274,7 @@ export const generateTickets = ({ selectedSuggestedItems, targetEntry, dataStats
     const {
         tickets,
         ticketsStatsMap
-    } = generateUniformDistributionTickets({
+    } = await generateUniformDistributionTickets({
         selectedSuggestedItemsSorted, itemsPerTicketCustom, ticketsSettings: {
             ticketsNumber,
             occurancesPerSelectedSuggestedItem

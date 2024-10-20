@@ -53,11 +53,11 @@ export const Tickets = ({ selectedSuggestedItems, targetEntry, dataStats, settin
         setPriorityPerSelectedSuggestedItem(updatedList);
     }
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         // Do not refresh page
         event.preventDefault();
 
-        const { tickets, ticketsStatsMap } = generateTickets({
+        const { tickets, ticketsStatsMap } = await generateTickets({
             selectedSuggestedItems: plottedSelectedSuggestedItems,
             targetEntry, dataStats, settings,
             dataGroup,
