@@ -30,7 +30,7 @@ export function Game({ data }) {
     // Numbers from the last 'consecutiveWeeksCount' entries are examined for consecutive frequency
     const [consecutiveWeeksCount, setConsecutiveWeeksCount] = useState(4);
     const [minItem, setMinItem] = useState(1);
-    const [maxItem, setMaxItem] = useState(gameItemsCount);
+    const [maxItem, setMaxItem] = useState(20);
     const [useSupplemental, setUseSupplemental] = useState(gameName !== "PB");
     const [entriesInStateMachineCount, setEntriesInStateMachineCount] = useState(3);
     const settings = {

@@ -47,7 +47,7 @@ const combinationsRecursive = (collection, combinationLength) => {
     return result;
 }
 
-const getLowestAndHighestSelectedItems = (ticketsStatsMap, itemsPerTicketCustom, selectedItemsRequiredOccuranceMap) => {
+const getLowestAndHighestSelectedItems = ({ ticketsStatsMap, itemsPerTicketCustom, selectedItemsRequiredOccuranceMap, skipItem }) => {
     // Transform map into array sorted by the number the item appears in tickets, ascending
     const arr = [];
 
@@ -66,9 +66,26 @@ const getLowestAndHighestSelectedItems = (ticketsStatsMap, itemsPerTicketCustom,
         }
     })
 
+    let lowestNumbers = arrSorted.slice(0, lowestItemsCount).map(i => parseInt(i.number));
+    let highestNumbers = arrNegatives.slice(-highestItemsCount).map(i => parseInt(i.number))
+
+    if (skipItem) {
+        let itemIndex = lowestNumbers.indexOf(skipItem);
+
+        if (itemIndex > -1) {
+            lowestNumbers.splice(itemIndex, 1)
+        }
+
+        itemIndex = highestNumbers.indexOf(skipItem);
+
+        if (itemIndex > -1) {
+            highestNumbers.splice(itemIndex, 1)
+        }
+    }
+
     return {
-        lowestNumbers: arrSorted.slice(0, lowestItemsCount).map(i => parseInt(i.number)),
-        highestNumbers: arrNegatives.slice(-highestItemsCount).map(i => parseInt(i.number))
+        lowestNumbers,
+        highestNumbers
     };
 }
 
@@ -102,52 +119,39 @@ const findRepeatedTickets = (tickets, itemsPerTicketCustom) => {
     return nonRepeatedTickets;
 }
 
-const generateUniformDistributionTickets = async ({ selectedSuggestedItemsSorted,
+const selectTicketsWithFirstItem = async ({
+    item,
+    ticketsCountPerFirstItem,
+    ticketsStatsMap,
     itemsPerTicketCustom,
-    ticketsSettings: {
-        ticketsNumber,
-    },
+    selectedItemsRequiredOccuranceMap,
     allCombinations,
-    selectedItemsRequiredOccuranceMap
+    itemCombinationsInfo,
+    usedCombinationsIndex,
+    tickets,
+    delay
 }) => {
-    const ticketsStatsMap = {};
-    const tickets = [];
-    const randomSelectionCount = Math.max(1, Math.floor(ticketsNumber / 10));
-    const allCombinationsCount = allCombinations.length;
-    const usedCombinationsIndex = [];
-    const delay = 500;
+    const { firstIndex, lastIndex, count } = itemCombinationsInfo;
+    const itemTicketsRequired = Math.min(selectedItemsRequiredOccuranceMap[item] - ticketsStatsMap[item], ticketsCountPerFirstItem);
+    let usedCombinationsWithFirstItem = 0;
 
-    selectedSuggestedItemsSorted.forEach(item => {
-        ticketsStatsMap[item] = 0;
-    });
-
-    // Randomly select a portion of requested tickets
-    for (let i = 0; i < randomSelectionCount;) {
-        const randomCombinationIndex = Math.floor(Math.random() * allCombinationsCount);
-
-        if (usedCombinationsIndex.indexOf(randomCombinationIndex) < 0) {
-            const combination = allCombinations[randomCombinationIndex];
-
-            for (let k = 0; k < itemsPerTicketCustom; k += 1) {
-                ticketsStatsMap[combination[k]] += 1;
-            }
-
-            tickets.push(combination)
-            i += 1;
-
-            await sleep(delay)
-            console.log(`${i} tickets ready`)
-        }
+    if (itemTicketsRequired <= 0) {
+        return;
     }
 
-    // For the rest of the tickets: find the lowest used numbers and use them
-    for (let i = randomSelectionCount; i < ticketsNumber;) {
-        const { lowestNumbers, highestNumbers } = getLowestAndHighestSelectedItems(ticketsStatsMap, itemsPerTicketCustom, selectedItemsRequiredOccuranceMap);
+    for (let i = 0; i < itemTicketsRequired && usedCombinationsWithFirstItem < count;) {
+        const { lowestNumbers, highestNumbers } = getLowestAndHighestSelectedItems({
+            ticketsStatsMap,
+            itemsPerTicketCustom,
+            selectedItemsRequiredOccuranceMap,
+            skipItem: item
+        });
 
-        const randomCombinationIndex = Math.floor(Math.random() * allCombinationsCount);
+        const combinationIndex = firstIndex + Math.floor(Math.random() * count)
+        console.log(`firstIndex ${firstIndex}; lastIndex=${lastIndex} index ${combinationIndex} `);
 
-        if (usedCombinationsIndex.indexOf(randomCombinationIndex) < 0) {
-            const combination = allCombinations[randomCombinationIndex];
+        if (usedCombinationsIndex.indexOf(combinationIndex) < 0) {
+            const combination = allCombinations[combinationIndex];
             let isContainsRequiredNumbers = true;
             let skipsOverusedNumbers = true;
 
@@ -180,15 +184,76 @@ const generateUniformDistributionTickets = async ({ selectedSuggestedItemsSorted
 
                 if (isOccurancesPerItemConditionSatisfied) {
                     // Got enough occurances for each number, done
-                    i = ticketsNumber;
+                    i = itemTicketsRequired;
                 } else {
                     i += 1;
+                    usedCombinationsWithFirstItem += 1;
                 }
 
                 console.log(`${i} tickets ready ${new Date().toISOString()} `);
                 await sleep(delay)
             }
         }
+    }
+}
+
+
+const generateUniformDistributionTickets = async ({
+    selectedSuggestedItemsSorted,
+    itemsPerTicketCustom,
+    allCombinations,
+    allCombinationsInfo,
+    selectedItemsRequiredOccuranceMap,
+    ticketsCountPerFirstItem
+}) => {
+    const ticketsStatsMap = {};
+    const tickets = [];
+    const allCombinationsCount = allCombinations.length;
+    const usedCombinationsIndex = [];
+    const delay = 500;
+
+    selectedSuggestedItemsSorted.forEach(item => {
+        ticketsStatsMap[item] = 0;
+    });
+
+    const initialSelectionCount = Object.keys(allCombinationsInfo.itemsMap).reduce((total, key) => {
+        // Sum up the number of tickets where the first number is repeated less than 10 times - latest tickets in allCombinations
+        const itemCount = allCombinationsInfo.itemsMap[key].count;
+
+        return total + (itemCount < 10 ? itemCount : 0);
+    }, 0);
+
+    // Select the tickets where the first number is repeated less than 10 times - latest tickets in allCombinations
+    for (let i = 1; i <= initialSelectionCount; i += 1) {
+        const index = allCombinationsCount - i;
+        console.log(`index ${index}`);
+        const combination = allCombinations[index];
+
+        for (let k = 0; k < itemsPerTicketCustom; k += 1) {
+            ticketsStatsMap[combination[k]] += 1;
+        }
+
+        tickets.push(combination)
+        console.log(`${i} tickets ready`)
+    }
+
+    // For the rest of the tickets: starting with the lowest selected item, select the
+    // required number of tickets where the selected item is the first item
+    for (let i = 0; i < selectedSuggestedItemsSorted.length; i += 1) {
+        const item = selectedSuggestedItemsSorted[i];
+
+        await selectTicketsWithFirstItem({
+            item,
+            ticketsCountPerFirstItem,
+            ticketsStatsMap,
+            itemsPerTicketCustom,
+            selectedItemsRequiredOccuranceMap,
+            allCombinations,
+            itemCombinationsInfo: allCombinationsInfo.itemsMap[item],
+            usedCombinationsIndex,
+            tickets,
+            delay
+        });
     }
 
 
@@ -197,6 +262,8 @@ const generateUniformDistributionTickets = async ({ selectedSuggestedItemsSorted
         ticketsStatsMap,
     };
 }
+
+
 
 const buildPrioritySettingsByRelativePriority = ({
     selectedSuggestedItems,
@@ -245,6 +312,48 @@ const buildRelativePrioritySettingsByMannualSetting = ({
     return selectedItemsRequiredOccuranceMap;
 }
 
+const getAllCombinationsInfo = ({ allCombinations, selectedSuggestedItemsSorted }) => {
+    const combinationsCount = allCombinations.length;
+    const itemsCount = selectedSuggestedItemsSorted.length;
+    const allCombinationsInfo = {
+        combinationsCount,
+        itemsCount,
+        itemsMap: {}
+    };
+    let itemIndex = 0;
+    const itemsMap = allCombinationsInfo.itemsMap;
+
+    for (let i = 0; i < combinationsCount && itemIndex < itemsCount;) {
+        const item = selectedSuggestedItemsSorted[itemIndex];
+
+        itemsMap[item] = {
+            firstIndex: i
+        };
+
+        while (i < combinationsCount && allCombinations[i][0] === item) {
+            i += 1;
+        }
+
+        itemsMap[item].lastIndex = i - 1;
+        itemsMap[item].count = i - itemsMap[item].firstIndex;
+        itemIndex += 1;
+    }
+
+
+    return allCombinationsInfo;
+}
+
+/**
+ * Get the number of ticket per each first number
+ * 
+ * @param {*} param0 
+ */
+const calculateTicketsCountPerDistinctFirstItem = ({ selectedSuggestedItemsSorted, ticketsNumber, itemsPerTicketCustom }) => {
+    const firsItemsCount = selectedSuggestedItemsSorted.length - itemsPerTicketCustom + 1;
+
+    return Math.round(ticketsNumber / firsItemsCount)
+}
+
 export const generateTickets = async ({ selectedSuggestedItems, targetEntry, dataStats, settings,
     dataGroup,
     ticketsSettings: {
@@ -270,17 +379,22 @@ export const generateTickets = async ({ selectedSuggestedItems, targetEntry, dat
         priorityPerSelectedSuggestedItem,
         itemsPerTicketCustom
     })
+    const allCombinationsInfo = getAllCombinationsInfo({
+        allCombinations,
+        selectedSuggestedItemsSorted,
+    });
+    const ticketsCountPerFirstItem = calculateTicketsCountPerDistinctFirstItem({ selectedSuggestedItemsSorted, ticketsNumber, itemsPerTicketCustom });
 
     const {
         tickets,
         ticketsStatsMap
     } = await generateUniformDistributionTickets({
-        selectedSuggestedItemsSorted, itemsPerTicketCustom, ticketsSettings: {
-            ticketsNumber,
-            occurancesPerSelectedSuggestedItem
-        },
+        selectedSuggestedItemsSorted,
+        itemsPerTicketCustom,
         allCombinations,
-        selectedItemsRequiredOccuranceMap
+        allCombinationsInfo,
+        selectedItemsRequiredOccuranceMap,
+        ticketsCountPerFirstItem
     });
 
     const nonRepeatedTickets = findRepeatedTickets(tickets, itemsPerTicketCustom)

@@ -1,0 +1,98 @@
+const generateUniformDistributionTickets = async ({ selectedSuggestedItemsSorted,
+    itemsPerTicketCustom,
+    ticketsSettings: {
+        ticketsNumber,
+    },
+    allCombinations,
+    selectedItemsRequiredOccuranceMap
+}) => {
+    const ticketsStatsMap = {};
+    const tickets = [];
+    const randomSelectionCount = Math.max(1, Math.floor(ticketsNumber / 10));
+    const allCombinationsCount = allCombinations.length;
+    const usedCombinationsIndex = [];
+    const delay = 500;
+
+    selectedSuggestedItemsSorted.forEach(item => {
+        ticketsStatsMap[item] = 0;
+    });
+
+    // Randomly select a portion of requested tickets
+    for (let i = 0; i < randomSelectionCount;) {
+        const randomCombinationIndex = Math.floor(Math.random() * allCombinationsCount);
+        console.log(`total ${allCombinationsCount} index ${randomCombinationIndex} `);
+
+        if (usedCombinationsIndex.indexOf(randomCombinationIndex) < 0) {
+            const combination = allCombinations[randomCombinationIndex];
+
+            for (let k = 0; k < itemsPerTicketCustom; k += 1) {
+                ticketsStatsMap[combination[k]] += 1;
+            }
+
+            tickets.push(combination)
+            i += 1;
+
+            await sleep(delay)
+            console.log(`${i} tickets ready`)
+        }
+    }
+
+    // For the rest of the tickets: find the lowest used numbers and use them
+    for (let i = randomSelectionCount; i < ticketsNumber;) {
+        const { lowestNumbers, highestNumbers } = getLowestAndHighestSelectedItems(ticketsStatsMap, itemsPerTicketCustom, selectedItemsRequiredOccuranceMap);
+
+        const randomCombinationIndex = Math.floor(Math.random() * allCombinationsCount);
+        console.log(`total ${allCombinationsCount} index ${randomCombinationIndex} `);
+
+
+        if (usedCombinationsIndex.indexOf(randomCombinationIndex) < 0) {
+            const combination = allCombinations[randomCombinationIndex];
+            let isContainsRequiredNumbers = true;
+            let skipsOverusedNumbers = true;
+
+            lowestNumbers.forEach(number => {
+                if (combination.indexOf(number) < 0) {
+                    isContainsRequiredNumbers = false;
+                }
+            });
+
+            highestNumbers.forEach(number => {
+                if (combination.indexOf(number) > -1) {
+                    skipsOverusedNumbers = false;
+                }
+            })
+
+            if (isContainsRequiredNumbers && skipsOverusedNumbers) {
+                for (let k = 0; k < itemsPerTicketCustom; k += 1) {
+                    ticketsStatsMap[combination[k]] += 1;
+                }
+
+                tickets.push(combination);
+
+                let isOccurancesPerItemConditionSatisfied = true;
+
+                Object.keys(ticketsStatsMap).forEach(key => {
+                    if (ticketsStatsMap[key] < selectedItemsRequiredOccuranceMap[key]) {
+                        isOccurancesPerItemConditionSatisfied = false;
+                    }
+                })
+
+                if (isOccurancesPerItemConditionSatisfied) {
+                    // Got enough occurances for each number, done
+                    i = ticketsNumber;
+                } else {
+                    i += 1;
+                }
+
+                console.log(`${i} tickets ready ${new Date().toISOString()} `);
+                await sleep(delay)
+            }
+        }
+    }
+
+
+    return {
+        tickets,
+        ticketsStatsMap,
+    };
+}
