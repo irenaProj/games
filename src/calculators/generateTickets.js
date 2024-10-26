@@ -192,33 +192,19 @@ const generateUniformDistributionTickets = async ({
     allCombinations,
     allCombinationsInfo,
     selectedItemsRequiredOccuranceMap,
-    ticketsCountPerFirstItem,
-    ticketsNumber
+    ticketsCountsPerItemInfo,
+    ticketsNumber,
 }) => {
     const ticketsStatsMap = {};
     const tickets = [];
     const allCombinationsCount = allCombinations.length;
     const usedCombinationsIndex = [];
-    const delay = 500;
-    const firstItems = []
+    const delay = 200;
+    const {firstItems, initialSelectionCount, ticketsCountPerFirstItemMap} = ticketsCountsPerItemInfo
 
     selectedSuggestedItemsSorted.forEach(item => {
         ticketsStatsMap[item] = 0;
     });
-
-    const initialSelectionCount = Object.keys(allCombinationsInfo.itemsMap).reduce((total, key) => {
-        // Sum up the number of tickets where the first number is repeated less than 10 times - latest tickets in allCombinations
-        const itemCount = allCombinationsInfo.itemsMap[key].count;
-
-        if (itemCount < 10) {
-            
-            return total + itemCount;
-        } 
-        
-        firstItems.push(key);
-
-        return total;
-    }, 0);
 
     // Select the tickets where the first number is repeated less than 10 times - latest tickets in allCombinations
     for (let i = 1; i <= initialSelectionCount; i += 1) {
@@ -241,7 +227,7 @@ const generateUniformDistributionTickets = async ({
 
         await selectTicketsWithFirstItem({
             item,
-            ticketsCountPerFirstItem,
+            ticketsCountPerFirstItem: ticketsCountPerFirstItemMap[item],
             ticketsStatsMap,
             itemsPerTicketCustom,
             selectedItemsRequiredOccuranceMap,
@@ -293,7 +279,7 @@ const buildRelativePrioritySettingsByMannualSetting = ({
     selectedSuggestedItems,
     ticketsNumber,
     priorityPerSelectedSuggestedItem,
-    itemsPerTicketCustom
+    itemsPerTicketCustom,
 }) => {
     const selectedSuggestedItemsCount = selectedSuggestedItems.length;
     const minTicketsCount = selectedSuggestedItemsCount / itemsPerTicketCustom;
@@ -308,6 +294,46 @@ const buildRelativePrioritySettingsByMannualSetting = ({
     })
 
     return selectedItemsRequiredOccuranceMap;
+}
+
+const buildTicketsNumbersForFirstItems = ({
+    allCombinationsInfo, 
+    priorityPerSelectedSuggestedItem, 
+    selectedSuggestedItemsSorted,
+    ticketsNumber,
+    itemsPerTicketCustom
+}) => {
+    const firstItems = [];
+    const ticketsCountPerFirstItemMap = {};
+
+    const initialSelectionCount = Object.keys(allCombinationsInfo.itemsMap).reduce((total, key) => {
+        // Sum up the number of tickets where the first number is repeated less than 10 times - latest tickets in allCombinations
+        const itemCount = allCombinationsInfo.itemsMap[key].count;
+
+        if (itemCount < 10) {
+            
+            return total + itemCount;
+        } 
+        
+        firstItems.push(parseInt(key));
+
+        return total;
+    }, 0);
+
+    const ticketsCountPerFirstItemNoPriority = calculateTicketsCountPerDistinctFirstItem({ selectedSuggestedItemsSorted, ticketsNumber, itemsPerTicketCustom });
+
+    firstItems.forEach(item => {
+        const itemInfo = priorityPerSelectedSuggestedItem.find(p => p.number === item);
+
+        ticketsCountPerFirstItemMap[item] = itemInfo.itemPriority * ticketsCountPerFirstItemNoPriority;
+    })
+
+    return {
+        initialSelectionCount,
+        firstItems,
+        ticketsCountPerFirstItemMap
+
+    }
 }
 
 const getAllCombinationsInfo = ({ allCombinations, selectedSuggestedItemsSorted }) => {
@@ -381,7 +407,13 @@ export const generateTickets = async ({ selectedSuggestedItems, targetEntry, dat
         allCombinations,
         selectedSuggestedItemsSorted,
     });
-    const ticketsCountPerFirstItem = calculateTicketsCountPerDistinctFirstItem({ selectedSuggestedItemsSorted, ticketsNumber, itemsPerTicketCustom });
+    const ticketsCountsPerItemInfo = buildTicketsNumbersForFirstItems({
+        allCombinationsInfo, 
+        priorityPerSelectedSuggestedItem, 
+        selectedSuggestedItemsSorted,
+        ticketsNumber,
+        itemsPerTicketCustom
+    })
 
     const {
         tickets,
@@ -392,8 +424,8 @@ export const generateTickets = async ({ selectedSuggestedItems, targetEntry, dat
         allCombinations,
         allCombinationsInfo,
         selectedItemsRequiredOccuranceMap,
-        ticketsCountPerFirstItem,
-        ticketsNumber
+        ticketsCountsPerItemInfo,
+        ticketsNumber,
     });
 
     const nonRepeatedTickets = findRepeatedTickets(tickets, itemsPerTicketCustom)
