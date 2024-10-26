@@ -71,7 +71,7 @@ const getLowestAndHighestSelectedItems = ({ ticketsStatsMap, itemsPerTicketCusto
 
     return {
         lowestNumbers: arrSorted.slice(0, lowestItemsCount).map(i => parseInt(i.number)),
-        highestNumbers:arrNegatives.slice(-highestItemsCount).map(i => parseInt(i.number))
+        highestNumbers: arrNegatives.slice(-highestItemsCount).map(i => parseInt(i.number))
     };
 }
 
@@ -133,7 +133,7 @@ const selectTicketsWithFirstItem = async ({
             itemsPerTicketCustom,
             selectedItemsRequiredOccuranceMap,
             thresholdItem: item
-        }) : { lowestNumbers : [], highestNumbers: [] };
+        }) : { lowestNumbers: [], highestNumbers: [] };
 
         const combinationIndex = firstIndex + Math.floor(Math.random() * count)
         console.log(`firstIndex ${firstIndex}; lastIndex=${lastIndex} index ${combinationIndex} `);
@@ -200,7 +200,7 @@ const generateUniformDistributionTickets = async ({
     const allCombinationsCount = allCombinations.length;
     const usedCombinationsIndex = [];
     const delay = 200;
-    const {firstItems, initialSelectionCount, ticketsCountPerFirstItemMap} = ticketsCountsPerItemInfo
+    const { firstItems, initialSelectionCount, ticketsCountPerFirstItemMap } = ticketsCountsPerItemInfo
 
     selectedSuggestedItemsSorted.forEach(item => {
         ticketsStatsMap[item] = 0;
@@ -297,30 +297,34 @@ const buildRelativePrioritySettingsByMannualSetting = ({
 }
 
 const buildTicketsNumbersForFirstItems = ({
-    allCombinationsInfo, 
-    priorityPerSelectedSuggestedItem, 
+    allCombinationsInfo,
+    priorityPerSelectedSuggestedItem,
     selectedSuggestedItemsSorted,
     ticketsNumber,
-    itemsPerTicketCustom
+    itemsPerTicketCustom,
+    highestFirstItem
 }) => {
     const firstItems = [];
     const ticketsCountPerFirstItemMap = {};
 
     const initialSelectionCount = Object.keys(allCombinationsInfo.itemsMap).reduce((total, key) => {
         // Sum up the number of tickets where the first number is repeated less than 10 times - latest tickets in allCombinations
-        const itemCount = allCombinationsInfo.itemsMap[key].count;
 
-        if (itemCount < 10) {
-            
-            return total + itemCount;
-        } 
-        
-        firstItems.push(parseInt(key));
+        if (key <= highestFirstItem) {
+            const itemCount = allCombinationsInfo.itemsMap[key].count;
+
+            if (itemCount < 10) {
+
+                return total + itemCount;
+            }
+
+            firstItems.push(parseInt(key));
+        }
 
         return total;
     }, 0);
 
-    const ticketsCountPerFirstItemNoPriority = calculateTicketsCountPerDistinctFirstItem({ selectedSuggestedItemsSorted, ticketsNumber, itemsPerTicketCustom });
+    const ticketsCountPerFirstItemNoPriority = calculateTicketsCountPerDistinctFirstItem({  ticketsNumber, firstItems});
 
     firstItems.forEach(item => {
         const itemInfo = priorityPerSelectedSuggestedItem.find(p => p.number === item);
@@ -372,8 +376,8 @@ const getAllCombinationsInfo = ({ allCombinations, selectedSuggestedItemsSorted 
  * 
  * @param {*} param0 
  */
-const calculateTicketsCountPerDistinctFirstItem = ({ selectedSuggestedItemsSorted, ticketsNumber, itemsPerTicketCustom }) => {
-    const firsItemsCount = selectedSuggestedItemsSorted.length - itemsPerTicketCustom + 1;
+const calculateTicketsCountPerDistinctFirstItem = ({  ticketsNumber, firstItems }) => {
+    const firsItemsCount = firstItems.length;
 
     return Math.round(ticketsNumber / firsItemsCount)
 }
@@ -386,6 +390,7 @@ export const generateTickets = async ({ selectedSuggestedItems, targetEntry, dat
         useRelativePriority,
         priorityPerSelectedSuggestedItem,
         itemsPerTicketCustom,
+        highestFirstItem
     } }) => {
     const {
         useSupplemental
@@ -408,11 +413,12 @@ export const generateTickets = async ({ selectedSuggestedItems, targetEntry, dat
         selectedSuggestedItemsSorted,
     });
     const ticketsCountsPerItemInfo = buildTicketsNumbersForFirstItems({
-        allCombinationsInfo, 
-        priorityPerSelectedSuggestedItem, 
+        allCombinationsInfo,
+        priorityPerSelectedSuggestedItem,
         selectedSuggestedItemsSorted,
         ticketsNumber,
-        itemsPerTicketCustom
+        itemsPerTicketCustom,
+        highestFirstItem
     })
 
     const {

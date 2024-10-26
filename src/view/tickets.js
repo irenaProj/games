@@ -6,7 +6,7 @@ import Form from 'react-bootstrap/Form';
 import { generateTickets } from "../calculators/generateTickets";
 import { TabularData } from "./tabularData";
 import { ITEM_PRIORITY_TYPES } from "../constants";
-import { FloatingLabel } from "react-bootstrap";
+import {  FloatingLabel } from "react-bootstrap";
 
 export const Tickets = ({ selectedSuggestedItems, targetEntry, dataStats, settings, dataGroup }) => {
     const [tickets, setTickets] = useState([]);
@@ -15,6 +15,7 @@ export const Tickets = ({ selectedSuggestedItems, targetEntry, dataStats, settin
     const [ticketsStatsMap, setTicketsStatsMap] = useState({});
     const [itemsPerTicketCustom, setItemsPerTicketCustom] = useState(settings.itemsPerTicket);
     const [occurancesPerSelectedSuggestedItem, setOccurancesPerSelectedSuggestedItem] = useState(0);
+    const [highestFirstItem, setHighestFirstItem] = useState(selectedSuggestedItems[0].number);
     const plottedSelectedSuggestedItems = [];
 
     selectedSuggestedItems.forEach(si => {
@@ -39,6 +40,7 @@ export const Tickets = ({ selectedSuggestedItems, targetEntry, dataStats, settin
 
     const onTicketsNumberUpdate = ({ target: { value } }) => setTicketsNumber(parseInt(value));
     const onNumbersPerTicketUpdate = ({ target: { value } }) => setItemsPerTicketCustom(parseInt(value));
+    const oHighestFirstItemUpdate = ({ target: { value } }) => setHighestFirstItem(parseInt(value));
     const onRelativePriorityUpdate = () => setUseRelativePriority(!useRelativePriority);
     const onOccurancesPerSelectedSuggestedItemUpdate = ({ target: { value } }) => setOccurancesPerSelectedSuggestedItem(parseInt(value));
     const onPriorityPerSelectedSuggestedItemUpdate = (updatedItem) => {
@@ -67,6 +69,7 @@ export const Tickets = ({ selectedSuggestedItems, targetEntry, dataStats, settin
                 useRelativePriority,
                 priorityPerSelectedSuggestedItem,
                 itemsPerTicketCustom,
+                highestFirstItem
             }
         });
 
@@ -75,7 +78,6 @@ export const Tickets = ({ selectedSuggestedItems, targetEntry, dataStats, settin
     }
 
     const renderItemsPriority = (selectedSuggestedItem) => {
-
         return (
             <Col sm="2">
                 <FloatingLabel controlId={`selected-item-priority-${selectedSuggestedItem.number}`} label={`Item ${selectedSuggestedItem.number}`}>
@@ -99,6 +101,18 @@ export const Tickets = ({ selectedSuggestedItems, targetEntry, dataStats, settin
                                     <Form.Control type="number" placeholder="Tickets #" onChange={onTicketsNumberUpdate} />
                                     <Form.Text className="text-muted">
                                         Total number of generated tickets
+                                    </Form.Text>
+                                </Form.Group>
+                            </Col>
+                            <Col sm="3">
+                                <Form.Group className="xs-3" controlId="highestFirstItem">
+                                    <Form.Label>Highest first number</Form.Label>
+                                    <Form.Select aria-label="Highest first number" value={highestFirstItem} onChange={oHighestFirstItemUpdate}>
+                                        {selectedSuggestedItems.map((itemInfo, index) => (<option key={index} value={itemInfo.number}>{itemInfo.number}</option>))}
+                                    </Form.Select>
+
+                                    <Form.Text className="text-muted">
+                                        Highest first number on a ticket: {highestFirstItem}
                                     </Form.Text>
                                 </Form.Group>
                             </Col>
