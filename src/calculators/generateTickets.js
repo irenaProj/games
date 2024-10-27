@@ -1,6 +1,5 @@
 import _ from "lodash";
 import { getItemsInEntries } from "../utils/getItemsInEntries";
-import { getSortedByDate } from "../utils/getSortedByDate";
 import { sleep } from "../utils/sleep";
 
 const checkTicket = (ticket, targetEntry, useSupplemental) => {
@@ -199,7 +198,7 @@ const generateUniformDistributionTickets = async ({
     const tickets = [];
     const allCombinationsCount = allCombinations.length;
     const usedCombinationsIndex = [];
-    const delay = 200;
+    const delay = 50;
     const { firstItems, initialSelectionCount, ticketsCountPerFirstItemMap } = ticketsCountsPerItemInfo
 
     selectedSuggestedItemsSorted.forEach(item => {
@@ -247,46 +246,17 @@ const generateUniformDistributionTickets = async ({
     };
 }
 
-
-
-const buildPrioritySettingsByRelativePriority = ({
-    selectedSuggestedItems,
-    dataGroup,
-    occurancesPerSelectedSuggestedItem,
-    settings: { useSupplemental }
-}) => {
-    const dataSortedDesc = getSortedByDate(dataGroup, false); // All entries sorted from last, descending
-    const last3WeeksItems = getItemsInEntries(getSortedByDate(dataSortedDesc.slice(0, 3), true), useSupplemental); // Recent entries, sorted from oldest up
-    const last2WeeksItems = getItemsInEntries(getSortedByDate(dataSortedDesc.slice(0, 2), true), useSupplemental); // Recent entries, sorted from oldest up
-    const selectedItemsRequiredOccuranceMap = {}
-
-    selectedSuggestedItems.forEach(suggestedItem => {
-        const number = suggestedItem.number;
-
-        if (last2WeeksItems.indexOf(number) > -1) {
-            selectedItemsRequiredOccuranceMap[number] = occurancesPerSelectedSuggestedItem * 1.4;
-        } else if (last3WeeksItems.indexOf(number) > -1) {
-            selectedItemsRequiredOccuranceMap[number] = occurancesPerSelectedSuggestedItem * 1.2;
-        } else {
-            selectedItemsRequiredOccuranceMap[number] = occurancesPerSelectedSuggestedItem
-        }
-    })
-
-    return selectedItemsRequiredOccuranceMap;
-}
-
 const buildRelativePrioritySettingsByMannualSetting = ({
-    selectedSuggestedItems,
     ticketsNumber,
     priorityPerSelectedSuggestedItem,
     itemsPerTicketCustom,
 }) => {
-    const selectedSuggestedItemsCount = selectedSuggestedItems.length;
+    const selectedSuggestedItemsCount = priorityPerSelectedSuggestedItem.length;
     const minTicketsCount = selectedSuggestedItemsCount / itemsPerTicketCustom;
     const normalPriorityOccurancesPerSelectedSuggestedItem = Math.ceil(ticketsNumber / minTicketsCount);
     const selectedItemsRequiredOccuranceMap = {}
 
-    selectedSuggestedItems.forEach(suggestedItem => {
+    priorityPerSelectedSuggestedItem.forEach(suggestedItem => {
         const number = suggestedItem.number;
         const itemPriority = _.find(priorityPerSelectedSuggestedItem, (prsi) => prsi.number === number).itemPriority;
 
@@ -299,9 +269,7 @@ const buildRelativePrioritySettingsByMannualSetting = ({
 const buildTicketsNumbersForFirstItems = ({
     allCombinationsInfo,
     priorityPerSelectedSuggestedItem,
-    selectedSuggestedItemsSorted,
     ticketsNumber,
-    itemsPerTicketCustom,
     highestFirstItem
 }) => {
     const firstItems = [];
@@ -324,7 +292,7 @@ const buildTicketsNumbersForFirstItems = ({
         return total;
     }, 0);
 
-    const ticketsCountPerFirstItemNoPriority = calculateTicketsCountPerDistinctFirstItem({  ticketsNumber, firstItems});
+    const ticketsCountPerFirstItemNoPriority = calculateTicketsCountPerDistinctFirstItem({ ticketsNumber, firstItems });
 
     firstItems.forEach(item => {
         const itemInfo = priorityPerSelectedSuggestedItem.find(p => p.number === item);
@@ -336,7 +304,6 @@ const buildTicketsNumbersForFirstItems = ({
         initialSelectionCount,
         firstItems,
         ticketsCountPerFirstItemMap
-
     }
 }
 
@@ -376,34 +343,28 @@ const getAllCombinationsInfo = ({ allCombinations, selectedSuggestedItemsSorted 
  * 
  * @param {*} param0 
  */
-const calculateTicketsCountPerDistinctFirstItem = ({  ticketsNumber, firstItems }) => {
+const calculateTicketsCountPerDistinctFirstItem = ({ ticketsNumber, firstItems }) => {
     const firsItemsCount = firstItems.length;
 
     return Math.round(ticketsNumber / firsItemsCount)
 }
 
-export const generateTickets = async ({ selectedSuggestedItems, targetEntry, dataStats, settings,
-    dataGroup,
+export const generateTickets = async ({
+    targetEntry,
+    settings,
     ticketsSettings: {
         ticketsNumber,
-        occurancesPerSelectedSuggestedItem,
-        useRelativePriority,
         priorityPerSelectedSuggestedItem,
         itemsPerTicketCustom,
         highestFirstItem
-    } }) => {
+    }
+}) => {
     const {
         useSupplemental
     } = settings;
-    const selectedSuggestedItemsSorted = getItemsSortedAsc(selectedSuggestedItems);
+    const selectedSuggestedItemsSorted = getItemsSortedAsc(priorityPerSelectedSuggestedItem);
     const allCombinations = combinationsRecursive(selectedSuggestedItemsSorted, itemsPerTicketCustom);
-    const selectedItemsRequiredOccuranceMap = useRelativePriority ? buildPrioritySettingsByRelativePriority({
-        selectedSuggestedItems,
-        dataGroup,
-        occurancesPerSelectedSuggestedItem,
-        settings
-    }) : buildRelativePrioritySettingsByMannualSetting({
-        selectedSuggestedItems,
+    const selectedItemsRequiredOccuranceMap = buildRelativePrioritySettingsByMannualSetting({
         ticketsNumber,
         priorityPerSelectedSuggestedItem,
         itemsPerTicketCustom
@@ -412,12 +373,14 @@ export const generateTickets = async ({ selectedSuggestedItems, targetEntry, dat
         allCombinations,
         selectedSuggestedItemsSorted,
     });
+
+    // Priority is taken into account in 2 different ways:
+    // 1. for tickets first items
+    // 2. general number of item used in tickets (first and non first)
     const ticketsCountsPerItemInfo = buildTicketsNumbersForFirstItems({
         allCombinationsInfo,
         priorityPerSelectedSuggestedItem,
-        selectedSuggestedItemsSorted,
         ticketsNumber,
-        itemsPerTicketCustom,
         highestFirstItem
     })
 
