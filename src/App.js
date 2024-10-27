@@ -66,6 +66,9 @@ function Layout() {
         <Nav.Item>
           <Nav.Link href="/wf">WF All</Nav.Link>
         </Nav.Item>
+        <Nav.Item >
+          <Nav.Link>Ver 1.0.0</Nav.Link>
+        </Nav.Item>
       </Nav>
 
       <hr />
