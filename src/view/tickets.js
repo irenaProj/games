@@ -10,9 +10,11 @@ import { FloatingLabel } from "react-bootstrap";
 
 export const Tickets = ({ selectedSuggestedItems, targetEntry, dataStats, settings, dataGroup }) => {
     const [tickets, setTickets] = useState([]);
+    const [ticketsWithUnselectedItems, setTicketsWithUnselectedItems] = useState([]);
     const [ticketsNumber, setTicketsNumber] = useState(0);
     const [ticketsStatsMap, setTicketsStatsMap] = useState({});
     const [itemsPerTicketCustom, setItemsPerTicketCustom] = useState(settings.itemsPerTicket);
+    const [ticketsWithUnpooledItemsPercentage, setTicketsWithUnpooledItemsPercentage] = useState(0);
     const plottedSelectedSuggestedItems = [];
 
     selectedSuggestedItems.forEach(si => {
@@ -39,6 +41,7 @@ export const Tickets = ({ selectedSuggestedItems, targetEntry, dataStats, settin
 
     const onTicketsNumberUpdate = ({ target: { value } }) => setTicketsNumber(parseInt(value));
     const onNumbersPerTicketUpdate = ({ target: { value } }) => setItemsPerTicketCustom(parseInt(value));
+    const onTicketsWithUnpooledItemsPercentageUpdate = ({ target: { value } }) => setTicketsWithUnpooledItemsPercentage(parseInt(value));
     const oHighestFirstItemUpdate = ({ target: { value } }) => setHighestFirstItem(parseInt(value));
     const onPriorityPerSelectedSuggestedItemUpdate = (updatedItem) => {
         const updatedList = priorityPerSelectedSuggestedItem.map(selectedSuggestedItem => {
@@ -56,19 +59,21 @@ export const Tickets = ({ selectedSuggestedItems, targetEntry, dataStats, settin
         // Do not refresh page
         event.preventDefault();
 
-        const { tickets, ticketsStatsMap } = await generateTickets({
+        const { tickets, ticketsStatsMap, ticketsWithUnselectedItems } = await generateTickets({
             targetEntry,
             settings,
             ticketsSettings: {
                 ticketsNumber,
                 priorityPerSelectedSuggestedItem,
                 itemsPerTicketCustom,
-                highestFirstItem
+                highestFirstItem,
+                ticketsWithUnpooledItemsPercentage: ticketsWithUnpooledItemsPercentage / 100
             }
         });
 
         setTickets(tickets);
         setTicketsStatsMap(ticketsStatsMap);
+        setTicketsWithUnselectedItems(ticketsWithUnselectedItems)
     }
 
     const renderItemsPriority = (selectedSuggestedItem) => {
@@ -121,6 +126,15 @@ export const Tickets = ({ selectedSuggestedItems, targetEntry, dataStats, settin
                                     <Form.Control type="number" placeholder="Numbers per ticket #" onChange={onNumbersPerTicketUpdate} />
                                 </Form.Group>
                             </Col>
+                            <Col sm="5">
+                                <Form.Group className="xs-3" controlId="ticketsWithUnpooledItemsPercentage">
+                                    <Form.Label>Percentage of tickets with unpooled items</Form.Label>
+                                    <Form.Control type="number" placeholder="Percentage of unpooled tickets" onChange={onTicketsWithUnpooledItemsPercentageUpdate} />
+                                    <Form.Text className="text-muted">
+                                        Percentage of tickets with unpooled items {ticketsWithUnpooledItemsPercentage}
+                                    </Form.Text>
+                                </Form.Group>
+                            </Col>
                         </Row>
 
                         <Button variant="primary" type="submit">
@@ -136,7 +150,12 @@ export const Tickets = ({ selectedSuggestedItems, targetEntry, dataStats, settin
                 }))} />
             </Row>
             <Row>
+                <p>Tickets with pooled items only</p>
                 <TabularData data={tickets} />
+            </Row>
+            <Row>
+                <p>Tickets with unpooled items</p>
+                <TabularData data={ticketsWithUnselectedItems} />
             </Row>
         </React.Fragment>
     );

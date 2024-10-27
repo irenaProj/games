@@ -1,6 +1,7 @@
 import _ from "lodash";
 import { getItemsInEntries } from "../utils/getItemsInEntries";
 import { sleep } from "../utils/sleep";
+import { addUnselectedItemsToTickets } from "./generateTicketsUtils";
 
 const checkTicket = (ticket, targetEntry, useSupplemental) => {
     if (!targetEntry || !ticket) {
@@ -356,11 +357,13 @@ export const generateTickets = async ({
         ticketsNumber,
         priorityPerSelectedSuggestedItem,
         itemsPerTicketCustom,
-        highestFirstItem
+        highestFirstItem,
+        ticketsWithUnpooledItemsPercentage
     }
 }) => {
     const {
-        useSupplemental
+        useSupplemental,
+        gameItemsCount
     } = settings;
     const selectedSuggestedItemsSorted = getItemsSortedAsc(priorityPerSelectedSuggestedItem);
     const allCombinations = combinationsRecursive(selectedSuggestedItemsSorted, itemsPerTicketCustom);
@@ -397,10 +400,17 @@ export const generateTickets = async ({
         ticketsNumber,
     });
 
-    const nonRepeatedTickets = findRepeatedTickets(tickets, itemsPerTicketCustom)
+    const nonRepeatedTickets = findRepeatedTickets(tickets, itemsPerTicketCustom);
+    const {ticketsWithUnselectedItems} = await addUnselectedItemsToTickets({
+        updatedTicketsPercentage:ticketsWithUnpooledItemsPercentage,
+        tickets: nonRepeatedTickets,
+        gameItemsCount,
+        itemsPerTicketCustom,
+        priorityPerSelectedSuggestedItem,
+    })
 
     if (targetEntry) {
-        const checkedTickets = nonRepeatedTickets.map((ticket, index) => ({
+        const checkedTickets = nonRepeatedTickets.map((ticket) => ({
             hits: JSON.stringify(checkTicket(ticket, targetEntry, useSupplemental)),
             ...ticket,
         }));
@@ -408,12 +418,20 @@ export const generateTickets = async ({
 
         return {
             tickets: checkedTickets.sort((ch1, ch2) => ch2.hits.length - ch1.hits.length).map((ticket, index) => ({ ...ticket, index: index + 1 })),
+            ticketsWithUnselectedItems: ticketsWithUnselectedItems.map((ticket) => ({
+                hits: JSON.stringify(checkTicket(ticket, targetEntry, useSupplemental)),
+                ...ticket,
+            })).sort((ch1, ch2) => ch2.hits.length - ch1.hits.length).map((ticket, index) => ({ ...ticket, index: index + 1 })),
             ticketsStatsMap,
         };
     }
 
     return {
         tickets: nonRepeatedTickets.map((ticket, index) => ({
+            index: index + 1,
+            ...ticket,
+        })),
+        ticketsWithUnselectedItems: ticketsWithUnselectedItems.map((ticket, index) => ({
             index: index + 1,
             ...ticket,
         })),
