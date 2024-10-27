@@ -91,7 +91,7 @@ export const Tickets = ({ selectedSuggestedItems, targetEntry, dataStats, settin
                         <Row>
                             <Col sm="3">
                                 <Form.Group className="xs-3" controlId="ticketsNumber">
-                                    <Form.Label>Number of tickets</Form.Label>
+                                    <Form.Label><strong>Number of tickets</strong></Form.Label>
                                     <Form.Control type="number" placeholder="Tickets #" onChange={onTicketsNumberUpdate} />
                                     <Form.Text className="text-muted">
                                         Total number of generated tickets
@@ -100,7 +100,7 @@ export const Tickets = ({ selectedSuggestedItems, targetEntry, dataStats, settin
                             </Col>
                             <Col sm="3">
                                 <Form.Group className="xs-3" controlId="highestFirstItem">
-                                    <Form.Label>Highest first number</Form.Label>
+                                    <Form.Label><strong>Highest first number</strong></Form.Label>
                                     <Form.Select aria-label="Highest first number" value={highestFirstItem} onChange={oHighestFirstItemUpdate}>
                                         {selectedSuggestedItems.map((itemInfo, index) => (<option key={index} value={itemInfo.number}>{itemInfo.number}</option>))}
                                     </Form.Select>
