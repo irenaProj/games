@@ -1,6 +1,17 @@
 // https://gnetwork.com.au/powerball-results/
 export const pbData = [
   {
+    "Date": "31/10/24",
+    "#1": 3,
+    "#2": 9,
+    "#3": 11,
+    "#4": 14,
+    "#5": 26,
+    "#6": 34,
+    "#7": 35,
+    "PB": 7
+  },
+  {
     "Date": "24/10/24",
     "#1": 1,
     "#2": 5,
