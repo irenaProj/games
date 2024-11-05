@@ -1,11 +1,12 @@
 import { getNumbers } from "../utils/getNumbers"
 import { sleep } from "../utils/sleep";
 
-const getUnselectedItems = ({ gameItemsCount, priorityPerSelectedSuggestedItem }) => {
+const getUnselectedItems = ({ gameItemsCount, priorityPerSelectedSuggestedItem, maxItem }) => {
     const unselectedItems = [];
     const selectedItems = priorityPerSelectedSuggestedItem.map(pi => pi.number);
+    const highestNumber = Math.min(maxItem, gameItemsCount)
 
-    getNumbers(gameItemsCount).forEach(item => {
+    getNumbers(highestNumber).forEach(item => {
         if (selectedItems.indexOf(item) < 0) {
             unselectedItems.push(item);
         }
@@ -52,11 +53,12 @@ export const addUnselectedItemsToTickets = async ({
     tickets,
     gameItemsCount,
     itemsPerTicketCustom,
+    maxItem,
     priorityPerSelectedSuggestedItem,
 }) => {
     let ticketsCount = tickets.length;
     const updateCount = Math.floor(updatedTicketsPercentage * ticketsCount);
-    const unselectedItems = getUnselectedItems({ gameItemsCount, priorityPerSelectedSuggestedItem });
+    const unselectedItems = getUnselectedItems({ gameItemsCount, priorityPerSelectedSuggestedItem, maxItem });
     const unselectedItemsCount = unselectedItems.length;
     const updatedTickets = [];
     const delay = 50;

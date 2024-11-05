@@ -358,12 +358,13 @@ export const generateTickets = async ({
         priorityPerSelectedSuggestedItem,
         itemsPerTicketCustom,
         highestFirstItem,
-        ticketsWithUnpooledItemsPercentage
+        // ticketsWithUnpooledItemsPercentage
     }
 }) => {
     const {
         useSupplemental,
-        gameItemsCount
+        gameItemsCount,
+        maxItem
     } = settings;
     const selectedSuggestedItemsSorted = getItemsSortedAsc(priorityPerSelectedSuggestedItem);
     const allCombinations = combinationsRecursive(selectedSuggestedItemsSorted, itemsPerTicketCustom);
@@ -401,13 +402,15 @@ export const generateTickets = async ({
     });
 
     const nonRepeatedTickets = findRepeatedTickets(tickets, itemsPerTicketCustom);
-    const {ticketsWithUnselectedItems} = await addUnselectedItemsToTickets({
-        updatedTicketsPercentage:ticketsWithUnpooledItemsPercentage,
-        tickets: nonRepeatedTickets,
-        gameItemsCount,
-        itemsPerTicketCustom,
-        priorityPerSelectedSuggestedItem,
-    })
+    const { ticketsWithUnselectedItems } = { ticketsWithUnselectedItems: [] };
+    // await addUnselectedItemsToTickets({
+    //     updatedTicketsPercentage:ticketsWithUnpooledItemsPercentage,
+    //     tickets: nonRepeatedTickets,
+    //     gameItemsCount,
+    //     itemsPerTicketCustom,
+    //     maxItem,
+    //     priorityPerSelectedSuggestedItem,
+    // })
 
     if (targetEntry) {
         const checkedTickets = nonRepeatedTickets.map((ticket) => ({

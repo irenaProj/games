@@ -8,7 +8,7 @@ import { TabularData } from "./tabularData";
 import { ITEM_PRIORITY_TYPES } from "../constants";
 import { FloatingLabel } from "react-bootstrap";
 
-export const Tickets = ({ selectedSuggestedItems, targetEntry, dataStats, settings, dataGroup }) => {
+export const Tickets = ({ selectedSuggestedItems, targetEntry, useAllItems,dataStats, settings, dataGroup }) => {
     const [tickets, setTickets] = useState([]);
     const [ticketsWithUnselectedItems, setTicketsWithUnselectedItems] = useState([]);
     const [ticketsNumber, setTicketsNumber] = useState(0);
@@ -23,7 +23,7 @@ export const Tickets = ({ selectedSuggestedItems, targetEntry, dataStats, settin
         }
     })
 
-    const [priorityPerSelectedSuggestedItem, setPriorityPerSelectedSuggestedItem] = useState(plottedSelectedSuggestedItems.map(si => ({ ...si, itemPriority: ITEM_PRIORITY_TYPES.NORMAL })));
+    const [priorityPerSelectedSuggestedItem, setPriorityPerSelectedSuggestedItem] = useState(plottedSelectedSuggestedItems.map(si => ({ ...si, itemPriority: si.isInPool && useAllItems ? ITEM_PRIORITY_TYPES.HIGHEST : ITEM_PRIORITY_TYPES.NORMAL })));
     const [highestFirstItem, setHighestFirstItem] = useState(plottedSelectedSuggestedItems[0].number);
 
     useEffect(() => {
@@ -35,7 +35,7 @@ export const Tickets = ({ selectedSuggestedItems, targetEntry, dataStats, settin
             }
         })
 
-        setPriorityPerSelectedSuggestedItem(_plottedSelectedSuggestedItems.map(si => ({ ...si, itemPriority: ITEM_PRIORITY_TYPES.NORMAL })));
+        setPriorityPerSelectedSuggestedItem(_plottedSelectedSuggestedItems.map(si => ({ ...si, itemPriority: si.isInPool && useAllItems ? ITEM_PRIORITY_TYPES.HIGHEST : ITEM_PRIORITY_TYPES.NORMAL })));
         setHighestFirstItem(_plottedSelectedSuggestedItems[0].number)
     }, [selectedSuggestedItems]);
 
@@ -115,6 +115,8 @@ export const Tickets = ({ selectedSuggestedItems, targetEntry, dataStats, settin
                                     </Form.Text>
                                 </Form.Group>
                             </Col>
+                            
+
                         </Row>
                         <Row>
                             {priorityPerSelectedSuggestedItem.map((selectedSuggestedItem) => renderItemsPriority(selectedSuggestedItem))}
@@ -126,7 +128,7 @@ export const Tickets = ({ selectedSuggestedItems, targetEntry, dataStats, settin
                                     <Form.Control type="number" placeholder="Numbers per ticket #" onChange={onNumbersPerTicketUpdate} />
                                 </Form.Group>
                             </Col>
-                            <Col sm="5">
+                            {/* <Col sm="5">
                                 <Form.Group className="xs-3" controlId="ticketsWithUnpooledItemsPercentage">
                                     <Form.Label>Percentage of tickets with unpooled items</Form.Label>
                                     <Form.Control type="number" placeholder="Percentage of unpooled tickets" onChange={onTicketsWithUnpooledItemsPercentageUpdate} />
@@ -134,7 +136,7 @@ export const Tickets = ({ selectedSuggestedItems, targetEntry, dataStats, settin
                                         Percentage of tickets with unpooled items {ticketsWithUnpooledItemsPercentage}
                                     </Form.Text>
                                 </Form.Group>
-                            </Col>
+                            </Col> */}
                         </Row>
 
                         <Button variant="primary" type="submit">

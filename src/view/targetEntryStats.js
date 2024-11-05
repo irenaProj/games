@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import _ from "lodash";
 import Accordion from 'react-bootstrap/Accordion';
+import { Form } from "react-bootstrap";
 import Row from 'react-bootstrap/Row';
 import { TabularData } from "./tabularData"
 import { checkAgainstTargetEntry } from "../calculators/checkAgainstTargetEntry"
@@ -10,6 +11,7 @@ import { SuggestedItemsHistoryPlot } from './components/suggestedItemsHistoryPlo
 import { SuggestedItemsSelection } from './components/suggestedItemsSelection';
 import { Tickets } from './tickets';
 import { getSuggestedItemsWithStateMachines } from '../calculators/getSuggestedItemsStateMachines';
+import { getNumbers } from '../utils/getNumbers';
 
 const markSuggestedItemsWithHits = ({ suggestedItems, suggestedItemsCheckResult }) => {
     const markedSuggestedItems = []
@@ -27,7 +29,7 @@ const markSuggestedItemsWithHits = ({ suggestedItems, suggestedItemsCheckResult 
 }
 
 
-const toSelectedSuggestedItems = (suggestedItems) => suggestedItems.map(si => ({ ...si, isPlotted: true })).sort((s1, s2) => s1.number - s2.number);
+const toSelectedSuggestedItems = (suggestedItems) => suggestedItems.map(si => ({ ...si, isPlotted: true, isInPool: true })).sort((s1, s2) => s1.number - s2.number);
 
 export const TargetEntryStats = ({
     targetEntry,
@@ -49,15 +51,17 @@ export const TargetEntryStats = ({
     const hits = suggestedItemsCheckResult.map(res => res.number).join(", ");
 
     const [selectedSuggestedItems, setSelectedSuggestedItems] = useState(toSelectedSuggestedItems(suggestedItems));
+    const [useAllItems, setUseAllItems] = useState(false);
 
     useEffect(() => {
         const newSelectedSuggestedItems = suggestedItems.map(si => {
             const existingPlottedSuggestedItem = selectedSuggestedItems.find(i => i.number === si.number);
 
-            return { ...si, isPlotted: existingPlottedSuggestedItem ? existingPlottedSuggestedItem.isPlotted : true }
+            return { ...si, isPlotted: existingPlottedSuggestedItem ? existingPlottedSuggestedItem.isPlotted : true, isInPool: true }
         }).sort((s1, s2) => s1.number - s2.number);
 
-        setSelectedSuggestedItems(newSelectedSuggestedItems)
+        setSelectedSuggestedItems(newSelectedSuggestedItems);
+        setUseAllItems(false)
     }, [suggestedItems.length]);
 
 
@@ -70,6 +74,48 @@ export const TargetEntryStats = ({
 
     return (
         <React.Fragment>
+            <Form.Group>
+                <Form.Check type={"checkbox"} style={{ width: "150px", display: "inline-block" }}>
+                    <Form.Check.Input
+                        type={"checkbox"}
+                        defaultChecked={useAllItems}
+                        onClick={() => {
+                            const newUseAllItems = !useAllItems
+                            setUseAllItems(newUseAllItems);
+
+                            if (newUseAllItems) {
+                                const _selectedSuggestedItems = _.cloneDeep(selectedSuggestedItems);
+                                const allItems = getNumbers(settings.maxItem);
+
+                                allItems.forEach(item => {
+                                    const existingItem = _selectedSuggestedItems.find(si => si.number === item);
+
+                                    if (!existingItem) {
+                                        _selectedSuggestedItems.push({
+                                            number: item,
+                                            isPlotted: true, isInPool: false
+                                        })
+                                    }
+                                })
+
+                                _selectedSuggestedItems.sort((si1, si2) => si1.number - si2.number);
+                                setSelectedSuggestedItems(_selectedSuggestedItems);
+                            } else {
+                                const _selectedSuggestedItems = [];
+
+                                selectedSuggestedItems.forEach(si => {
+                                    if (si.isInPool) {
+                                        _selectedSuggestedItems.push({...si})
+                                    }
+                                })
+
+                                setSelectedSuggestedItems(_selectedSuggestedItems);
+                            }
+                        }}
+                    />
+                    <Form.Check.Label>Use all items</Form.Check.Label>
+                </Form.Check>
+            </Form.Group>
             <SuggestedItemsSelection selectedSuggestedItems={selectedSuggestedItems} setSelectedSuggestedItems={setSelectedSuggestedItems} />
             {SuggestedItemsHistoryPlot({ dataGroup, selectedSuggestedItems, useSupplemental, entriesInPlots })}
             <Row>
@@ -118,6 +164,7 @@ export const TargetEntryStats = ({
                         <Accordion.Body>
                             <Tickets selectedSuggestedItems={selectedSuggestedItems}
                                 targetEntry={targetEntry} dataStats={dataStats}
+                                useAllItems={useAllItems}
                                 settings={settings}
                                 dataGroup={dataGroup} />
                         </Accordion.Body>
