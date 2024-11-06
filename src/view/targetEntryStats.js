@@ -28,6 +28,37 @@ const markSuggestedItemsWithHits = ({ suggestedItems, suggestedItemsCheckResult 
     return markedSuggestedItems
 }
 
+const updateBasedOnUseAllSetting = ({ useAllItems, selectedSuggestedItems, setSelectedSuggestedItems, maxItem }) => {
+    if (useAllItems) {
+        const _selectedSuggestedItems = _.cloneDeep(selectedSuggestedItems);
+        const allItems = getNumbers(maxItem);
+
+        allItems.forEach(item => {
+            const existingItem = _selectedSuggestedItems.find(si => si.number === item);
+
+            if (!existingItem) {
+                _selectedSuggestedItems.push({
+                    number: item,
+                    isPlotted: true, isInPool: false
+                })
+            }
+        })
+
+        _selectedSuggestedItems.sort((si1, si2) => si1.number - si2.number);
+        setSelectedSuggestedItems(_selectedSuggestedItems);
+    } else {
+        const _selectedSuggestedItems = [];
+
+        selectedSuggestedItems.forEach(si => {
+            if (si.isInPool) {
+                _selectedSuggestedItems.push({ ...si })
+            }
+        })
+
+        setSelectedSuggestedItems(_selectedSuggestedItems);
+    }
+}
+
 
 const toSelectedSuggestedItems = (suggestedItems) => suggestedItems.map(si => ({ ...si, isPlotted: true, isInPool: true })).sort((s1, s2) => s1.number - s2.number);
 
@@ -61,6 +92,7 @@ export const TargetEntryStats = ({
         }).sort((s1, s2) => s1.number - s2.number);
 
         setSelectedSuggestedItems(newSelectedSuggestedItems);
+        updateBasedOnUseAllSetting({ useAllItems: false, selectedSuggestedItems: newSelectedSuggestedItems, setSelectedSuggestedItems, maxItem: settings.maxItem })
         setUseAllItems(false)
     }, [suggestedItems.length]);
 
@@ -78,39 +110,10 @@ export const TargetEntryStats = ({
                 <Form.Check type={"checkbox"} style={{ width: "150px", display: "inline-block" }}>
                     <Form.Check.Input
                         type={"checkbox"}
-                        defaultChecked={useAllItems}
+                        checked={useAllItems}
                         onClick={() => {
-                            const newUseAllItems = !useAllItems
-                            setUseAllItems(newUseAllItems);
-
-                            if (newUseAllItems) {
-                                const _selectedSuggestedItems = _.cloneDeep(selectedSuggestedItems);
-                                const allItems = getNumbers(settings.maxItem);
-
-                                allItems.forEach(item => {
-                                    const existingItem = _selectedSuggestedItems.find(si => si.number === item);
-
-                                    if (!existingItem) {
-                                        _selectedSuggestedItems.push({
-                                            number: item,
-                                            isPlotted: true, isInPool: false
-                                        })
-                                    }
-                                })
-
-                                _selectedSuggestedItems.sort((si1, si2) => si1.number - si2.number);
-                                setSelectedSuggestedItems(_selectedSuggestedItems);
-                            } else {
-                                const _selectedSuggestedItems = [];
-
-                                selectedSuggestedItems.forEach(si => {
-                                    if (si.isInPool) {
-                                        _selectedSuggestedItems.push({...si})
-                                    }
-                                })
-
-                                setSelectedSuggestedItems(_selectedSuggestedItems);
-                            }
+                            updateBasedOnUseAllSetting({ useAllItems: !useAllItems, selectedSuggestedItems, setSelectedSuggestedItems, maxItem: settings.maxItem })
+                            setUseAllItems(!useAllItems);
                         }}
                     />
                     <Form.Check.Label>Use all items</Form.Check.Label>
