@@ -350,6 +350,47 @@ const calculateTicketsCountPerDistinctFirstItem = ({ ticketsNumber, firstItems }
     return Math.round(ticketsNumber / firsItemsCount)
 }
 
+ const prepareAllValidCombinations = (selectedSuggestedItemsSorted, itemsPerTicketCustom) => {
+    return combinationsRecursive(selectedSuggestedItemsSorted, itemsPerTicketCustom);
+}
+
+export const getAllValidCombinationsStatistics = (selectedSuggestedItemsSorted, itemsPerTicketCustom) => {
+    const allCombinations = combinationsRecursive(selectedSuggestedItemsSorted, itemsPerTicketCustom);
+    const selectedSuggestedItemsSortedInfo = {};
+
+    selectedSuggestedItemsSorted.forEach(si => {
+        selectedSuggestedItemsSortedInfo[si.number] = {
+            ticketsWithItem: 0,
+            ticketsWithFirstItem:0,
+            inPool: 0,
+            notInPool: 0
+        };
+    });
+
+
+    allCombinations.forEach(combination => {
+
+        for (let k = 0; k < itemsPerTicketCustom; k += 1) {
+            const item = combination[k].number;
+            selectedSuggestedItemsSortedInfo[item].ticketsWithItem += 1;
+
+            if (combination[k].isInPool) {
+                selectedSuggestedItemsSortedInfo[item].inPool += 1;
+            } else {
+                selectedSuggestedItemsSortedInfo[item].notInPool += 1;
+            }
+        }
+
+        selectedSuggestedItemsSortedInfo[combination[0].number].ticketsWithFirstItem += 1;
+    })
+
+
+    return {
+        totalTicketsCount: allCombinations.length,
+        selectedSuggestedItemsSortedInfo
+    }
+}
+
 export const generateTickets = async ({
     targetEntry,
     settings,
@@ -367,7 +408,7 @@ export const generateTickets = async ({
         maxItem
     } = settings;
     const selectedSuggestedItemsSorted = getItemsSortedAsc(priorityPerSelectedSuggestedItem);
-    const allCombinations = combinationsRecursive(selectedSuggestedItemsSorted, itemsPerTicketCustom);
+    const allCombinations = prepareAllValidCombinations(selectedSuggestedItemsSorted, itemsPerTicketCustom)
     const selectedItemsRequiredOccuranceMap = buildRelativePrioritySettingsByMannualSetting({
         ticketsNumber,
         priorityPerSelectedSuggestedItem,

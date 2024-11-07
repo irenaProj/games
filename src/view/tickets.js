@@ -3,12 +3,12 @@ import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
 import Form from 'react-bootstrap/Form';
-import { generateTickets } from "../calculators/generateTickets";
+import { generateTickets, getAllValidCombinationsStatistics } from "../calculators/generateTickets";
 import { TabularData } from "./tabularData";
 import { ITEM_PRIORITY_TYPES } from "../constants";
 import { FloatingLabel } from "react-bootstrap";
 
-export const Tickets = ({ selectedSuggestedItems, targetEntry, useAllItems,dataStats, settings, dataGroup }) => {
+export const Tickets = ({ selectedSuggestedItems, targetEntry, useAllItems, dataStats, settings, dataGroup }) => {
     const [tickets, setTickets] = useState([]);
     const [ticketsWithUnselectedItems, setTicketsWithUnselectedItems] = useState([]);
     const [ticketsNumber, setTicketsNumber] = useState(0);
@@ -16,6 +16,10 @@ export const Tickets = ({ selectedSuggestedItems, targetEntry, useAllItems,dataS
     const [itemsPerTicketCustom, setItemsPerTicketCustom] = useState(settings.itemsPerTicket);
     const [ticketsWithUnpooledItemsPercentage, setTicketsWithUnpooledItemsPercentage] = useState(0);
     const plottedSelectedSuggestedItems = [];
+    const allValidCombinationsStatistics = getAllValidCombinationsStatistics(selectedSuggestedItems, itemsPerTicketCustom)
+    const [totalTicketsCount, setTtotalTicketsCount] = useState(allValidCombinationsStatistics.totalTicketsCount);
+    const [selectedSuggestedItemsSortedInfo, setSelectedSuggestedItemsSortedInfo] = useState(allValidCombinationsStatistics.selectedSuggestedItemsSortedInfo);
+
 
     selectedSuggestedItems.forEach(si => {
         if (si.isPlotted) {
@@ -37,10 +41,21 @@ export const Tickets = ({ selectedSuggestedItems, targetEntry, useAllItems,dataS
 
         setPriorityPerSelectedSuggestedItem(_plottedSelectedSuggestedItems.map(si => ({ ...si, itemPriority: si.isInPool && useAllItems ? ITEM_PRIORITY_TYPES.HIGHEST : ITEM_PRIORITY_TYPES.NORMAL })));
         setHighestFirstItem(_plottedSelectedSuggestedItems[0].number)
+
+        const updatedAllValidCombinationsStatistics = getAllValidCombinationsStatistics(selectedSuggestedItems, itemsPerTicketCustom)
+
+        setTtotalTicketsCount(updatedAllValidCombinationsStatistics.totalTicketsCount);
+        setSelectedSuggestedItemsSortedInfo(updatedAllValidCombinationsStatistics.selectedSuggestedItemsSortedInfo);
     }, [selectedSuggestedItems]);
 
     const onTicketsNumberUpdate = ({ target: { value } }) => setTicketsNumber(parseInt(value));
-    const onNumbersPerTicketUpdate = ({ target: { value } }) => setItemsPerTicketCustom(parseInt(value));
+    const onNumbersPerTicketUpdate = ({ target: { value } }) => {
+        const updatedAllValidCombinationsStatistics = getAllValidCombinationsStatistics(selectedSuggestedItems, itemsPerTicketCustom)
+
+        setTtotalTicketsCount(updatedAllValidCombinationsStatistics.totalTicketsCount);
+        setSelectedSuggestedItemsSortedInfo(updatedAllValidCombinationsStatistics.selectedSuggestedItemsSortedInfo);
+        setItemsPerTicketCustom(parseInt(value));
+    }
     const onTicketsWithUnpooledItemsPercentageUpdate = ({ target: { value } }) => setTicketsWithUnpooledItemsPercentage(parseInt(value));
     const oHighestFirstItemUpdate = ({ target: { value } }) => setHighestFirstItem(parseInt(value));
     const onPriorityPerSelectedSuggestedItemUpdate = (updatedItem) => {
@@ -115,7 +130,7 @@ export const Tickets = ({ selectedSuggestedItems, targetEntry, useAllItems,dataS
                                     </Form.Text>
                                 </Form.Group>
                             </Col>
-                            
+
 
                         </Row>
                         <Row>
@@ -145,6 +160,18 @@ export const Tickets = ({ selectedSuggestedItems, targetEntry, useAllItems,dataS
                     </Form>
                 </Col>
             </Row>
+            <Row>
+                <p>Total valid tickets: {totalTicketsCount}</p>
+                
+                <TabularData data={Object.keys(selectedSuggestedItemsSortedInfo).map(key => ({
+                    "Number": key,
+                    "Total ticket with item": selectedSuggestedItemsSortedInfo[key].ticketsWithItem,
+                    "Tickets with first item": selectedSuggestedItemsSortedInfo[key].ticketsWithFirstItem,
+                    "In pool":selectedSuggestedItemsSortedInfo[key].inPool,
+                    "Not in pool":selectedSuggestedItemsSortedInfo[key].notInPool,
+                }))} />
+            </Row>
+
             <Row>
                 <TabularData data={Object.keys(ticketsStatsMap).map(key => ({
                     "Number": key,
