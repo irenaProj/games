@@ -1,4 +1,4 @@
-import _ from "lodash";
+import _, { forEach } from "lodash";
 import { getItemsInEntries } from "../utils/getItemsInEntries";
 import { sleep } from "../utils/sleep";
 
@@ -484,17 +484,37 @@ export const generateTickets = async ({
 
     const nonRepeatedTickets = findRepeatedTickets(tickets, itemsPerTicketCustom);
 
-
     if (targetEntry) {
-        const checkedTickets = nonRepeatedTickets.map((ticket) => ({
-            hits: JSON.stringify(checkTicket(ticket, targetEntry, useSupplemental)),
-            ...ticket,
-        }));
+        const ticketsStats = {
+            totalsTickets: nonRepeatedTickets.length,
+            "7 hits": 0,
+            "6 hits": 0,
+            "5 hits": 0,
+            "4 hits": 0,
+            "3 hits": 0,
+            "2 hits": 0,
+            "1 hits": 0,
+            "0 hits": 0,
+        }
+    
+        const checkedTickets = nonRepeatedTickets.map((ticket) => {
+            const hits = checkTicket(ticket, targetEntry, useSupplemental);
+            const hitsCount = hits.length;
+            ticketsStats[`${hitsCount} hits`] += 1;
 
+            return {
+            hits: JSON.stringify(hits),
+            ...ticket,
+            }
+        });
 
         return {
             tickets: checkedTickets.sort((ch1, ch2) => ch2.hits.length - ch1.hits.length).map((ticket, index) => ({ ...ticket, index: index + 1 })),
             ticketsStatsMap,
+            ticketsHitsStats: Object.keys(ticketsStats).map(key => ({
+                key,
+                value:ticketsStats[key]
+            }))
         };
     }
 
@@ -504,5 +524,6 @@ export const generateTickets = async ({
             ...ticket,
         })),
         ticketsStatsMap,
+        ticketsHitsStats: []
     };
 }

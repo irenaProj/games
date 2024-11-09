@@ -14,6 +14,7 @@ export const Tickets = ({ selectedSuggestedItems, targetEntry, useAllItems, data
     const [tickets, setTickets] = useState([]);
     const [ticketsNumber, setTicketsNumber] = useState(0);
     const [ticketsStatsMap, setTicketsStatsMap] = useState({});
+    const [ticketsHitsStats, setTicketsHitsStats] = useState({});
     const [itemsPerTicketCustom, setItemsPerTicketCustom] = useState(itemsPerTicket);
     const [minDiffBetweenFirstAndLast, setMinDiffBetweenFirstAndLast] = useState(16);
     const plottedSelectedSuggestedItems = [];
@@ -29,7 +30,8 @@ export const Tickets = ({ selectedSuggestedItems, targetEntry, useAllItems, data
 
     const [priorityPerSelectedSuggestedItem, setPriorityPerSelectedSuggestedItem] = useState(plottedSelectedSuggestedItems.map(si => ({ ...si, itemPriority: si.isInPool && useAllItems ? ITEM_PRIORITY_TYPES.HIGHEST : ITEM_PRIORITY_TYPES.NORMAL })));
     const [highestFirstItem, setHighestFirstItem] = useState(plottedSelectedSuggestedItems[0].number);
- 
+    const [showStatsOnly, setShowStatsOnly] = useState(false);
+
     useEffect(() => {
         const _plottedSelectedSuggestedItems = [];
 
@@ -74,7 +76,7 @@ export const Tickets = ({ selectedSuggestedItems, targetEntry, useAllItems, data
         // Do not refresh page
         event.preventDefault();
 
-        const { tickets, ticketsStatsMap } = await generateTickets({
+        const { tickets, ticketsStatsMap, ticketsHitsStats } = await generateTickets({
             targetEntry,
             settings,
             ticketsSettings: {
@@ -88,6 +90,7 @@ export const Tickets = ({ selectedSuggestedItems, targetEntry, useAllItems, data
 
         setTickets(tickets);
         setTicketsStatsMap(ticketsStatsMap);
+        setTicketsHitsStats(ticketsHitsStats);
     }
 
     const renderItemsPriority = (selectedSuggestedItem) => {
@@ -158,8 +161,28 @@ export const Tickets = ({ selectedSuggestedItems, targetEntry, useAllItems, data
                                     <Form.Control type="number" placeholder="Numbers per ticket #" onChange={onNumbersPerTicketUpdate} />
                                 </Form.Group>
                             </Col>
+                            <Col sm="3">
+                                <Form.Group>
+                                    <Form.Label>Show only tickets hists stats</Form.Label>
+                                    <Form.Check type={"checkbox"} style={{ display: "inline-block" }}>
+                                        <Form.Check.Input
+                                            type={"checkbox"}
+                                            checked={showStatsOnly}
+                                            onClick={() => {
+                                                setShowStatsOnly(!showStatsOnly);
+                                            }}
+                                        />
+                                        <Form.Check.Label>Only show hits stats</Form.Check.Label>
+                                    </Form.Check>
+                                </Form.Group>
+                                <Form.Text className="text-muted">
+                                    Showing tickets stats only: {showStatsOnly ? "yes" : "no"}
+                                </Form.Text>
+                            </Col>
                         </Row>
-
+                        <Row>
+                            <br />
+                        </Row>
                         <Button variant="primary" type="submit">
                             Submit
                         </Button>
@@ -184,10 +207,18 @@ export const Tickets = ({ selectedSuggestedItems, targetEntry, useAllItems, data
                     "Number of tickets": ticketsStatsMap[key]
                 }))} />
             </Row>
-            <Row>
-                <p>Tickets with pooled items only</p>
-                <TabularData data={tickets} />
-            </Row>
+            {!showStatsOnly &&
+                <Row>
+                    <p>Tickets with pooled items only</p>
+                    <TabularData data={tickets} />
+                </Row>
+            }
+            {showStatsOnly &&
+                <Row>
+                    <p>Hist stats</p>
+                    <TabularData data={ticketsHitsStats} />
+                </Row>
+            }
         </React.Fragment>
     );
 }
