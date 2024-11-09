@@ -18,7 +18,8 @@ export const DataStatsTab = ({
         entryItemsFirstDigitsData,
         itemsClustersData,
         coupleAndTrippleSequentialNumbersData,
-        numbersStateMachineData
+        numbersStateMachineData,
+        diffBetweenFirstAndLastItemsData
     },
     settings,
 }) => {
@@ -38,6 +39,12 @@ export const DataStatsTab = ({
                         <Accordion.Header>First item analysis</Accordion.Header>
                         <Accordion.Body>
                             {ItemsHistoryPlot({ dataGroup, itemNameInEntry: "#1" })}
+                        </Accordion.Body>
+                    </Accordion.Item>
+                    <Accordion.Item eventKey={eventKey++}>
+                        <Accordion.Header>Difference between first and last items</Accordion.Header>
+                        <Accordion.Body>
+                            <TabularData data={diffBetweenFirstAndLastItemsData} />
                         </Accordion.Body>
                     </Accordion.Item>
                     <Accordion.Item eventKey={eventKey++}>

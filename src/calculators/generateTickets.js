@@ -398,6 +398,7 @@ export const generateTickets = async ({
         priorityPerSelectedSuggestedItem,
         itemsPerTicketCustom,
         highestFirstItem,
+        minDiffBetweenFirstAndLast
     }
 }) => {
     const {
@@ -406,7 +407,7 @@ export const generateTickets = async ({
         maxItem
     } = settings;
     const selectedSuggestedItemsSorted = getItemsSortedAsc(priorityPerSelectedSuggestedItem);
-    const allCombinations = prepareAllValidCombinations(selectedSuggestedItemsSorted, itemsPerTicketCustom)
+    const allCombinations = prepareAllValidCombinations(selectedSuggestedItemsSorted, itemsPerTicketCustom, minDiffBetweenFirstAndLast)
     const selectedItemsRequiredOccuranceMap = buildRelativePrioritySettingsByMannualSetting({
         ticketsNumber,
         priorityPerSelectedSuggestedItem,

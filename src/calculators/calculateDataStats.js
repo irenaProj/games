@@ -7,6 +7,7 @@ import { consecutiveFrequency } from "./dataCrunchers/consecutiveFrequency";
 import { getEntryItemsFirstDigits } from "./dataCrunchers/getEntryItemsFirstDigits";
 import { getFrequencyFactors } from "./dataCrunchers/getFrequencyFactors";
 import { occuranceFrequency } from "./dataCrunchers/occuranceFrequency";
+import { checkDiffBetweenFirstAndLastItems } from "./dataCrunchers/checkDiffBetweenFirstAndLastItems";
 
 export const calculateDataStats = ({
     dataGroup,
@@ -27,7 +28,8 @@ export const calculateDataStats = ({
         dataGroup,
         useSupplemental,
         gameItemsCount
-    })
+    });
+    const diffBetweenFirstAndLastItemsData = checkDiffBetweenFirstAndLastItems(dataGroup, useSupplemental, gameItemsCount);
 
     return {
         occuranceFrequencyData,
@@ -38,6 +40,7 @@ export const calculateDataStats = ({
         entryItemsFirstDigitsData,
         itemsClustersData,
         coupleAndTrippleSequentialNumbersData,
-        numbersStateMachineData
+        numbersStateMachineData,
+        diffBetweenFirstAndLastItemsData
     }
 }

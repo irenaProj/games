@@ -7,17 +7,18 @@ import { generateTickets, getAllValidCombinationsStatistics } from "../calculato
 import { TabularData } from "./tabularData";
 import { ITEM_PRIORITY_TYPES } from "../constants";
 import { FloatingLabel } from "react-bootstrap";
+import { getNumbers } from "../utils/getNumbers";
 
 export const Tickets = ({ selectedSuggestedItems, targetEntry, useAllItems, dataStats, settings, dataGroup }) => {
+    const { maxItem, itemsPerTicket } = settings;
     const [tickets, setTickets] = useState([]);
     const [ticketsNumber, setTicketsNumber] = useState(0);
     const [ticketsStatsMap, setTicketsStatsMap] = useState({});
-    const [itemsPerTicketCustom, setItemsPerTicketCustom] = useState(settings.itemsPerTicket);
+    const [itemsPerTicketCustom, setItemsPerTicketCustom] = useState(itemsPerTicket);
     const plottedSelectedSuggestedItems = [];
     const allValidCombinationsStatistics = getAllValidCombinationsStatistics(selectedSuggestedItems, itemsPerTicketCustom)
     const [totalTicketsCount, setTtotalTicketsCount] = useState(allValidCombinationsStatistics.totalTicketsCount);
     const [selectedSuggestedItemsSortedInfo, setSelectedSuggestedItemsSortedInfo] = useState(allValidCombinationsStatistics.selectedSuggestedItemsSortedInfo);
-
 
     selectedSuggestedItems.forEach(si => {
         if (si.isPlotted) {
@@ -27,6 +28,7 @@ export const Tickets = ({ selectedSuggestedItems, targetEntry, useAllItems, data
 
     const [priorityPerSelectedSuggestedItem, setPriorityPerSelectedSuggestedItem] = useState(plottedSelectedSuggestedItems.map(si => ({ ...si, itemPriority: si.isInPool && useAllItems ? ITEM_PRIORITY_TYPES.HIGHEST : ITEM_PRIORITY_TYPES.NORMAL })));
     const [highestFirstItem, setHighestFirstItem] = useState(plottedSelectedSuggestedItems[0].number);
+    const [minDiffBetweenFirstAndLast, setMinDiffBetweenFirstAndLast] = useState(1);
 
     useEffect(() => {
         const _plottedSelectedSuggestedItems = [];
@@ -54,7 +56,8 @@ export const Tickets = ({ selectedSuggestedItems, targetEntry, useAllItems, data
         setSelectedSuggestedItemsSortedInfo(updatedAllValidCombinationsStatistics.selectedSuggestedItemsSortedInfo);
         setItemsPerTicketCustom(parseInt(value));
     }
-     const oHighestFirstItemUpdate = ({ target: { value } }) => setHighestFirstItem(parseInt(value));
+    const oHighestFirstItemUpdate = ({ target: { value } }) => setHighestFirstItem(parseInt(value));
+    const oMinDiffBetweenFirstAndLastUpdate = ({ target: { value } }) => setMinDiffBetweenFirstAndLast(parseInt(value));
     const onPriorityPerSelectedSuggestedItemUpdate = (updatedItem) => {
         const updatedList = priorityPerSelectedSuggestedItem.map(selectedSuggestedItem => {
             if (selectedSuggestedItem.number !== updatedItem.number) {
@@ -79,6 +82,7 @@ export const Tickets = ({ selectedSuggestedItems, targetEntry, useAllItems, data
                 priorityPerSelectedSuggestedItem,
                 itemsPerTicketCustom,
                 highestFirstItem,
+                minDiffBetweenFirstAndLast
             }
         });
 
@@ -125,11 +129,27 @@ export const Tickets = ({ selectedSuggestedItems, targetEntry, useAllItems, data
                                     </Form.Text>
                                 </Form.Group>
                             </Col>
+                            <Col sm="3">
+                                <Form.Group className="xs-3" controlId="minDiffBetweenFirstAndLast">
+                                    <Form.Label><strong>Min diff between first and last items</strong></Form.Label>
+                                    <Form.Select aria-label="Set min diff" value={minDiffBetweenFirstAndLast} onChange={oMinDiffBetweenFirstAndLastUpdate}>
+                                        {getNumbers(maxItem).map((item, index) => (<option key={index} value={item}>{item}</option>))}
+                                    </Form.Select>
 
-
+                                    <Form.Text className="text-muted">
+                                        Highest first number on a ticket: {highestFirstItem}
+                                    </Form.Text>
+                                </Form.Group>
+                            </Col>
+                        </Row>
+                        <Row>
+                            <br />
                         </Row>
                         <Row>
                             {priorityPerSelectedSuggestedItem.map((selectedSuggestedItem) => renderItemsPriority(selectedSuggestedItem))}
+                        </Row>
+                        <Row>
+                            <br />
                         </Row>
                         <Row>
                             <Col sm="3">
@@ -148,13 +168,13 @@ export const Tickets = ({ selectedSuggestedItems, targetEntry, useAllItems, data
             </Row>
             <Row>
                 <p>Total valid tickets: {totalTicketsCount}</p>
-                
+
                 <TabularData data={Object.keys(selectedSuggestedItemsSortedInfo).map(key => ({
                     "Number": key,
                     "Total ticket with item": selectedSuggestedItemsSortedInfo[key].ticketsWithItem,
                     "Tickets with first item": selectedSuggestedItemsSortedInfo[key].ticketsWithFirstItem,
-                    "In pool":selectedSuggestedItemsSortedInfo[key].inPool,
-                    "Not in pool":selectedSuggestedItemsSortedInfo[key].notInPool,
+                    "In pool": selectedSuggestedItemsSortedInfo[key].inPool,
+                    "Not in pool": selectedSuggestedItemsSortedInfo[key].notInPool,
                 }))} />
             </Row>
 
