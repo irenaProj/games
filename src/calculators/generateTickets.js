@@ -349,18 +349,59 @@ const calculateTicketsCountPerDistinctFirstItem = ({ ticketsNumber, firstItems }
     return Math.round(ticketsNumber / firsItemsCount)
 }
 
- const prepareAllValidCombinations = (selectedSuggestedItemsSorted, itemsPerTicketCustom) => {
-    return combinationsRecursive(selectedSuggestedItemsSorted, itemsPerTicketCustom);
+const filterOutByMinDiffBetweenFirstAndLast = (allCombinations, minDiffBetweenFirstAndLast, useNumberAttribute) => {
+    const remaining = [];
+    if (!allCombinations || !allCombinations.length) {
+        return {
+            remaining: [],
+            dropped: 0
+        }
+    }
+    
+    const length = allCombinations[0].length;
+    let dropped = 0;
+
+    allCombinations.forEach(combination => {
+        let diff = 0;
+
+        if (useNumberAttribute) {
+            diff = combination[length - 1].number - combination[0].number;
+        } else {
+            diff = combination[length - 1] - combination[0]
+        }
+
+        if (diff >= minDiffBetweenFirstAndLast) {
+            remaining.push(combination)
+        } else {
+            dropped += 1;
+        }
+    })
+
+    return {
+        remaining,
+        dropped
+    };
 }
 
-export const getAllValidCombinationsStatistics = (selectedSuggestedItemsSorted, itemsPerTicketCustom) => {
+const prepareAllValidCombinations = (selectedSuggestedItemsSorted, itemsPerTicketCustom, minDiffBetweenFirstAndLast, useNumberAttribute = false) => {
     const allCombinations = combinationsRecursive(selectedSuggestedItemsSorted, itemsPerTicketCustom);
+    const {
+        remaining,
+        dropped
+    } = filterOutByMinDiffBetweenFirstAndLast(allCombinations, minDiffBetweenFirstAndLast, useNumberAttribute);
+
+    console.log(`Dropped due to min/max diff: ${dropped}`)
+    return remaining;
+}
+
+export const getAllValidCombinationsStatistics = (selectedSuggestedItemsSorted, itemsPerTicketCustom, minDiffBetweenFirstAndLast) => {
+    const allCombinations = prepareAllValidCombinations(selectedSuggestedItemsSorted, itemsPerTicketCustom, minDiffBetweenFirstAndLast, true);
     const selectedSuggestedItemsSortedInfo = {};
 
     selectedSuggestedItemsSorted.forEach(si => {
         selectedSuggestedItemsSortedInfo[si.number] = {
             ticketsWithItem: 0,
-            ticketsWithFirstItem:0,
+            ticketsWithFirstItem: 0,
             inPool: 0,
             notInPool: 0
         };

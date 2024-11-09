@@ -15,8 +15,9 @@ export const Tickets = ({ selectedSuggestedItems, targetEntry, useAllItems, data
     const [ticketsNumber, setTicketsNumber] = useState(0);
     const [ticketsStatsMap, setTicketsStatsMap] = useState({});
     const [itemsPerTicketCustom, setItemsPerTicketCustom] = useState(itemsPerTicket);
+    const [minDiffBetweenFirstAndLast, setMinDiffBetweenFirstAndLast] = useState(16);
     const plottedSelectedSuggestedItems = [];
-    const allValidCombinationsStatistics = getAllValidCombinationsStatistics(selectedSuggestedItems, itemsPerTicketCustom)
+    const allValidCombinationsStatistics = getAllValidCombinationsStatistics(selectedSuggestedItems, itemsPerTicketCustom, minDiffBetweenFirstAndLast)
     const [totalTicketsCount, setTtotalTicketsCount] = useState(allValidCombinationsStatistics.totalTicketsCount);
     const [selectedSuggestedItemsSortedInfo, setSelectedSuggestedItemsSortedInfo] = useState(allValidCombinationsStatistics.selectedSuggestedItemsSortedInfo);
 
@@ -28,8 +29,7 @@ export const Tickets = ({ selectedSuggestedItems, targetEntry, useAllItems, data
 
     const [priorityPerSelectedSuggestedItem, setPriorityPerSelectedSuggestedItem] = useState(plottedSelectedSuggestedItems.map(si => ({ ...si, itemPriority: si.isInPool && useAllItems ? ITEM_PRIORITY_TYPES.HIGHEST : ITEM_PRIORITY_TYPES.NORMAL })));
     const [highestFirstItem, setHighestFirstItem] = useState(plottedSelectedSuggestedItems[0].number);
-    const [minDiffBetweenFirstAndLast, setMinDiffBetweenFirstAndLast] = useState(1);
-
+ 
     useEffect(() => {
         const _plottedSelectedSuggestedItems = [];
 
@@ -42,7 +42,7 @@ export const Tickets = ({ selectedSuggestedItems, targetEntry, useAllItems, data
         setPriorityPerSelectedSuggestedItem(_plottedSelectedSuggestedItems.map(si => ({ ...si, itemPriority: si.isInPool && useAllItems ? ITEM_PRIORITY_TYPES.HIGHEST : ITEM_PRIORITY_TYPES.NORMAL })));
         setHighestFirstItem(_plottedSelectedSuggestedItems[0].number)
 
-        const updatedAllValidCombinationsStatistics = getAllValidCombinationsStatistics(selectedSuggestedItems, itemsPerTicketCustom)
+        const updatedAllValidCombinationsStatistics = getAllValidCombinationsStatistics(selectedSuggestedItems, itemsPerTicketCustom, minDiffBetweenFirstAndLast)
 
         setTtotalTicketsCount(updatedAllValidCombinationsStatistics.totalTicketsCount);
         setSelectedSuggestedItemsSortedInfo(updatedAllValidCombinationsStatistics.selectedSuggestedItemsSortedInfo);
@@ -50,7 +50,7 @@ export const Tickets = ({ selectedSuggestedItems, targetEntry, useAllItems, data
 
     const onTicketsNumberUpdate = ({ target: { value } }) => setTicketsNumber(parseInt(value));
     const onNumbersPerTicketUpdate = ({ target: { value } }) => {
-        const updatedAllValidCombinationsStatistics = getAllValidCombinationsStatistics(selectedSuggestedItems, itemsPerTicketCustom)
+        const updatedAllValidCombinationsStatistics = getAllValidCombinationsStatistics(selectedSuggestedItems, itemsPerTicketCustom, minDiffBetweenFirstAndLast)
 
         setTtotalTicketsCount(updatedAllValidCombinationsStatistics.totalTicketsCount);
         setSelectedSuggestedItemsSortedInfo(updatedAllValidCombinationsStatistics.selectedSuggestedItemsSortedInfo);
@@ -137,7 +137,7 @@ export const Tickets = ({ selectedSuggestedItems, targetEntry, useAllItems, data
                                     </Form.Select>
 
                                     <Form.Text className="text-muted">
-                                        Highest first number on a ticket: {highestFirstItem}
+                                        Highest first number on a ticket: {minDiffBetweenFirstAndLast}
                                     </Form.Text>
                                 </Form.Group>
                             </Col>
