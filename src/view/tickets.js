@@ -10,11 +10,9 @@ import { FloatingLabel } from "react-bootstrap";
 
 export const Tickets = ({ selectedSuggestedItems, targetEntry, useAllItems, dataStats, settings, dataGroup }) => {
     const [tickets, setTickets] = useState([]);
-    const [ticketsWithUnselectedItems, setTicketsWithUnselectedItems] = useState([]);
     const [ticketsNumber, setTicketsNumber] = useState(0);
     const [ticketsStatsMap, setTicketsStatsMap] = useState({});
     const [itemsPerTicketCustom, setItemsPerTicketCustom] = useState(settings.itemsPerTicket);
-    const [ticketsWithUnpooledItemsPercentage, setTicketsWithUnpooledItemsPercentage] = useState(0);
     const plottedSelectedSuggestedItems = [];
     const allValidCombinationsStatistics = getAllValidCombinationsStatistics(selectedSuggestedItems, itemsPerTicketCustom)
     const [totalTicketsCount, setTtotalTicketsCount] = useState(allValidCombinationsStatistics.totalTicketsCount);
@@ -56,8 +54,7 @@ export const Tickets = ({ selectedSuggestedItems, targetEntry, useAllItems, data
         setSelectedSuggestedItemsSortedInfo(updatedAllValidCombinationsStatistics.selectedSuggestedItemsSortedInfo);
         setItemsPerTicketCustom(parseInt(value));
     }
-    const onTicketsWithUnpooledItemsPercentageUpdate = ({ target: { value } }) => setTicketsWithUnpooledItemsPercentage(parseInt(value));
-    const oHighestFirstItemUpdate = ({ target: { value } }) => setHighestFirstItem(parseInt(value));
+     const oHighestFirstItemUpdate = ({ target: { value } }) => setHighestFirstItem(parseInt(value));
     const onPriorityPerSelectedSuggestedItemUpdate = (updatedItem) => {
         const updatedList = priorityPerSelectedSuggestedItem.map(selectedSuggestedItem => {
             if (selectedSuggestedItem.number !== updatedItem.number) {
@@ -74,7 +71,7 @@ export const Tickets = ({ selectedSuggestedItems, targetEntry, useAllItems, data
         // Do not refresh page
         event.preventDefault();
 
-        const { tickets, ticketsStatsMap, ticketsWithUnselectedItems } = await generateTickets({
+        const { tickets, ticketsStatsMap } = await generateTickets({
             targetEntry,
             settings,
             ticketsSettings: {
@@ -82,13 +79,11 @@ export const Tickets = ({ selectedSuggestedItems, targetEntry, useAllItems, data
                 priorityPerSelectedSuggestedItem,
                 itemsPerTicketCustom,
                 highestFirstItem,
-                ticketsWithUnpooledItemsPercentage: ticketsWithUnpooledItemsPercentage / 100
             }
         });
 
         setTickets(tickets);
         setTicketsStatsMap(ticketsStatsMap);
-        setTicketsWithUnselectedItems(ticketsWithUnselectedItems)
     }
 
     const renderItemsPriority = (selectedSuggestedItem) => {
@@ -143,15 +138,6 @@ export const Tickets = ({ selectedSuggestedItems, targetEntry, useAllItems, data
                                     <Form.Control type="number" placeholder="Numbers per ticket #" onChange={onNumbersPerTicketUpdate} />
                                 </Form.Group>
                             </Col>
-                            {/* <Col sm="5">
-                                <Form.Group className="xs-3" controlId="ticketsWithUnpooledItemsPercentage">
-                                    <Form.Label>Percentage of tickets with unpooled items</Form.Label>
-                                    <Form.Control type="number" placeholder="Percentage of unpooled tickets" onChange={onTicketsWithUnpooledItemsPercentageUpdate} />
-                                    <Form.Text className="text-muted">
-                                        Percentage of tickets with unpooled items {ticketsWithUnpooledItemsPercentage}
-                                    </Form.Text>
-                                </Form.Group>
-                            </Col> */}
                         </Row>
 
                         <Button variant="primary" type="submit">
@@ -181,10 +167,6 @@ export const Tickets = ({ selectedSuggestedItems, targetEntry, useAllItems, data
             <Row>
                 <p>Tickets with pooled items only</p>
                 <TabularData data={tickets} />
-            </Row>
-            <Row>
-                <p>Tickets with unpooled items</p>
-                <TabularData data={ticketsWithUnselectedItems} />
             </Row>
         </React.Fragment>
     );
